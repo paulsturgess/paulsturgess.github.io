@@ -8,7 +8,8 @@ categories:
 
 [Octopress](http://octopress.org/) is a static blog generator. It uses
 [Jekyll](https://github.com/mojombo/jekyll) which was created by Github to run
-[Github Pages](http://pages.github.com) and now I'm using it to power my blog.
+[Github Pages](http://pages.github.com) and now I'm using it to power my
+re-launched blog.
 
 I'm attracted by the prospect of using Octopress because it's dead simple. It
 generates the blog content as flat pages so it's super fast. It allows me to
@@ -16,9 +17,7 @@ write using [Markdown](http://daringfireball.net/projects/markdown/) and deploy
 via [Git](http://git-scm.com/).
 
 There's no server setup and no hosting fees, as it's hosted using Github
-Pages (which is free).
-
-Also it's written in Ruby, so it works with all the tools I'm familiar with.
+Pages. Also it's written in Ruby, so it works with all the tools I'm familiar with.
 
 What follows is more for my reference than anything, so I can remember how I set
 things up.
@@ -125,11 +124,12 @@ As easy as:
     $ rake generate
     $ rake deploy
 
+Just rememeber to manually commit changes made in the `source` branch.
+
 ## Working from another machine
 
 As the `_deploy` directory is in the `.gitignore`, the easiest thing is to clone
-the source and run the generator again to create it and setup the remote for
-you.
+the `source` branch and then setup the `_deploy` branch manually.
 
     $ git clone -b source git@github.com:username/username.github.io.git username.github.io
     $ cd username.github.io

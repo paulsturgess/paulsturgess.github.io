@@ -3,10 +3,10 @@
 # ----------------------- #
 
 url: http://paulsturgess.github.io
-title: My Octopress Blog
-subtitle: A blogging framework for hackers.
-author: Your Name
-simple_search: http://google.com/search
+title: "A blog about iOS dev with RubyMotion"
+subtitle: Paul Sturgess
+author: Paul Sturgess
+simple_search:
 description:
 
 # Default date format is "ordinal" (resulting in "July 22nd 2007")
@@ -58,14 +58,14 @@ default_asides: [asides/recent_posts.html, asides/github.html, asides/delicious.
 # ----------------------- #
 
 # Github repositories
-github_user:
+github_user: paulsturgess
 github_repo_count: 0
 github_show_profile_link: true
 github_skip_forks: true
 
 # Twitter
-twitter_user:
-twitter_tweet_button: true
+twitter_user: paulsturgess
+twitter_tweet_button: false
 
 # Google +1
 google_plus_one: false

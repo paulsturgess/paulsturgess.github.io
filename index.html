@@ -113,7 +113,7 @@ things up.</p>
 <p>Create a new Github repo named <code>yourgithubusername.github.io</code>.</p>
 
 <p>The name is important here as Github Pages will automatically find this repo and
-server up the pages in the <code>master</code> branch as your website at
+serve up the content it finds in the <code>master</code> branch as your website at
 <code>http://yourgithubusername.github.io</code>.</p>
 
 <p>Grab Octopress and change directory:</p>
@@ -206,7 +206,7 @@ $ rake generate
 <p>This is where the main site configuration lives. Things like the blog title and various 3rd Party Settings, your Twitter and Github handles etc.</p>
 
 <p>Changes to <code>_config.yml</code> will require you to restart the <code>rake watch</code> task if
-you&#8217;re POW server.</p>
+you&#8217;re using POW server.</p>
 
 <h2>Creating this post</h2>
 
@@ -222,6 +222,17 @@ $ rake deploy
 </code></pre>
 
 <p>Just rememeber to manually commit changes made in the <code>source</code> branch.</p>
+
+<h2>Custom domain</h2>
+
+<p>Inside your <code>source</code> branch run the following:</p>
+
+<pre><code>echo 'your-domain.com' &gt;&gt; source/CNAME
+</code></pre>
+
+<p>Deploy up to Gitbub and then point an <code>A record</code> (for your naked domain) to <code>207.97.227.245</code></p>
+
+<p>For <code>www</code> just point a <code>CNAME record</code> to yourgithubusername.github.io</p>
 
 <h2>Working from another machine</h2>
 

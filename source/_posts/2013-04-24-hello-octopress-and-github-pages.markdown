@@ -126,6 +126,16 @@ As easy as:
 
 Just rememeber to manually commit changes made in the `source` branch.
 
+## Custom domain
+
+Inside your `source` branch run the following:
+
+    echo 'your-domain.com' >> source/CNAME
+
+Deploy up to Gitbub and then point an `A record` (for your naked domain) to `207.97.227.245`
+
+For `www` just point a `CNAME record` to yourgithubusername.github.io
+
 ## Working from another machine
 
 As the `_deploy` directory is in the `.gitignore`, the easiest thing is to clone

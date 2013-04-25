@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about iOS dev with RubyMotion]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2013-04-25T13:26:27+01:00</updated>
+  <updated>2013-04-25T13:48:18+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -148,6 +148,17 @@ $ rake deploy
 </code></pre>
 
 <p>Just rememeber to manually commit changes made in the <code>source</code> branch.</p>
+
+<h2>Custom domain</h2>
+
+<p>Inside your <code>source</code> branch run the following:</p>
+
+<pre><code>echo 'your-domain.com' &gt;&gt; source/CNAME
+</code></pre>
+
+<p>Deploy up to Gitbub and then point an <code>A record</code> (for your naked domain) to <code>207.97.227.245</code></p>
+
+<p>For <code>www</code> just point a <code>CNAME record</code> to yourgithubusername.github.io</p>
 
 <h2>Working from another machine</h2>
 

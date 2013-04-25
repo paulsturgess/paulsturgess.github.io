@@ -27,7 +27,7 @@ things up.
 Create a new Github repo named `yourgithubusername.github.io`.
 
 The name is important here as Github Pages will automatically find this repo and
-server up the pages in the `master` branch as your website at
+serve up the content it finds in the `master` branch as your website at
 `http://yourgithubusername.github.io`.
 
 Grab Octopress and change directory:
@@ -111,7 +111,7 @@ I installed the theme by running the following in the root of the `source` branc
 This is where the main site configuration lives. Things like the blog title and various 3rd Party Settings, your Twitter and Github handles etc.
 
 Changes to `_config.yml` will require you to restart the `rake watch` task if
-you're POW server.
+you're using POW server.
 
 ## Creating this post
 

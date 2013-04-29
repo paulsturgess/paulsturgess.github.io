@@ -86,7 +86,7 @@ Octopress works really well with [POW server](http://pow.cx).
     $ cd ~/.pow
     $ ln -s /path/to/your/octopress/site yoursitename
 
-Now that you’re setup with POW, checkout the `source` branch and run:
+Now that you’re setup with POW, in the root of your `source` branch run:
 
     $ rake watch
 
@@ -128,11 +128,14 @@ Just rememeber to manually commit changes made in the `source` branch.
 
 ## Custom domain
 
+Github have full details on how to do this in their [GitHub Pages Documentation](https://help.github.com/articles/setting-up-a-custom-domain-with-pages).
+
 Inside your `source` branch run the following:
 
     echo 'your-domain.com' >> source/CNAME
 
-Deploy up to Gitbub and then point an `A record` (for your naked domain) to `207.97.227.245`
+Regenerate your site and deploy up to Github. In your DNS settings point an
+`A record` (for your naked domain) to `204.232.175.78`.
 
 For `www` just point a `CNAME record` to yourgithubusername.github.io
 

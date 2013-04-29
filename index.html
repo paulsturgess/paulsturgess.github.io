@@ -342,7 +342,7 @@ $ git push origin source
 $ ln -s /path/to/your/octopress/site yoursitename
 </code></pre>
 
-<p>Now that you’re setup with POW, checkout the <code>source</code> branch and run:</p>
+<p>Now that you’re setup with POW, in the root of your <code>source</code> branch run:</p>
 
 <pre><code>$ rake watch
 </code></pre>
@@ -388,12 +388,15 @@ $ rake deploy
 
 <h2>Custom domain</h2>
 
+<p>Github have full details on how to do this in their <a href="https://help.github.com/articles/setting-up-a-custom-domain-with-pages">GitHub Pages Documentation</a>.</p>
+
 <p>Inside your <code>source</code> branch run the following:</p>
 
 <pre><code>echo 'your-domain.com' &gt;&gt; source/CNAME
 </code></pre>
 
-<p>Deploy up to Gitbub and then point an <code>A record</code> (for your naked domain) to <code>207.97.227.245</code></p>
+<p>Regenerate your site and deploy up to Github. In your DNS settings point an
+<code>A record</code> (for your naked domain) to <code>204.232.175.78</code>.</p>
 
 <p>For <code>www</code> just point a <code>CNAME record</code> to yourgithubusername.github.io</p>
 

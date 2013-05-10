@@ -47,9 +47,9 @@ click it to add to your Keychain.
 In that same section of the website you can create an App ID by going to
 `Identifiers > App ID's`.
 
-I chose a name of `exampleapp` and opted for the Wildcard App ID. The wildcard
-ID means I don't need to create a new App ID & Profile for each new app I want
-to try out on my iPhone.
+From what I can gather the name is just a label, it's the ID itself that matters.
+I opted for the Wildcard App ID. The wildcard ID means I don't need to create a
+new App ID & Profile for each new app I want to try out on my iPhone.
 
 Obviously when it comes to App Store submission, then it will make sense to have
 a dedicated App ID. Also Apple recommend a dedicated App ID if you're testing

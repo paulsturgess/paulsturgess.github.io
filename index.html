@@ -9,8 +9,8 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="RubyMotion does a great job of allowing iOS apps to be written in Ruby. However,
-whilst I want to avoid writing Objective-C, I do want to learn how &hellip;">
+  <meta name="description" content="So you&#8217;ve got your Apple developer account and
+now you want to get your RubyMotion app onto your iPhone. At the end of these instructions you &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -73,6 +73,136 @@ whilst I want to avoid writing Objective-C, I do want to learn how &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone/">Using RubyMotion to Provision an App Onto Your iPhone</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-10T21:49:00+01:00" pubdate data-updated="true">May 10<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>So you&#8217;ve got your <a href="https://developer.apple.com/">Apple developer account</a> and
+now you want to get your RubyMotion app onto your iPhone.</p>
+
+<p>At the end of these instructions you will be able to deploy multiple apps using
+the same provisioning profile. Ideal for prototyping.</p>
+
+<h2>Summary of what you need to do</h2>
+
+<ul>
+<li>Generate an iOS certificate</li>
+<li>Create an App ID</li>
+<li>Register your iPhone with your Apple Developer account</li>
+<li>Create a Provisioning Profile</li>
+<li>Update your RubyMotion Rakefile to use the Certificate and the Provisioning Profile</li>
+</ul>
+
+
+<h2>Generate an iOS certificate</h2>
+
+<p>Open the Keychain Access program on your Mac and from the dropdown menu choose:</p>
+
+<p><code>Keychain Access &gt; Certificate Assistant &gt; Request a certificate from a certificate authority</code></p>
+
+<p>For the common name I went for <code>iOS development certificate</code>. But you can
+choose whatever you like.</p>
+
+<p>Just make sure you select to <code>save to disk</code>.</p>
+
+<p>Now you need to sync this up with your Apple Developer account.</p>
+
+<p>Visit <a href="https://developer.apple.com">The Apple iOS Dev Centre</a> and go to the
+<code>Certificates, Identities &amp; Profiles</code> section.</p>
+
+<p>Go to <code>Certificates &gt; Development</code> and select to add a new certificate. Follow
+the step process, uploading the certificate you just created.</p>
+
+<p>At the end you need to download the <code>.cer</code> file that gets generated. Double
+click it to add to your Keychain.</p>
+
+<h2>Create an App ID</h2>
+
+<p>In that same section of the website you can create an App ID by going to
+<code>Identifiers &gt; App ID's</code>.</p>
+
+<p>I chose a name of <code>exampleapp</code> and opted for the Wildcard App ID. The wildcard
+ID means I don&#8217;t need to create a new App ID &amp; Profile for each new app I want
+to try out on my iPhone.</p>
+
+<p>Obviously when it comes to App Store submission, then it will make sense to have
+a dedicated App ID. Also Apple recommend a dedicated App ID if you&#8217;re testing
+advanced features like Push Notifications.</p>
+
+<h2>Register your iPhone with your Apple Developer account</h2>
+
+<p>Again staying on the iOS Dev Center website, you need to register all the
+devices you want to deploy your app onto.</p>
+
+<p>You only need to do this once for each device, but you&#8217;ll need to know the UDID
+for each one.</p>
+
+<p>I decided to install a handy free app (simply called UDID) that emails you this
+reference and a host of other info straight from your iPhone. There are loads
+of free apps that do similar things on the App Store.</p>
+
+<h2>Create a Provisioning Profile</h2>
+
+<p>The last task on the iOS Dev Center website is to create a
+<code>Development Provisioning Profile</code>.</p>
+
+<p>All the instructions are self-explanatory so I won&#8217;t repeat them here.</p>
+
+<p>Just make sure you download the <code>.mobileprovision</code> file at the end.</p>
+
+<h2>Update your RubyMotion Rakefile to use the Certificate &amp; Provisioning Profile</h2>
+
+<p>Update your <code>Rakefile</code> in your app:</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+  app.name = 'ExampleApp'
+  app.identifier = 'com.yourdomain.exampleapp'
+  app.codesign_certificate = 'iPhone Developer: Your Name (XXXXXXXXXX)'
+  app.provisioning_profile = '/path/to/your/provisioning/profile/Example_App.mobileprovision'
+end
+</code></pre>
+
+<p>Note that Wildcard App Id means you can use any name for the third part of the
+identifier.</p>
+
+<p>Also for the <code>codesign_certificate</code>, you can view this in the Keychain Access
+program.</p>
+
+<p>Finally deploy to the device via:</p>
+
+<pre><code>$ rake device
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -432,6 +562,10 @@ $ cd ..
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone/">Using RubyMotion to provision an app onto your iPhone</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/04/25/objective-c-for-a-rubyist/">Objective-C for a Rubyist</a>

@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about iOS dev with RubyMotion]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2013-04-25T13:48:18+01:00</updated>
+  <updated>2013-05-13T10:03:54+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,271 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Setting up Bundler and RVM for a RubyMotion app]]></title>
+    <link href="http://paulsturgess.github.io/blog/2013/05/13/setting-up-bundler-and-rvm-for-a-rubymotion-app/"/>
+    <updated>2013-05-13T10:00:00+01:00</updated>
+    <id>http://paulsturgess.github.io/blog/2013/05/13/setting-up-bundler-and-rvm-for-a-rubymotion-app</id>
+    <content type="html"><![CDATA[<p>Create your rvmrc file via:</p>
+
+<pre><code>$ rvm use 1.9.3@yourgemsetname --create --rvmrc
+</code></pre>
+
+<p>Add bundler to your <code>Rakefile</code></p>
+
+<pre><code>require 'bundler'
+Bundler.require
+</code></pre>
+
+<p>Create your <code>Gemfile</code> via:</p>
+
+<pre><code>$ bundle init
+</code></pre>
+
+<p>Update your <code>Gemfile</code></p>
+
+<pre><code>source "https://rubygems.org"
+gem "bubble-wrap"
+</code></pre>
+
+<p>Install gems</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>You&#8217;re done.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using RubyMotion to provision an app onto your iPhone]]></title>
+    <link href="http://paulsturgess.github.io/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone/"/>
+    <updated>2013-05-10T21:49:00+01:00</updated>
+    <id>http://paulsturgess.github.io/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone</id>
+    <content type="html"><![CDATA[<p>So you&#8217;ve got your <a href="https://developer.apple.com/">Apple developer account</a> and
+now you want to get your RubyMotion app onto your iPhone.</p>
+
+<p>At the end of these instructions you will be able to deploy multiple apps using
+the same provisioning profile. Ideal for prototyping.</p>
+
+<h2>Summary of what you need to do</h2>
+
+<ul>
+<li>Generate an iOS certificate</li>
+<li>Create an App ID</li>
+<li>Register your iPhone with your Apple Developer account</li>
+<li>Create a Provisioning Profile</li>
+<li>Update your RubyMotion Rakefile to use the Certificate and the Provisioning Profile</li>
+</ul>
+
+
+<h2>Generate an iOS certificate</h2>
+
+<p>Open the Keychain Access program on your Mac and from the dropdown menu choose:</p>
+
+<p><code>Keychain Access &gt; Certificate Assistant &gt; Request a certificate from a certificate authority</code></p>
+
+<p>For the common name I went for <code>iOS development certificate</code>. But you can
+choose whatever you like.</p>
+
+<p>Just make sure you select to <code>save to disk</code>.</p>
+
+<p>Now you need to sync this up with your Apple Developer account.</p>
+
+<p>Visit <a href="https://developer.apple.com">The Apple iOS Dev Centre</a> and go to the
+<code>Certificates, Identities &amp; Profiles</code> section.</p>
+
+<p>Go to <code>Certificates &gt; Development</code> and select to add a new certificate. Follow
+the step process, uploading the certificate you just created.</p>
+
+<p>At the end you need to download the <code>.cer</code> file that gets generated. Double
+click it to add to your Keychain.</p>
+
+<h2>Create an App ID</h2>
+
+<p>In that same section of the website you can create an App ID by going to
+<code>Identifiers &gt; App ID's</code>.</p>
+
+<p>I chose a name of <code>exampleapp</code> and opted for the Wildcard App ID. The wildcard
+ID means I don&#8217;t need to create a new App ID &amp; Profile for each new app I want
+to try out on my iPhone.</p>
+
+<p>Obviously when it comes to App Store submission, then it will make sense to have
+a dedicated App ID. Also Apple recommend a dedicated App ID if you&#8217;re testing
+advanced features like Push Notifications.</p>
+
+<h2>Register your iPhone with your Apple Developer account</h2>
+
+<p>Again staying on the iOS Dev Center website, you need to register all the
+devices you want to deploy your app onto.</p>
+
+<p>You only need to do this once for each device, but you&#8217;ll need to know the UDID
+for each one.</p>
+
+<p>I decided to install a handy free app (simply called UDID) that emails you this
+reference and a host of other info straight from your iPhone. There are loads
+of free apps that do similar things on the App Store.</p>
+
+<h2>Create a Provisioning Profile</h2>
+
+<p>The last task on the iOS Dev Center website is to create a
+<code>Development Provisioning Profile</code>.</p>
+
+<p>All the instructions are self-explanatory so I won&#8217;t repeat them here.</p>
+
+<p>Just make sure you download the <code>.mobileprovision</code> file at the end.</p>
+
+<h2>Update your RubyMotion Rakefile to use the Certificate &amp; Provisioning Profile</h2>
+
+<p>Update your <code>Rakefile</code> in your app:</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+  app.name = 'ExampleApp'
+  app.identifier = 'com.yourdomain.exampleapp'
+  app.codesign_certificate = 'iPhone Developer: Your Name (XXXXXXXXXX)'
+  app.provisioning_profile = '/path/to/your/provisioning/profile/Example_App.mobileprovision'
+end
+</code></pre>
+
+<p>Note that Wildcard App Id means you can use any name for the third part of the
+identifier.</p>
+
+<p>Also for the <code>codesign_certificate</code>, you can view this in the Keychain Access
+program.</p>
+
+<p>Finally deploy to the device via:</p>
+
+<pre><code>$ rake device
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Objective-C for a Rubyist]]></title>
+    <link href="http://paulsturgess.github.io/blog/2013/04/25/objective-c-for-a-rubyist/"/>
+    <updated>2013-04-25T21:04:00+01:00</updated>
+    <id>http://paulsturgess.github.io/blog/2013/04/25/objective-c-for-a-rubyist</id>
+    <content type="html"><![CDATA[<p><a href="http://www.rubymotion.com/">RubyMotion</a> does a great job of allowing iOS apps to be written in Ruby. However,
+whilst I want to avoid writing Objective-C, I do want to learn how to read it.</p>
+
+<ul>
+<li>It&#8217;ll make it easier to learn Apple&#8217;s SDK</li>
+<li>I want to be able to read existing iOS books/articles/stackoverflow solutions</li>
+<li>It just seems like a good idea</li>
+</ul>
+
+
+<p>Fortunately both languages stem from Smalltalk, so they&#8217;re not a million miles
+apart.</p>
+
+<h2>Instance variables</h2>
+
+<pre><code>- (void)instanceVariable;
+</code></pre>
+
+<ul>
+<li><code>-</code> means instance.</li>
+<li>next is the return type: <code>void</code> which means it returns nothing.</li>
+<li>Finally we have the method name, in this case <code>instanceVariable</code>.</li>
+</ul>
+
+
+<p>Everything in Objective-C is camelCase. The common idiom in
+ RubyMotion is to write Ruby in camel case where you are implementing
+ classes that use Apple&#8217;s Objective-C methods. Reverting back to snake_case when
+ the class is pure Ruby.</p>
+
+<h2>Class methods</h2>
+
+<pre><code>+ (User *)userWithName:(NSString *)name;
+</code></pre>
+
+<ul>
+<li><code>+</code> means class method</li>
+<li>next is the return type. In this case a <code>User</code> pointer.</li>
+<li>next is the method name: <code>userWithName</code></li>
+<li>next is a colon <code>:</code>, which means there is an argument.</li>
+<li>next, in brackets, is the argument type. A pointer to an <code>NSString</code> instance.</li>
+<li>Finally the argument variable <code>name</code></li>
+</ul>
+
+
+<p>So just be clear, in Ruby this is:</p>
+
+<pre><code>def self.userWithName(name)
+    #...
+end
+</code></pre>
+
+<h2>Sending messages</h2>
+
+<p>As with all Smalltalk based languages, you are essentially creating methods in
+classes to send messages around. I believe Objective-C does have a dot notation,
+like Ruby, but most code examples I&#8217;ve come across use spaces and lots of square
+brackets.</p>
+
+<p>For example in Objective-C sending the <code>logOut</code> message to a <code>user</code> object is:</p>
+
+<pre><code>[user logOut];
+</code></pre>
+
+<p>The Ruby equivalent:</p>
+
+<pre><code>user.logOut
+</code></pre>
+
+<p>To chain methods in Objective-C it looks like:</p>
+
+<pre><code>NSMutableArray *myArray = [NSMutableArray alloc] init];
+</code></pre>
+
+<p>This is equivalent to the Ruby:</p>
+
+<pre><code>myArray = NSMutableArray.alloc.init
+</code></pre>
+
+<h2>reallyLongMethod:WithNamedParameters:</h2>
+
+<p>In Objective-C named parameters are heavily used. This is great for clarity, as
+they are intended to be as descriptive as possible. Removing the ambiguity is
+really good, but it is important to know that named parameters are actually
+included in the method name.</p>
+
+<p>So an example Apple SDK method is <code>tableView:numberOfRowsInSection:</code>. Where the
+colons indicate an argument is required. So in this case, two. In Objective-C it
+looks like:</p>
+
+<pre><code>- (Integer) tableView(tableView, numberOfRowsInSection:section)
+</code></pre>
+
+<p>RubyMotion currently runs on Ruby 1.9.3, so named arguments have been added
+especially. The above method looks like the following in RubyMotion:</p>
+
+<pre><code>def tableView(tableView, numberOfRowsInSection: section)
+  # ...
+end
+</code></pre>
+
+<p>This can look a bit strange at times when the Apple SDK requires you to implement
+methods that start with the same name, but take different arguments. If you are
+not aware that the named named arguments are used in the method name, it actually
+looks like you&#8217;re implementing the same method multiple times.</p>
+
+<p>For example, another Apple SDK method <code>tableView:editingStyleForRowAtIndexPath:</code> looks very similar in RubyMotion:</p>
+
+<pre><code>def tableView(tableView, editingStyleForRowAtIndexPath: indexPath)
+  # ...
+end
+</code></pre>
+
+<h2>In summary</h2>
+
+<p>Objective-C is definitely more verbose, but I really like the RubyMotion
+implementation. There&#8217;s loads more to get my head around, but this is a good
+starting point.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Hello Octopress & Github pages]]></title>
@@ -39,7 +304,7 @@ things up.</p>
 <p>Create a new Github repo named <code>yourgithubusername.github.io</code>.</p>
 
 <p>The name is important here as Github Pages will automatically find this repo and
-server up the pages in the <code>master</code> branch as your website at
+serve up the content it finds in the <code>master</code> branch as your website at
 <code>http://yourgithubusername.github.io</code>.</p>
 
 <p>Grab Octopress and change directory:</p>
@@ -105,7 +370,7 @@ $ git push origin source
 $ ln -s /path/to/your/octopress/site yoursitename
 </code></pre>
 
-<p>Now that you’re setup with POW, checkout the <code>source</code> branch and run:</p>
+<p>Now that you’re setup with POW, in the root of your <code>source</code> branch run:</p>
 
 <pre><code>$ rake watch
 </code></pre>
@@ -132,7 +397,7 @@ $ rake generate
 <p>This is where the main site configuration lives. Things like the blog title and various 3rd Party Settings, your Twitter and Github handles etc.</p>
 
 <p>Changes to <code>_config.yml</code> will require you to restart the <code>rake watch</code> task if
-you&#8217;re POW server.</p>
+you&#8217;re using POW server.</p>
 
 <h2>Creating this post</h2>
 
@@ -151,12 +416,15 @@ $ rake deploy
 
 <h2>Custom domain</h2>
 
+<p>Github have full details on how to do this in their <a href="https://help.github.com/articles/setting-up-a-custom-domain-with-pages">GitHub Pages Documentation</a>.</p>
+
 <p>Inside your <code>source</code> branch run the following:</p>
 
 <pre><code>echo 'your-domain.com' &gt;&gt; source/CNAME
 </code></pre>
 
-<p>Deploy up to Gitbub and then point an <code>A record</code> (for your naked domain) to <code>207.97.227.245</code></p>
+<p>Regenerate your site and deploy up to Github. In your DNS settings point an
+<code>A record</code> (for your naked domain) to <code>204.232.175.78</code>.</p>
 
 <p>For <code>www</code> just point a <code>CNAME record</code> to yourgithubusername.github.io</p>
 

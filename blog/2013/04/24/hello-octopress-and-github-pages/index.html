@@ -34,6 +34,18 @@ re- &hellip;">
 <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
   
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-75197-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
 
 </head>
 
@@ -110,7 +122,7 @@ things up.</p>
 <p>Create a new Github repo named <code>yourgithubusername.github.io</code>.</p>
 
 <p>The name is important here as Github Pages will automatically find this repo and
-server up the pages in the <code>master</code> branch as your website at
+serve up the content it finds in the <code>master</code> branch as your website at
 <code>http://yourgithubusername.github.io</code>.</p>
 
 <p>Grab Octopress and change directory:</p>
@@ -176,7 +188,7 @@ $ git push origin source
 $ ln -s /path/to/your/octopress/site yoursitename
 </code></pre>
 
-<p>Now that you’re setup with POW, checkout the <code>source</code> branch and run:</p>
+<p>Now that you’re setup with POW, in the root of your <code>source</code> branch run:</p>
 
 <pre><code>$ rake watch
 </code></pre>
@@ -203,7 +215,7 @@ $ rake generate
 <p>This is where the main site configuration lives. Things like the blog title and various 3rd Party Settings, your Twitter and Github handles etc.</p>
 
 <p>Changes to <code>_config.yml</code> will require you to restart the <code>rake watch</code> task if
-you&#8217;re POW server.</p>
+you&#8217;re using POW server.</p>
 
 <h2>Creating this post</h2>
 
@@ -222,12 +234,15 @@ $ rake deploy
 
 <h2>Custom domain</h2>
 
+<p>Github have full details on how to do this in their <a href="https://help.github.com/articles/setting-up-a-custom-domain-with-pages">GitHub Pages Documentation</a>.</p>
+
 <p>Inside your <code>source</code> branch run the following:</p>
 
 <pre><code>echo 'your-domain.com' &gt;&gt; source/CNAME
 </code></pre>
 
-<p>Deploy up to Gitbub and then point an <code>A record</code> (for your naked domain) to <code>207.97.227.245</code></p>
+<p>Regenerate your site and deploy up to Github. In your DNS settings point an
+<code>A record</code> (for your naked domain) to <code>204.232.175.78</code>.</p>
 
 <p>For <code>www</code> just point a <code>CNAME record</code> to yourgithubusername.github.io</p>
 
@@ -284,6 +299,8 @@ $ cd ..
     <p class="meta">
       
       
+        <a class="basic-alignment right" href="/blog/2013/04/25/objective-c-for-a-rubyist/" title="Next Post: Objective-C for a Rubyist">Objective-C for a Rubyist &raquo;</a>
+      
     </p>
   </footer>
 </article>
@@ -296,6 +313,18 @@ $ cd ..
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/05/13/setting-up-bundler-and-rvm-for-a-rubymotion-app/">Setting up Bundler and RVM for a RubyMotion app</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone/">Using RubyMotion to provision an app onto your iPhone</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/25/objective-c-for-a-rubyist/">Objective-C for a Rubyist</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/04/24/hello-octopress-and-github-pages/">Hello Octopress & Github pages</a>

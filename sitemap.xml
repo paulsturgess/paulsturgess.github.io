@@ -2,15 +2,31 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://paulsturgess.github.io/blog/2013/04/24/hello-octopress-and-github-pages/</loc>
-        <lastmod>2013-04-25T13:39:02+01:00</lastmod>
+        <lastmod>2013-05-13T09:39:05+01:00</lastmod>
+    </url>
+    <url>
+        <loc>http://paulsturgess.github.io/blog/2013/04/25/objective-c-for-a-rubyist/</loc>
+        <lastmod>2013-05-13T09:39:05+01:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://paulsturgess.github.io/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone/
+        </loc>
+        <lastmod>2013-05-13T09:39:05+01:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://paulsturgess.github.io/blog/2013/05/13/setting-up-bundler-and-rvm-for-a-rubymotion-app/
+        </loc>
+        <lastmod>2013-05-13T10:02:09+01:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/blog/archives/</loc>
-        <lastmod>2013-04-25T13:39:02+01:00</lastmod>
+        <lastmod>2013-05-13T10:02:09+01:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/</loc>
-        <lastmod>2013-04-25T13:39:02+01:00</lastmod>
+        <lastmod>2013-05-13T10:02:09+01:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/robots.txt</loc>

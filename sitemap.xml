@@ -21,12 +21,18 @@
         <lastmod>2013-05-13T10:02:09+01:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://paulsturgess.github.io/blog/2013/05/15/using-native-objective-c-cocoapod-libraries-in-rubymotion/
+        </loc>
+        <lastmod>2013-05-15T13:45:15+01:00</lastmod>
+    </url>
+    <url>
         <loc>http://paulsturgess.github.io/blog/archives/</loc>
-        <lastmod>2013-05-13T10:02:09+01:00</lastmod>
+        <lastmod>2013-05-15T13:45:15+01:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/</loc>
-        <lastmod>2013-05-13T10:02:09+01:00</lastmod>
+        <lastmod>2013-05-15T13:45:15+01:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/robots.txt</loc>

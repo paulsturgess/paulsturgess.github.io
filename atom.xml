@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about iOS dev with RubyMotion]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2013-05-13T10:03:54+01:00</updated>
+  <updated>2013-05-15T13:46:45+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,86 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Using native Objective-C Cocoapod libraries in RubyMotion]]></title>
+    <link href="http://paulsturgess.github.io/blog/2013/05/15/using-native-objective-c-cocoapod-libraries-in-rubymotion/"/>
+    <updated>2013-05-15T13:40:00+01:00</updated>
+    <id>http://paulsturgess.github.io/blog/2013/05/15/using-native-objective-c-cocoapod-libraries-in-rubymotion</id>
+    <content type="html"><![CDATA[<p>Whilst RubyMotion is new, and the number of <a href="http://rubymotion-wrappers.com/">RubyMotion specific libraries</a>
+is growing fast, there are already loads of native Objective-C libraries out there.</p>
+
+<p>These instructions show you how to use <a href="http://cocoapods.org">Cocoapods</a> in
+combination with <a href="http://gembundler.com">Bundler</a>.</p>
+
+<p>Cocoapods is a dependency manager, like <a href="http://rubygems.org">RubyGems</a>, but for
+Objective-C projects.</p>
+
+<p>In this example, I&#8217;ve chosen to install <a href="https://github.com/Inferis/ViewDeck">ViewDeck</a>. ViewDeck
+makes it easy to implement the sliding panel user interface made popular by the
+Facebook iOS app.</p>
+
+<p>The <a href="http://cocoapods.org">CocoaPods website</a> is a great place to search for
+available &#8216;Pods&#8217;.</p>
+
+<h2>Summary of steps</h2>
+
+<ul>
+<li>Include the motion-cocoapods gem</li>
+<li>Setup Cocoapods</li>
+<li>Add ViewDeck to your application Rakefile</li>
+</ul>
+
+
+<h2>Bundler</h2>
+
+<p>If you haven&#8217;t got Bundler setup, I&#8217;ve written some
+<a href="http://paulsturgess.co.uk/blog/2013/05/13/setting-up-bundler-and-rvm-for-a-rubymotion-app/">instructions for using Bundler with RubyMotion</a>.</p>
+
+<h2>Cocoapods</h2>
+
+<p>Add cocoapods to your Gemfile:</p>
+
+<pre><code>gem 'motion-cocoapods'
+</code></pre>
+
+<p>Install the gem via bundler:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>Setup Cocoapods via:</p>
+
+<pre><code>$ pod setup
+</code></pre>
+
+<h2>Add ViewDeck to your Rakefile</h2>
+
+<p>In your Rakefile you need to add the ViewDeck pod and QuartzCore Framework
+(required by ViewDeck):</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+  # Frameworks
+  app.frameworks += [
+    'QuartzCore'
+  ]
+
+  # Cocoapods
+  app.pods do
+    pod 'ViewDeck'
+  end
+end
+</code></pre>
+
+<p>ViewDeck will be automatically downloaded, built and linked the next time your build your app.</p>
+
+<h2>Using ViewDeck</h2>
+
+<p>I&#8217;ve ported the Objective-C example ViewDeck application over to RubyMotion.</p>
+
+<p><a href="https://github.com/paulsturgess/ViewDeckExample-RubyMotion">Feel free to check it out</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Setting up Bundler and RVM for a RubyMotion app]]></title>

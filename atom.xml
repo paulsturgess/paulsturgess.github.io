@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about iOS dev with RubyMotion]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2013-05-15T13:46:45+01:00</updated>
+  <updated>2013-05-15T14:30:01+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -157,8 +157,8 @@ the same provisioning profile. Ideal for prototyping.</p>
 
 <p><code>Keychain Access &gt; Certificate Assistant &gt; Request a certificate from a certificate authority</code></p>
 
-<p>For the common name I went for <code>iOS development certificate</code>. But you can
-choose whatever you like.</p>
+<p>The &#8216;common name&#8217; is the name for your private key. You can choose whatever
+you like.</p>
 
 <p>Just make sure you select to <code>save to disk</code>.</p>
 

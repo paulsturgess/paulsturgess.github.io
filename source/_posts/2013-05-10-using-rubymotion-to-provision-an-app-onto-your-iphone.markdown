@@ -26,8 +26,8 @@ Open the Keychain Access program on your Mac and from the dropdown menu choose:
 
 `Keychain Access > Certificate Assistant > Request a certificate from a certificate authority`
 
-For the common name I went for `iOS development certificate`. But you can
-choose whatever you like.
+The 'common name' is the name for your private key. You can choose whatever
+you like.
 
 Just make sure you select to `save to disk`.
 

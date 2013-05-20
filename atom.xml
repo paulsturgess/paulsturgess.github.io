@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about iOS dev with RubyMotion]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2013-05-16T14:37:16+01:00</updated>
+  <updated>2013-05-20T11:45:39+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -242,7 +242,7 @@ of free apps that do similar things on the App Store.</p>
 
 <p>All the instructions are self-explanatory so I won&#8217;t repeat them here.</p>
 
-<p>Just make sure you download the <code>.mobileprovision</code> file at the end.</p>
+<p>Just make sure you download and double click the <code>.mobileprovision</code> file at the end.</p>
 
 <h2>Update your RubyMotion Rakefile to use the Certificate &amp; Provisioning Profile</h2>
 

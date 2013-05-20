@@ -74,7 +74,7 @@ The last task on the iOS Dev Center website is to create a
 
 All the instructions are self-explanatory so I won't repeat them here.
 
-Just make sure you download the `.mobileprovision` file at the end.
+Just make sure you download and double click the `.mobileprovision` file at the end.
 
 ## Update your RubyMotion Rakefile to use the Certificate & Provisioning Profile
 

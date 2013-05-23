@@ -401,9 +401,9 @@ end
   </header>
 
 
-  <div class="entry-content"><p>Create your rvmrc file via:</p>
+  <div class="entry-content"><p>Create your rvm <code>.ruby-version</code> and <code>.ruby-gemset</code> files via:</p>
 
-<pre><code>$ rvm use 1.9.3@yourgemsetname --create --rvmrc
+<pre><code>$ rvm use 1.9.3@yourgemsetname --create --ruby-version
 </code></pre>
 
 <p>Add bundler to your <code>Rakefile</code></p>
@@ -420,10 +420,10 @@ Bundler.require
 <p>Update your <code>Gemfile</code></p>
 
 <pre><code>source "https://rubygems.org"
-gem "bubble-wrap"
+gem "your-favourite-gem"
 </code></pre>
 
-<p>Install gems</p>
+<p>Install gems via:</p>
 
 <pre><code>$ bundle
 </code></pre>

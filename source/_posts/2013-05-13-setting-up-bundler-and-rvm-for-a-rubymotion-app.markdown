@@ -6,9 +6,9 @@ comments: false
 categories:
 ---
 
-Create your rvmrc file via:
+Create your rvm `.ruby-version` and `.ruby-gemset` files via:
 
-    $ rvm use 1.9.3@yourgemsetname --create --rvmrc
+    $ rvm use 1.9.3@yourgemsetname --create --ruby-version
 
 Add bundler to your `Rakefile`
 
@@ -22,9 +22,9 @@ Create your `Gemfile` via:
 Update your `Gemfile`
 
     source "https://rubygems.org"
-    gem "bubble-wrap"
+    gem "your-favourite-gem"
 
-Install gems
+Install gems via:
 
     $ bundle
 

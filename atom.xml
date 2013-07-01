@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about iOS dev with RubyMotion]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2013-07-01T09:59:09+01:00</updated>
+  <updated>2013-07-01T10:36:05+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,46 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[How to use the Crittercism Cocoapod in a RubyMotion app]]></title>
+    <link href="http://paulsturgess.github.io/blog/2013/07/01/how-to-use-the-crittercism-cocoapod-in-a-rubymotion-app/"/>
+    <updated>2013-07-01T10:24:00+01:00</updated>
+    <id>http://paulsturgess.github.io/blog/2013/07/01/how-to-use-the-crittercism-cocoapod-in-a-rubymotion-app</id>
+    <content type="html"><![CDATA[<p><a href="http://www.crittercism.com">Crittercism</a> is a great way of collecting data and
+crash reports from your iOS application whilst it&#8217;s being used in realtime.</p>
+
+<p>The easiest way to get it up and running in your RubyMotion app is to <a href="http://cocoapods.org/?q=crittercism">use the Coacoapod</a>.</p>
+
+<p>If you haven&#8217;t setup Coacoapods in your app yet then check out my article
+where I <a href="http://paulsturgess.co.uk/blog/2013/05/15/using-native-objective-c-cocoapod-libraries-in-rubymotion/">install the ViewDeck Cocoapod</a>.</p>
+
+<p>Update your <code>Rakefile</code> with:</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+  # ...
+
+  app.frameworks += [
+    'SystemConfiguration'
+  ]
+
+  app.pods do
+    pod 'CrittercismSDK'
+  end
+end
+</code></pre>
+
+<p>Locate your Crittercism App id under Settings on the Crittercism website. Update
+your <code>app_delegate.rb</code> with the following just before you call <code>makeKeyAndVisible</code>:</p>
+
+<pre><code>crittercism_app_id = "51d1421f97c8f273e0000007"
+Crittercism.enableWithAppID(crittercism_app_id)
+</code></pre>
+
+<p>Now when you build your app and errors get raised, you&#8217;ll start receiving crash
+reports.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[How to Memory Profile a RubyMotion application using Instruments]]></title>

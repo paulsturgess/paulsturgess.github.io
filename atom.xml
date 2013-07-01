@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about iOS dev with RubyMotion]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2013-06-28T10:26:52+01:00</updated>
+  <updated>2013-07-01T09:59:09+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -278,7 +278,7 @@ available &#8216;Pods&#8217;.</p>
 end
 </code></pre>
 
-<p>ViewDeck will be automatically downloaded, built and linked the next time your build your app.</p>
+<p>ViewDeck will be automatically downloaded, built and linked the next time you build your app.</p>
 
 <h2>Using ViewDeck</h2>
 

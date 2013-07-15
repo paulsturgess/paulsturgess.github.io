@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about iOS dev with RubyMotion]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2013-07-01T10:36:05+01:00</updated>
+  <updated>2013-07-15T14:04:14+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,66 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Using the RubyMotion debugger]]></title>
+    <link href="http://paulsturgess.github.io/blog/2013/07/15/using-the-rubymotion-debugger/"/>
+    <updated>2013-07-15T13:47:00+01:00</updated>
+    <id>http://paulsturgess.github.io/blog/2013/07/15/using-the-rubymotion-debugger</id>
+    <content type="html"><![CDATA[<p>If you haven&#8217;t read <a href="http://www.rubymotion.com/developer-center/articles/debugging/">The Official RubyMotion Debugging guide</a> then I&#8217;d recommend starting there. However, this is a summary of useful commands I tend to use.</p>
+
+<p>Launch your application with the debugger running via:</p>
+
+<pre><code>$ rake debug=1
+</code></pre>
+
+<p>Your app will pause, take the oppportunity to setup the debugger or just continue with:</p>
+
+<pre><code>$ c
+</code></pre>
+
+<p>When your app crashes you can view the backtrace via:</p>
+
+<pre><code>$ bt
+</code></pre>
+
+<p>I had an error that recommended setting a breakpoint in <code>malloc_error_break</code>.</p>
+
+<p>This can be achieved either on the fly by:</p>
+
+<pre><code>$ break malloc_error_break
+</code></pre>
+
+<p>Enter <code>y</code> to &#8220;make breakpoint pending on future shared library load&#8221;</p>
+
+<p>Alternatively, a handy way of setting this up for all apps is to create a <code>.gdbinit</code> file:</p>
+
+<pre><code>$ vim ~/.gdbinit
+</code></pre>
+
+<p>With the line:</p>
+
+<pre><code>fb malloc_error_break
+</code></pre>
+
+<p>Now when you launch via <code>rake debug=1</code> the <code>malloc_error_break</code> breakpoint will
+automatically be setup and ready to use.</p>
+
+<h2>NSZombies</h2>
+
+<p>Running your app with NSZombies will reveal even more debugging info.</p>
+
+<p>Launch your app via:</p>
+
+<pre><code>rake debug=1 NSZombieEnabled=YES MallocStackLoggingNoCompact=1
+</code></pre>
+
+<p>If you get a problem with a specifc instance you can reveal more info via:</p>
+
+<pre><code>info malloc-history &lt;your-object-ref&gt;
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[How to use the Crittercism Cocoapod in a RubyMotion app]]></title>

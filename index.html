@@ -9,8 +9,7 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="Crittercism is a great way of collecting data and
-crash reports from your iOS application whilst it&#8217;s being used in realtime. The easiest way &hellip;">
+  <meta name="description" content="If you haven&#8217;t read The Official RubyMotion Debugging guide then I&#8217;d recommend starting there. However, this is a summary of useful &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -73,6 +72,93 @@ crash reports from your iOS application whilst it&#8217;s being used in realtime
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/15/using-the-rubymotion-debugger/">Using the RubyMotion Debugger</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-15T13:47:00+01:00" pubdate data-updated="true">Jul 15<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>If you haven&#8217;t read <a href="http://www.rubymotion.com/developer-center/articles/debugging/">The Official RubyMotion Debugging guide</a> then I&#8217;d recommend starting there. However, this is a summary of useful commands I tend to use.</p>
+
+<p>Launch your application with the debugger running via:</p>
+
+<pre><code>$ rake debug=1
+</code></pre>
+
+<p>Your app will pause, take the oppportunity to setup the debugger or just continue with:</p>
+
+<pre><code>$ c
+</code></pre>
+
+<p>When your app crashes you can view the backtrace via:</p>
+
+<pre><code>$ bt
+</code></pre>
+
+<p>I had an error that recommended setting a breakpoint in <code>malloc_error_break</code>.</p>
+
+<p>This can be achieved either on the fly by:</p>
+
+<pre><code>$ break malloc_error_break
+</code></pre>
+
+<p>Enter <code>y</code> to &#8220;make breakpoint pending on future shared library load&#8221;</p>
+
+<p>Alternatively, a handy way of setting this up for all apps is to create a <code>.gdbinit</code> file:</p>
+
+<pre><code>$ vim ~/.gdbinit
+</code></pre>
+
+<p>With the line:</p>
+
+<pre><code>fb malloc_error_break
+</code></pre>
+
+<p>Now when you launch via <code>rake debug=1</code> the <code>malloc_error_break</code> breakpoint will
+automatically be setup and ready to use.</p>
+
+<h2>NSZombies</h2>
+
+<p>Running your app with NSZombies will reveal even more debugging info.</p>
+
+<p>Launch your app via:</p>
+
+<pre><code>rake debug=1 NSZombieEnabled=YES MallocStackLoggingNoCompact=1
+</code></pre>
+
+<p>If you get a problem with a specifc instance you can reveal more info via:</p>
+
+<pre><code>info malloc-history &lt;your-object-ref&gt;
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -897,202 +983,9 @@ starting point.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/24/hello-octopress-and-github-pages/">Hello Octopress & Github Pages</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-24T19:51:00+01:00" pubdate data-updated="true">Apr 24<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="http://octopress.org/">Octopress</a> is a static blog generator. It uses
-<a href="https://github.com/mojombo/jekyll">Jekyll</a> which was created by Github to run
-<a href="http://pages.github.com">Github Pages</a> and now I&#8217;m using it to power my
-re-launched blog.</p>
-
-<p>I&#8217;m attracted by the prospect of using Octopress because it&#8217;s dead simple. It
-generates the blog content as flat pages so it&#8217;s super fast. It allows me to
-write using <a href="http://daringfireball.net/projects/markdown/">Markdown</a> and deploy
-via <a href="http://git-scm.com/">Git</a>.</p>
-
-<p>There&#8217;s no server setup and no hosting fees, as it&#8217;s hosted using Github
-Pages. Also it&#8217;s written in Ruby, so it works with all the tools I&#8217;m familiar with.</p>
-
-<p>What follows is more for my reference than anything, so I can remember how I set
-things up.</p>
-
-<h2>Initial setup</h2>
-
-<p>Create a new Github repo named <code>yourgithubusername.github.io</code>.</p>
-
-<p>The name is important here as Github Pages will automatically find this repo and
-serve up the content it finds in the <code>master</code> branch as your website at
-<code>http://yourgithubusername.github.io</code>.</p>
-
-<p>Grab Octopress and change directory:</p>
-
-<pre><code>$ git clone git://github.com/imathis/octopress.git yourgithubusername.github.io
-$ cd yourgithubusername.github.io
-</code></pre>
-
-<p>Octopress has its&#8217; own rvmrc file, but I like to use gemsets, so I created my own
-before installing bundler and the required gems:</p>
-
-<pre><code>$ rvm use 1.9.3@yourgemsetname --create --rvmrc
-$ gem install bundler
-$ bundle install
-</code></pre>
-
-<p>Install the default theme:</p>
-
-<pre><code>$ rake install
-</code></pre>
-
-<p>Octopress has a configuration rake task that automatically sets the repo up for
-easy deployment to Github Pages:</p>
-
-<pre><code>$ rake setup_github_pages
-</code></pre>
-
-<p>This task does quite a few things. The most important is that it creates a new
-<code>_deploy</code> directory that is another git repository. This is where Octopress
-generates the flat website for deployment to the <code>master</code> branch of your repo
-on Github.</p>
-
-<p>All the Octopress code used to generate the website into the <code>_deploy</code> directory
-now lives in new branch called <code>source</code>. Note in the <code>source</code> branch the
-<code>.gitignore</code> includes <code>_deploy</code> so it doesn&#8217;t get committed in two places!</p>
-
-<p>This sounds more complicated than it is, Octopress has rake tasks to make this
-really easy to manage. It&#8217;s worth pushing up at this point to check everything
-works before tinkering:</p>
-
-<pre><code>$ rake generate
-$ rake deploy
-</code></pre>
-
-<p>This copies the generated files into <code>_deploy</code>, adds them to git, commits and
-pushes them up to the <code>master</code> branch.</p>
-
-<p>Visit <code>http://yourgithubusername.github.io</code></p>
-
-<p>Note at this point only the website has been committed, the source needs to be
-comitted separately via:</p>
-
-<pre><code>$ git add .
-$ git commit -m 'Initial source commit'
-$ git push origin source
-</code></pre>
-
-<h2>Running Octopress locally</h2>
-
-<p>Octopress works really well with <a href="http://pow.cx">POW server</a>.</p>
-
-<pre><code>$ cd ~/.pow
-$ ln -s /path/to/your/octopress/site yoursitename
-</code></pre>
-
-<p>Now that you’re setup with POW, in the root of your <code>source</code> branch run:</p>
-
-<pre><code>$ rake watch
-</code></pre>
-
-<p>Load up <code>http://yoursitename.dev</code></p>
-
-<h2>Theme customisation</h2>
-
-<p>I&#8217;m using the <a href="https://github.com/lucaslew/whitespace">&#8216;Whitespace&#8217; theme</a> by lucaslew.
- <a href="https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes">Other themes are available</a>.</p>
-
-<p>I&#8217;ve tweaked the header to remove the search and include navigation links to my Twitter and Github accounts.</p>
-
-<p>I installed the theme by running the following in the root of the <code>source</code> branch.
- Say yes when it asks you to overwrite existing files.</p>
-
-<pre><code>$ git clone git://github.com/lucaslew/whitespace.git .themes/whitespace
-$ rake install['whitespace']
-$ rake generate
-</code></pre>
-
-<h2>_config.yml</h2>
-
-<p>This is where the main site configuration lives. Things like the blog title and various 3rd Party Settings, your Twitter and Github handles etc.</p>
-
-<p>Changes to <code>_config.yml</code> will require you to restart the <code>rake watch</code> task if
-you&#8217;re using POW server.</p>
-
-<h2>Creating this post</h2>
-
-<p>As easy as:</p>
-
-<pre><code>rake new_post["Hello Octopress and Github pages"]
-</code></pre>
-
-<h2>Deploying to Github Pages</h2>
-
-<pre><code>$ rake generate
-$ rake deploy
-</code></pre>
-
-<p>Just rememeber to manually commit changes made in the <code>source</code> branch.</p>
-
-<h2>Custom domain</h2>
-
-<p>Github have full details on how to do this in their <a href="https://help.github.com/articles/setting-up-a-custom-domain-with-pages">GitHub Pages Documentation</a>.</p>
-
-<p>Inside your <code>source</code> branch run the following:</p>
-
-<pre><code>echo 'your-domain.com' &gt;&gt; source/CNAME
-</code></pre>
-
-<p>Regenerate your site and deploy up to Github. In your DNS settings point an
-<code>A record</code> (for your naked domain) to <code>204.232.175.78</code>.</p>
-
-<p>For <code>www</code> just point a <code>CNAME record</code> to yourgithubusername.github.io</p>
-
-<h2>Working from another machine</h2>
-
-<p>As the <code>_deploy</code> directory is in the <code>.gitignore</code>, the easiest thing is to clone
-the <code>source</code> branch and then setup the <code>_deploy</code> branch manually.</p>
-
-<pre><code>$ git clone -b source git@github.com:username/username.github.io.git username.github.io
-$ cd username.github.io
-$ bundle install
-$ mkdir _deploy
-$ cd _deploy
-$ git init
-$ git remote add origin git@github.com:username/username.github.io.git
-$ git pull origin master
-$ cd ..
-</code></pre>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="/blog/page/2/">&larr; Older</a>
     
     
   </div>
@@ -1102,6 +995,10 @@ $ cd ..
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/07/15/using-the-rubymotion-debugger/">Using the RubyMotion debugger</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/07/01/how-to-use-the-crittercism-cocoapod-in-a-rubymotion-app/">How to use the Crittercism Cocoapod in a RubyMotion app</a>
@@ -1117,10 +1014,6 @@ $ cd ..
     
       <li class="post">
         <a href="/blog/2013/05/23/how-to-setup-testflight-for-a-rubymotion-app/">How to setup TestFlight for a RubyMotion app</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/05/16/how-to-setup-a-test-only-group-in-bundler-for-rubymotion/">How to setup a test only group in Bundler for RubyMotion</a>
       </li>
     
   </ul>

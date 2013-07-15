@@ -5,12 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Using RubyMotion to provision an app onto your iPhone - A blog about iOS dev with RubyMotion</title>
+  <title>Using the RubyMotion debugger - A blog about iOS dev with RubyMotion</title>
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="So you&#8217;ve got your Apple developer account and
-now you want to get your RubyMotion app onto your iPhone. At the end of these instructions you &hellip;">
+  <meta name="description" content="If you haven&#8217;t read The Official RubyMotion Debugging guide then I&#8217;d recommend starting there. However, this is a summary of useful &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +18,7 @@ now you want to get your RubyMotion app onto your iPhone. At the end of these in
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://paulsturgess.github.io/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone">
+  <link rel="canonical" href="http://paulsturgess.github.io/blog/2013/07/15/using-the-rubymotion-debugger">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="A blog about iOS dev with RubyMotion" type="application/atom+xml">
@@ -76,7 +75,7 @@ now you want to get your RubyMotion app onto your iPhone. At the end of these in
   
   <header>
     
-      <h1 class="entry-title">Using RubyMotion to Provision an App Onto Your iPhone</h1>
+      <h1 class="entry-title">Using the RubyMotion Debugger</h1>
     
     
       <p class="meta">
@@ -92,107 +91,64 @@ now you want to get your RubyMotion app onto your iPhone. At the end of these in
   
 
 
-<time datetime="2013-05-10T21:49:00+01:00" pubdate data-updated="true">May 10<span>th</span>, 2013</time>
+<time datetime="2013-07-15T13:47:00+01:00" pubdate data-updated="true">Jul 15<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>So you&#8217;ve got your <a href="https://developer.apple.com/">Apple developer account</a> and
-now you want to get your RubyMotion app onto your iPhone.</p>
+<div class="entry-content"><p>If you haven&#8217;t read <a href="http://www.rubymotion.com/developer-center/articles/debugging/">The Official RubyMotion Debugging guide</a> then I&#8217;d recommend starting there. However, this is a summary of useful commands I tend to use.</p>
 
-<p>At the end of these instructions you will be able to deploy multiple apps using
-the same provisioning profile. Ideal for prototyping.</p>
+<p>Launch your application with the debugger running via:</p>
 
-<h2>Summary of what you need to do</h2>
-
-<ul>
-<li>Generate an iOS certificate</li>
-<li>Create an App ID</li>
-<li>Register your iPhone with your Apple Developer account</li>
-<li>Create a Provisioning Profile</li>
-<li>Update your RubyMotion Rakefile to use the Certificate and the Provisioning Profile</li>
-</ul>
-
-
-<h2>Generate an iOS certificate</h2>
-
-<p>Open the Keychain Access program on your Mac and from the dropdown menu choose:</p>
-
-<p><code>Keychain Access &gt; Certificate Assistant &gt; Request a certificate from a certificate authority</code></p>
-
-<p>The &#8216;common name&#8217; is the name for your private key. You can choose whatever
-you like.</p>
-
-<p>Just make sure you select to <code>save to disk</code>.</p>
-
-<p>Now you need to sync this up with your Apple Developer account.</p>
-
-<p>Visit <a href="https://developer.apple.com">The Apple iOS Dev Centre</a> and go to the
-<code>Certificates, Identities &amp; Profiles</code> section.</p>
-
-<p>Go to <code>Certificates &gt; Development</code> and select to add a new certificate. Follow
-the step process, uploading the certificate you just created.</p>
-
-<p>At the end you need to download the <code>.cer</code> file that gets generated. Double
-click it to add to your Keychain.</p>
-
-<h2>Create an App ID</h2>
-
-<p>In that same section of the website you can create an App ID by going to
-<code>Identifiers &gt; App ID's</code>.</p>
-
-<p>I chose a name of <code>exampleapp</code> and opted for the Wildcard App ID. The wildcard
-ID means I don&#8217;t need to create a new App ID &amp; Profile for each new app I want
-to try out on my iPhone.</p>
-
-<p>Obviously when it comes to App Store submission, then it will make sense to have
-a dedicated App ID. Also Apple recommend a dedicated App ID if you&#8217;re testing
-advanced features like Push Notifications.</p>
-
-<h2>Register your iPhone with your Apple Developer account</h2>
-
-<p>Again staying on the iOS Dev Center website, you need to register all the
-devices you want to deploy your app onto.</p>
-
-<p>You only need to do this once for each device, but you&#8217;ll need to know the UDID
-for each one.</p>
-
-<p>I decided to install a handy free app (simply called UDID) that emails you this
-reference and a host of other info straight from your iPhone. There are loads
-of free apps that do similar things on the App Store.</p>
-
-<h2>Create a Provisioning Profile</h2>
-
-<p>The last task on the iOS Dev Center website is to create a
-<code>Development Provisioning Profile</code>.</p>
-
-<p>All the instructions are self-explanatory so I won&#8217;t repeat them here.</p>
-
-<p>Just make sure you download and double click the <code>.mobileprovision</code> file at the end.</p>
-
-<h2>Update your RubyMotion Rakefile to use the Certificate &amp; Provisioning Profile</h2>
-
-<p>Update your <code>Rakefile</code> in your app:</p>
-
-<pre><code>Motion::Project::App.setup do |app|
-  app.name = 'ExampleApp'
-  app.identifier = 'com.yourdomain.exampleapp'
-  app.codesign_certificate = 'iPhone Developer: Your Name (XXXXXXXXXX)'
-  app.provisioning_profile = '/path/to/your/provisioning/profile/Example_App.mobileprovision'
-end
+<pre><code>$ rake debug=1
 </code></pre>
 
-<p>Note that Wildcard App Id means you can use any name for the third part of the
-identifier.</p>
+<p>Your app will pause, take the oppportunity to setup the debugger or just continue with:</p>
 
-<p>Also for the <code>codesign_certificate</code>, you can view this in the Keychain Access
-program.</p>
+<pre><code>$ c
+</code></pre>
 
-<p>Finally deploy to the device via:</p>
+<p>When your app crashes you can view the backtrace via:</p>
 
-<pre><code>$ rake device
+<pre><code>$ bt
+</code></pre>
+
+<p>I had an error that recommended setting a breakpoint in <code>malloc_error_break</code>.</p>
+
+<p>This can be achieved either on the fly by:</p>
+
+<pre><code>$ break malloc_error_break
+</code></pre>
+
+<p>Enter <code>y</code> to &#8220;make breakpoint pending on future shared library load&#8221;</p>
+
+<p>Alternatively, a handy way of setting this up for all apps is to create a <code>.gdbinit</code> file:</p>
+
+<pre><code>$ vim ~/.gdbinit
+</code></pre>
+
+<p>With the line:</p>
+
+<pre><code>fb malloc_error_break
+</code></pre>
+
+<p>Now when you launch via <code>rake debug=1</code> the <code>malloc_error_break</code> breakpoint will
+automatically be setup and ready to use.</p>
+
+<h2>NSZombies</h2>
+
+<p>Running your app with NSZombies will reveal even more debugging info.</p>
+
+<p>Launch your app via:</p>
+
+<pre><code>rake debug=1 NSZombieEnabled=YES MallocStackLoggingNoCompact=1
+</code></pre>
+
+<p>If you get a problem with a specifc instance you can reveal more info via:</p>
+
+<pre><code>info malloc-history &lt;your-object-ref&gt;
 </code></pre>
 </div>
 
@@ -216,7 +172,7 @@ program.</p>
   
 
 
-<time datetime="2013-05-10T21:49:00+01:00" pubdate data-updated="true">May 10<span>th</span>, 2013</time>
+<time datetime="2013-07-15T13:47:00+01:00" pubdate data-updated="true">Jul 15<span>th</span>, 2013</time>
       
 
 
@@ -231,10 +187,8 @@ program.</p>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/04/25/objective-c-for-a-rubyist/" title="Previous Post: Objective-C for a Rubyist">&laquo; Objective-C for a Rubyist</a>
+        <a class="basic-alignment left" href="/blog/2013/07/01/how-to-use-the-crittercism-cocoapod-in-a-rubymotion-app/" title="Previous Post: How to use the Crittercism Cocoapod in a RubyMotion app">&laquo; How to use the Crittercism Cocoapod in a RubyMotion app</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/05/13/setting-up-bundler-and-rvm-for-a-rubymotion-app/" title="Next Post: Setting up Bundler and RVM for a RubyMotion app">Setting up Bundler and RVM for a RubyMotion app &raquo;</a>
       
     </p>
   </footer>

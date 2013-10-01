@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Setting up Bundler and RVM for a RubyMotion app - A blog about iOS dev with RubyMotion</title>
+  <title>Setting the status bar colour for iOS7 in RubyMotion - A blog about iOS dev with RubyMotion</title>
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="Create your rvm .ruby-version and .ruby-gemset files via: $ rvm use 1.9.3@yourgemsetname --create --ruby-version Add bundler to your Rakefile require &hellip;">
+  <meta name="description" content="First things first you need to set UIViewControllerBasedStatusBarAppearance in
+your info.plist. This is done by updating your Rakefile like so: app. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://paulsturgess.github.io/blog/2013/05/13/setting-up-bundler-and-rvm-for-a-rubymotion-app">
+  <link rel="canonical" href="http://paulsturgess.github.io/blog/2013/10/01/setting-the-status-bar-colour-for-ios7-in-rubymotion">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="A blog about iOS dev with RubyMotion" type="application/atom+xml">
@@ -75,7 +76,7 @@
   
   <header>
     
-      <h1 class="entry-title">Setting Up Bundler and RVM for a RubyMotion App</h1>
+      <h1 class="entry-title">Setting the Status Bar Colour for iOS7 in RubyMotion</h1>
     
     
       <p class="meta">
@@ -91,41 +92,44 @@
   
 
 
-<time datetime="2013-05-13T10:00:00+01:00" pubdate data-updated="true">May 13<span>th</span>, 2013</time>
+<time datetime="2013-10-01T10:44:00+01:00" pubdate data-updated="true">Oct 1<span>st</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Create your rvm <code>.ruby-version</code> and <code>.ruby-gemset</code> files via:</p>
+<div class="entry-content"><p>First things first you need to set <code>UIViewControllerBasedStatusBarAppearance</code> in
+your <code>info.plist</code>.</p>
 
-<pre><code>$ rvm use 1.9.3@yourgemsetname --create --ruby-version
+<p>This is done by updating your <code>Rakefile</code> like so:</p>
+
+<pre><code>app.info_plist['UIViewControllerBasedStatusBarAppearance'] = true
 </code></pre>
 
-<p>Add bundler to your <code>Rakefile</code></p>
+<p>Now you need to implement the method <code>preferredStatusBarStyle</code> in your subclassed
+<code>UINavigationController</code>:</p>
 
-<pre><code>require 'bundler'
-Bundler.require
+<pre><code>class MyCustomNavigationController &lt; UINavigationController
+
+  def preferredStatusBarStyle
+    UIStatusBarStyleLightContent
+  end
+
+end
+
+class AppDelegate
+  def application(application, didFinishLaunchingWithOptions:launchOptions)
+    @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
+    @window.makeKeyAndVisible
+    controller = YourFirstController.alloc.init
+    @window.rootViewController = MyCustomNavigationController.alloc.initWithRootController(controller)
+    return true
+  end
+end
 </code></pre>
 
-<p>Create your <code>Gemfile</code> via:</p>
-
-<pre><code>$ bundle init
-</code></pre>
-
-<p>Update your <code>Gemfile</code></p>
-
-<pre><code>source "https://rubygems.org"
-gem "your-favourite-gem"
-</code></pre>
-
-<p>Install gems via:</p>
-
-<pre><code>$ bundle
-</code></pre>
-
-<p>You&#8217;re done.</p>
+<p>Note that <code>UIStatusBarStyleLightContent</code> will turn your status bar text color to white.</p>
 </div>
 
 
@@ -148,7 +152,7 @@ gem "your-favourite-gem"
   
 
 
-<time datetime="2013-05-13T10:00:00+01:00" pubdate data-updated="true">May 13<span>th</span>, 2013</time>
+<time datetime="2013-10-01T10:44:00+01:00" pubdate data-updated="true">Oct 1<span>st</span>, 2013</time>
       
 
 
@@ -163,10 +167,8 @@ gem "your-favourite-gem"
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone/" title="Previous Post: Using RubyMotion to provision an app onto your iPhone">&laquo; Using RubyMotion to provision an app onto your iPhone</a>
+        <a class="basic-alignment left" href="/blog/2013/07/15/using-the-rubymotion-debugger/" title="Previous Post: Using the RubyMotion debugger">&laquo; Using the RubyMotion debugger</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/05/15/using-native-objective-c-cocoapod-libraries-in-rubymotion/" title="Next Post: Using native Objective-C Cocoapod libraries in RubyMotion">Using native Objective-C Cocoapod libraries in RubyMotion &raquo;</a>
       
     </p>
   </footer>

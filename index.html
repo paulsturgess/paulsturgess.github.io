@@ -9,8 +9,8 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="So you&#8217;ve got your Apple developer account and
-now you want to get your RubyMotion app onto your iPhone. At the end of these instructions you &hellip;">
+  <meta name="description" content="First things first you need to set UIViewControllerBasedStatusBarAppearance in
+your info.plist. This is done by updating your Rakefile like so: app. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +79,699 @@ now you want to get your RubyMotion app onto your iPhone. At the end of these in
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2013/10/01/setting-the-status-bar-colour-for-ios7-in-rubymotion/">Setting the Status Bar Colour for iOS7 in RubyMotion</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-01T10:44:00+01:00" pubdate data-updated="true">Oct 1<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>First things first you need to set <code>UIViewControllerBasedStatusBarAppearance</code> in
+your <code>info.plist</code>.</p>
+
+<p>This is done by updating your <code>Rakefile</code> like so:</p>
+
+<pre><code>app.info_plist['UIViewControllerBasedStatusBarAppearance'] = true
+</code></pre>
+
+<p>Now you need to implement the method <code>preferredStatusBarStyle</code> in your subclassed
+<code>UINavigationController</code>:</p>
+
+<pre><code>class MyCustomNavigationController &lt; UINavigationController
+
+  def preferredStatusBarStyle
+    UIStatusBarStyleLightContent
+  end
+
+end
+
+class AppDelegate
+  def application(application, didFinishLaunchingWithOptions:launchOptions)
+    @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
+    @window.makeKeyAndVisible
+    controller = YourFirstController.alloc.init
+    @window.rootViewController = MyCustomNavigationController.alloc.initWithRootController(controller)
+    return true
+  end
+end
+</code></pre>
+
+<p>Note that <code>UIStatusBarStyleLightContent</code> will turn your status bar text color to white.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/15/using-the-rubymotion-debugger/">Using the RubyMotion Debugger</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-15T13:47:00+01:00" pubdate data-updated="true">Jul 15<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>If you haven&#8217;t read <a href="http://www.rubymotion.com/developer-center/articles/debugging/">The Official RubyMotion Debugging guide</a> then I&#8217;d recommend starting there. However, this is a summary of useful commands I tend to use.</p>
+
+<p>Launch your application with the debugger running via:</p>
+
+<pre><code>$ rake debug=1
+</code></pre>
+
+<p>Your app will pause, take the oppportunity to setup the debugger or just continue with:</p>
+
+<pre><code>$ c
+</code></pre>
+
+<p>When your app crashes you can view the backtrace via:</p>
+
+<pre><code>$ bt
+</code></pre>
+
+<p>I had an error that recommended setting a breakpoint in <code>malloc_error_break</code>.</p>
+
+<p>This can be achieved either on the fly by:</p>
+
+<pre><code>$ break malloc_error_break
+</code></pre>
+
+<p>Enter <code>y</code> to &#8220;make breakpoint pending on future shared library load&#8221;</p>
+
+<p>Alternatively, a handy way of setting this up for all apps is to create a <code>.gdbinit</code> file:</p>
+
+<pre><code>$ vim ~/.gdbinit
+</code></pre>
+
+<p>With the line:</p>
+
+<pre><code>fb malloc_error_break
+</code></pre>
+
+<p>Now when you launch via <code>rake debug=1</code> the <code>malloc_error_break</code> breakpoint will
+automatically be setup and ready to use.</p>
+
+<h2>NSZombies</h2>
+
+<p>Running your app with NSZombies will reveal even more debugging info.</p>
+
+<p>Launch your app via:</p>
+
+<pre><code>rake debug=1 NSZombieEnabled=YES MallocStackLoggingNoCompact=1
+</code></pre>
+
+<p>If you get a problem with a specifc instance you can reveal more info via:</p>
+
+<pre><code>info malloc-history &lt;your-object-ref&gt;
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/01/how-to-use-the-crittercism-cocoapod-in-a-rubymotion-app/">How to Use the Crittercism Cocoapod in a RubyMotion App</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-01T10:24:00+01:00" pubdate data-updated="true">Jul 1<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="http://www.crittercism.com">Crittercism</a> is a great way of collecting data and
+crash reports from your iOS application whilst it&#8217;s being used in realtime.</p>
+
+<p>The easiest way to get it up and running in your RubyMotion app is to <a href="http://cocoapods.org/?q=crittercism">use the Coacoapod</a>.</p>
+
+<p>If you haven&#8217;t setup Coacoapods in your app yet then check out my article
+where I <a href="http://paulsturgess.co.uk/blog/2013/05/15/using-native-objective-c-cocoapod-libraries-in-rubymotion/">install the ViewDeck Cocoapod</a>.</p>
+
+<p>Update your <code>Rakefile</code> with:</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+  # ...
+
+  app.frameworks += [
+    'SystemConfiguration'
+  ]
+
+  app.pods do
+    pod 'CrittercismSDK'
+  end
+end
+</code></pre>
+
+<p>Locate your Crittercism App id under Settings on the Crittercism website. Update
+your <code>app_delegate.rb</code> with the following just before you call <code>makeKeyAndVisible</code>:</p>
+
+<pre><code>crittercism_app_id = "51d1421f97c8f273e0000007"
+Crittercism.enableWithAppID(crittercism_app_id)
+</code></pre>
+
+<p>Now when you build your app and errors get raised, you&#8217;ll start receiving crash
+reports.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/28/how-to-memory-profile-a-rubymotion-application-using-instruments/">How to Memory Profile a RubyMotion Application Using Instruments</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-28T09:54:00+01:00" pubdate data-updated="true">Jun 28<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="https://developer.apple.com/library/mac/#documentation/developertools/conceptual/InstrumentsUserGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40004652-CH1-SW1">Instruments</a>, to quote Apple, &#8220;is a performance, analysis, and testing tool for dynamically tracing and profiling OS X and iOS code&#8221;.</p>
+
+<p>Essentially it gives you live data while your application is running to
+help track down memory leaks and performance issues.</p>
+
+<h2>Profiling in the simulator</h2>
+
+<p>Simply fire your application up and then open Xcode. Open Instruments via the menu:</p>
+
+<pre><code>Xcode &gt; Open Developer Tool &gt; Instruments
+</code></pre>
+
+<p>Once Instruments had opened, I elected to keep the icon in the dock. This just
+saves having to open Xcode each time I want to run Instruments.</p>
+
+<p>Once you&#8217;ve chosen the type of profiling you want to perform, from the <code>Choose Target</code>
+dropdown select, select <code>Attach to Process</code>. Under the <code>System</code> heading you should
+see the name of your app to select.</p>
+
+<p>Finally hit the record button and you&#8217;re good to go.</p>
+
+<h2>Profiling whilst your app is running on your device</h2>
+
+<p>First up make sure your device is recognised by Xcode to be &#8220;used for development&#8221;.</p>
+
+<p>If you haven&#8217;t done this, connect your device to your computer and open Xcode
+and open the organiser via:</p>
+
+<pre><code>Xcode &gt; Window &gt; Organizer
+</code></pre>
+
+<p>Find your device and select &#8220;Use for development&#8221;</p>
+
+<p>Now in Instruments you should be able to select your iPhone as a target. Then under
+<code>Choose Target</code> you should get a list of your apps to choose from.</p>
+
+<p>Note that your application must have been provisioned using a development profile.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/27/how-to-view-the-rubymotion-release-notes/">How to View the RubyMotion Release Notes</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-27T09:28:00+01:00" pubdate data-updated="true">Jun 27<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Presuming you have RubyMotion installed. This one-liner should open the release
+notes in your favourite editor:</p>
+
+<pre><code>$ open /Library/RubyMotion/NEWS
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/23/how-to-setup-testflight-for-a-rubymotion-app/">How to Setup TestFlight for a RubyMotion App</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-23T11:06:00+01:00" pubdate data-updated="true">May 23<span>rd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The official RubyMotion guide for <a href="http://www.rubymotion.com/developer-center/articles/testflight/">installing TestFlight</a>
+got me most of the way there, but there were a few additional steps I needed to
+get everything working.</p>
+
+<p>First and foremost <a href="http://paulsturgess.co.uk/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone/">I got my app running on my own device via usb</a>.</p>
+
+<p>However, for TestFlight, an Adhoc Provisioning Profile is required, as opposed
+to a Development Provisioning Profile. Essentially this is an Apple approved
+license to distribute your app to a limited number of devices without using the
+App Store.</p>
+
+<h2>Create a distribution certificate</h2>
+
+<p>Go to the Apple iOS developer website and create a Distribution certficate in a
+similar way to how you created your Developer certificate.</p>
+
+<h2>Create a fixed App ID</h2>
+
+<p>This is optional, but it felt right to me to use a fixed App ID instead of a
+wildcard.</p>
+
+<h2>Create an adhoc distribution profile</h2>
+
+<p>Finally, still on the Apple iOS Developer website, create an Adhoc distribution
+profile, download it and double click it to install it.</p>
+
+<h2>Setting up your Rakefile for multiple environments</h2>
+
+<p>I wanted to use both my Developer and Adhoc Provisioning Profiles at the same
+time. Without having to worry about switching them when required.</p>
+
+<p>My Rakefile looks like this:</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+  env = if ENV['adhoc'] == '1'
+          'adhoc'
+        else
+          'dev'
+        end
+
+  app.name = 'MyApp'
+
+  # Provisioning profiles
+  if env == 'adhoc'
+    app.identifier = 'com.mydomain.myapp'
+    app.codesign_certificate = 'iPhone Distribution: Company (XXXXXXXXXX)'
+    app.provisioning_profile = '/path/to/adhoc/provisioing/profile/example.mobileprovision'
+    app.entitlements['get-task-allow'] = false
+  else
+    app.identifier = 'com.mydomain.myapp'
+    app.codesign_certificate = 'iPhone Developer: My Name (XXXXXXXXXX)'
+    app.provisioning_profile = '/path/to/development/provisioing/profile/example.mobileprovision'
+  end
+
+  # TestFlight config
+  app.testflight.sdk = 'vendor/TestFlight'
+  app.testflight.api_token = 'sometoken'
+  app.testflight.team_token = 'anothertoken'
+end
+
+desc "Set the env to 'adhoc'"
+task :set_adhoc do
+  ENV['adhoc'] = '1'
+end
+
+desc "Run Testflight with the adhoc provisioning profile"
+# e.g. rake tf notes="My release notes"
+task :tf =&gt; [
+  :set_adhoc,
+  :testflight
+]
+</code></pre>
+
+<p>Credit to Hwee-Boon Yar for writing up <a href="http://hboon.com/different-settings-for-development-and-adhoc-builds-in-rubymotion/">how to setup the Rakefile for multiple environments</a></p>
+
+<p>Your API token is under your account settings on TestFlight at: <a href="https://testflightapp.com/account/#api">https://testflightapp.com/account/#api</a>.</p>
+
+<p>You can find your team API token at the following url: <a href="https://testflightapp.com/dashboard/team/edit/">https://testflightapp.com/dashboard/team/edit/</a></p>
+
+<p>One key bit of information I was initially missing was setting <code>get-task-allow</code>
+to false. This is only required for the Adhoc Provisioning Profile.</p>
+
+<h2>Use a custom rake task to deploy to TestFlight</h2>
+
+<p>Notice the rake task at the bottom sets the adhoc variable to ensure the Adhoc
+provisioning profile is used before firing off the TestFlight task added by
+<code>motion-testflight</code>.</p>
+
+<p>So from now on I release to TestFlight via:</p>
+
+<pre><code>$ rake tf notes="My release notes"
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/16/how-to-setup-a-test-only-group-in-bundler-for-rubymotion/">How to Setup a Test Only Group in Bundler for RubyMotion</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-16T14:30:00+01:00" pubdate data-updated="true">May 16<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Coming from a Ruby on Rails background, it&#8217;s common place to see the Gemfile
+declarations in logical groups. This ensures your gems only get required in the
+environment they are needed.</p>
+
+<p>A similar setup can be achieved in RubyMotion by tweaking your <code>Gemfile</code> and
+<code>Rakefile</code>.</p>
+
+<p>In your Gemfile:</p>
+
+<pre><code>source "https://rubygems.org"
+gem 'rake'
+gem 'motion-cocoapods'
+
+group :spec do
+  gem 'motion-redgreen'
+end
+</code></pre>
+
+<p>In your Rakefile:</p>
+
+<pre><code>if ARGV.join(' ') =~ /spec/
+  Bundler.require :default, :spec
+else
+  Bundler.require
+end
+</code></pre>
+
+<p>Thanks to the <a href="https://github.com/tkadauke/TinyMon">TinyMon</a> application where
+I first saw this setup.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/15/using-native-objective-c-cocoapod-libraries-in-rubymotion/">Using Native Objective-C Cocoapod Libraries in RubyMotion</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-15T13:40:00+01:00" pubdate data-updated="true">May 15<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Whilst RubyMotion is new, and the number of <a href="http://rubymotion-wrappers.com/">RubyMotion specific libraries</a>
+is growing fast, there are already loads of native Objective-C libraries out there.</p>
+
+<p>These instructions show you how to use <a href="http://cocoapods.org">Cocoapods</a> in
+combination with <a href="http://gembundler.com">Bundler</a>.</p>
+
+<p>Cocoapods is a dependency manager, like <a href="http://rubygems.org">RubyGems</a>, but for
+Objective-C projects.</p>
+
+<p>In this example, I&#8217;ve chosen to install <a href="https://github.com/Inferis/ViewDeck">ViewDeck</a>. ViewDeck
+makes it easy to implement the sliding panel user interface made popular by the
+Facebook iOS app.</p>
+
+<p>The <a href="http://cocoapods.org">CocoaPods website</a> is a great place to search for
+available &#8216;Pods&#8217;.</p>
+
+<h2>Summary of steps</h2>
+
+<ul>
+<li>Include the motion-cocoapods gem</li>
+<li>Setup Cocoapods</li>
+<li>Add ViewDeck to your application Rakefile</li>
+</ul>
+
+
+<h2>Bundler</h2>
+
+<p>If you haven&#8217;t got Bundler setup, I&#8217;ve written some
+<a href="http://paulsturgess.co.uk/blog/2013/05/13/setting-up-bundler-and-rvm-for-a-rubymotion-app/">instructions for using Bundler with RubyMotion</a>.</p>
+
+<h2>Cocoapods</h2>
+
+<p>Add cocoapods to your Gemfile:</p>
+
+<pre><code>gem 'motion-cocoapods'
+</code></pre>
+
+<p>Install the gem via bundler:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>Setup Cocoapods via:</p>
+
+<pre><code>$ pod setup
+</code></pre>
+
+<h2>Add ViewDeck to your Rakefile</h2>
+
+<p>In your Rakefile you need to add the ViewDeck pod and QuartzCore Framework
+(required by ViewDeck):</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+  # Frameworks
+  app.frameworks += [
+    'QuartzCore'
+  ]
+
+  # Cocoapods
+  app.pods do
+    pod 'ViewDeck'
+  end
+end
+</code></pre>
+
+<p>ViewDeck will be automatically downloaded, built and linked the next time you build your app.</p>
+
+<h2>Using ViewDeck</h2>
+
+<p>I&#8217;ve ported the Objective-C example ViewDeck application over to RubyMotion.</p>
+
+<p><a href="https://github.com/paulsturgess/ViewDeckExample-RubyMotion">Feel free to check it out</a>.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/13/setting-up-bundler-and-rvm-for-a-rubymotion-app/">Setting Up Bundler and RVM for a RubyMotion App</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-13T10:00:00+01:00" pubdate data-updated="true">May 13<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Create your rvm <code>.ruby-version</code> and <code>.ruby-gemset</code> files via:</p>
+
+<pre><code>$ rvm use 1.9.3@yourgemsetname --create --ruby-version
+</code></pre>
+
+<p>Add bundler to your <code>Rakefile</code></p>
+
+<pre><code>require 'bundler'
+Bundler.require
+</code></pre>
+
+<p>Create your <code>Gemfile</code> via:</p>
+
+<pre><code>$ bundle init
+</code></pre>
+
+<p>Update your <code>Gemfile</code></p>
+
+<pre><code>source "https://rubygems.org"
+gem "your-favourite-gem"
+</code></pre>
+
+<p>Install gems via:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>You&#8217;re done.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone/">Using RubyMotion to Provision an App Onto Your iPhone</a></h1>
     
     
@@ -125,8 +818,8 @@ the same provisioning profile. Ideal for prototyping.</p>
 
 <p><code>Keychain Access &gt; Certificate Assistant &gt; Request a certificate from a certificate authority</code></p>
 
-<p>For the common name I went for <code>iOS development certificate</code>. But you can
-choose whatever you like.</p>
+<p>The &#8216;common name&#8217; is the name for your private key. You can choose whatever
+you like.</p>
 
 <p>Just make sure you select to <code>save to disk</code>.</p>
 
@@ -146,8 +839,7 @@ click it to add to your Keychain.</p>
 <p>In that same section of the website you can create an App ID by going to
 <code>Identifiers &gt; App ID's</code>.</p>
 
-<p>From what I can gather the name is just a label, it&#8217;s the ID itself that matters.
-I opted for the Wildcard App ID. The wildcard ID means I don&#8217;t need to create a
+<p>I opted for the Wildcard App ID. The wildcard ID means I don&#8217;t need to create a
 new App ID &amp; Profile for each new app I want to try out on my iPhone.</p>
 
 <p>Obviously when it comes to App Store submission, then it will make sense to have
@@ -162,18 +854,20 @@ devices you want to deploy your app onto.</p>
 <p>You only need to do this once for each device, but you&#8217;ll need to know the UDID
 for each one.</p>
 
-<p>I decided to install a handy free app (simply called UDID) that emails you this
-reference and a host of other info straight from your iPhone. There are loads
-of free apps that do similar things on the App Store.</p>
+<p>You can get your UDID by plugging your iPhone into your computer via a USB cable
+and firing up Xcode. It&#8217;s labelled as <code>Identifier</code> on the details screen that lists
+the model and serial number etc.</p>
 
 <h2>Create a Provisioning Profile</h2>
 
 <p>The last task on the iOS Dev Center website is to create a
 <code>Development Provisioning Profile</code>.</p>
 
-<p>All the instructions are self-explanatory so I won&#8217;t repeat them here.</p>
+<p>All the instructions are self-explanatory so I won&#8217;t repeat them here. Essentially
+you are combining the certificate, the App ID and the Device ID(s) that you have
+setup.</p>
 
-<p>Just make sure you download the <code>.mobileprovision</code> file at the end.</p>
+<p>Just make sure you download and double click the <code>.mobileprovision</code> file at the end.</p>
 
 <h2>Update your RubyMotion Rakefile to use the Certificate &amp; Provisioning Profile</h2>
 
@@ -204,355 +898,9 @@ program.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/25/objective-c-for-a-rubyist/">Objective-C for a Rubyist</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-25T21:04:00+01:00" pubdate data-updated="true">Apr 25<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="http://www.rubymotion.com/">RubyMotion</a> does a great job of allowing iOS apps to be written in Ruby. However,
-whilst I want to avoid writing Objective-C, I do want to learn how to read it.</p>
-
-<ul>
-<li>It&#8217;ll make it easier to learn Apple&#8217;s SDK</li>
-<li>I want to be able to read existing iOS books/articles/stackoverflow solutions</li>
-<li>It just seems like a good idea</li>
-</ul>
-
-
-<p>Fortunately both languages stem from Smalltalk, so they&#8217;re not a million miles
-apart.</p>
-
-<h2>Instance variables</h2>
-
-<pre><code>- (void)instanceVariable;
-</code></pre>
-
-<ul>
-<li><code>-</code> means instance.</li>
-<li>next is the return type: <code>void</code> which means it returns nothing.</li>
-<li>Finally we have the method name, in this case <code>instanceVariable</code>.</li>
-</ul>
-
-
-<p>Everything in Objective-C is camelCase. The common idiom in
- RubyMotion is to write Ruby in camel case where you are implementing
- classes that use Apple&#8217;s Objective-C methods. Reverting back to snake_case when
- the class is pure Ruby.</p>
-
-<h2>Class methods</h2>
-
-<pre><code>+ (User *)userWithName:(NSString *)name;
-</code></pre>
-
-<ul>
-<li><code>+</code> means class method</li>
-<li>next is the return type. In this case a <code>User</code> pointer.</li>
-<li>next is the method name: <code>userWithName</code></li>
-<li>next is a colon <code>:</code>, which means there is an argument.</li>
-<li>next, in brackets, is the argument type. A pointer to an <code>NSString</code> instance.</li>
-<li>Finally the argument variable <code>name</code></li>
-</ul>
-
-
-<p>So just be clear, in Ruby this is:</p>
-
-<pre><code>def self.userWithName(name)
-    #...
-end
-</code></pre>
-
-<h2>Sending messages</h2>
-
-<p>As with all Smalltalk based languages, you are essentially creating methods in
-classes to send messages around. I believe Objective-C does have a dot notation,
-like Ruby, but most code examples I&#8217;ve come across use spaces and lots of square
-brackets.</p>
-
-<p>For example in Objective-C sending the <code>logOut</code> message to a <code>user</code> object is:</p>
-
-<pre><code>[user logOut];
-</code></pre>
-
-<p>The Ruby equivalent:</p>
-
-<pre><code>user.logOut
-</code></pre>
-
-<p>To chain methods in Objective-C it looks like:</p>
-
-<pre><code>NSMutableArray *myArray = [NSMutableArray alloc] init];
-</code></pre>
-
-<p>This is equivalent to the Ruby:</p>
-
-<pre><code>myArray = NSMutableArray.alloc.init
-</code></pre>
-
-<h2>reallyLongMethod:WithNamedParameters:</h2>
-
-<p>In Objective-C named parameters are heavily used. This is great for clarity, as
-they are intended to be as descriptive as possible. Removing the ambiguity is
-really good, but it is important to know that named parameters are actually
-included in the method name.</p>
-
-<p>So an example Apple SDK method is <code>tableView:numberOfRowsInSection:</code>. Where the
-colons indicate an argument is required. So in this case, two. In Objective-C it
-looks like:</p>
-
-<pre><code>- (Integer) tableView(tableView, numberOfRowsInSection:section)
-</code></pre>
-
-<p>RubyMotion currently runs on Ruby 1.9.3, so named arguments have been added
-especially. The above method looks like the following in RubyMotion:</p>
-
-<pre><code>def tableView(tableView, numberOfRowsInSection: section)
-  # ...
-end
-</code></pre>
-
-<p>This can look a bit strange at times when the Apple SDK requires you to implement
-methods that start with the same name, but take different arguments. If you are
-not aware that the named named arguments are used in the method name, it actually
-looks like you&#8217;re implementing the same method multiple times.</p>
-
-<p>For example, another Apple SDK method <code>tableView:editingStyleForRowAtIndexPath:</code> looks very similar in RubyMotion:</p>
-
-<pre><code>def tableView(tableView, editingStyleForRowAtIndexPath: indexPath)
-  # ...
-end
-</code></pre>
-
-<h2>In summary</h2>
-
-<p>Objective-C is definitely more verbose, but I really like the RubyMotion
-implementation. There&#8217;s loads more to get my head around, but this is a good
-starting point.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/24/hello-octopress-and-github-pages/">Hello Octopress & Github Pages</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-24T19:51:00+01:00" pubdate data-updated="true">Apr 24<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="http://octopress.org/">Octopress</a> is a static blog generator. It uses
-<a href="https://github.com/mojombo/jekyll">Jekyll</a> which was created by Github to run
-<a href="http://pages.github.com">Github Pages</a> and now I&#8217;m using it to power my
-re-launched blog.</p>
-
-<p>I&#8217;m attracted by the prospect of using Octopress because it&#8217;s dead simple. It
-generates the blog content as flat pages so it&#8217;s super fast. It allows me to
-write using <a href="http://daringfireball.net/projects/markdown/">Markdown</a> and deploy
-via <a href="http://git-scm.com/">Git</a>.</p>
-
-<p>There&#8217;s no server setup and no hosting fees, as it&#8217;s hosted using Github
-Pages. Also it&#8217;s written in Ruby, so it works with all the tools I&#8217;m familiar with.</p>
-
-<p>What follows is more for my reference than anything, so I can remember how I set
-things up.</p>
-
-<h2>Initial setup</h2>
-
-<p>Create a new Github repo named <code>yourgithubusername.github.io</code>.</p>
-
-<p>The name is important here as Github Pages will automatically find this repo and
-serve up the content it finds in the <code>master</code> branch as your website at
-<code>http://yourgithubusername.github.io</code>.</p>
-
-<p>Grab Octopress and change directory:</p>
-
-<pre><code>$ git clone git://github.com/imathis/octopress.git yourgithubusername.github.io
-$ cd yourgithubusername.github.io
-</code></pre>
-
-<p>Octopress has its&#8217; own rvmrc file, but I like to use gemsets, so I created my own
-before installing bundler and the required gems:</p>
-
-<pre><code>$ rvm use 1.9.3@yourgemsetname --create --rvmrc
-$ gem install bundler
-$ bundle install
-</code></pre>
-
-<p>Install the default theme:</p>
-
-<pre><code>$ rake install
-</code></pre>
-
-<p>Octopress has a configuration rake task that automatically sets the repo up for
-easy deployment to Github Pages:</p>
-
-<pre><code>$ rake setup_github_pages
-</code></pre>
-
-<p>This task does quite a few things. The most important is that it creates a new
-<code>_deploy</code> directory that is another git repository. This is where Octopress
-generates the flat website for deployment to the <code>master</code> branch of your repo
-on Github.</p>
-
-<p>All the Octopress code used to generate the website into the <code>_deploy</code> directory
-now lives in new branch called <code>source</code>. Note in the <code>source</code> branch the
-<code>.gitignore</code> includes <code>_deploy</code> so it doesn&#8217;t get committed in two places!</p>
-
-<p>This sounds more complicated than it is, Octopress has rake tasks to make this
-really easy to manage. It&#8217;s worth pushing up at this point to check everything
-works before tinkering:</p>
-
-<pre><code>$ rake generate
-$ rake deploy
-</code></pre>
-
-<p>This copies the generated files into <code>_deploy</code>, adds them to git, commits and
-pushes them up to the <code>master</code> branch.</p>
-
-<p>Visit <code>http://yourgithubusername.github.io</code></p>
-
-<p>Note at this point only the website has been committed, the source needs to be
-comitted separately via:</p>
-
-<pre><code>$ git add .
-$ git commit -m 'Initial source commit'
-$ git push origin source
-</code></pre>
-
-<h2>Running Octopress locally</h2>
-
-<p>Octopress works really well with <a href="http://pow.cx">POW server</a>.</p>
-
-<pre><code>$ cd ~/.pow
-$ ln -s /path/to/your/octopress/site yoursitename
-</code></pre>
-
-<p>Now that you’re setup with POW, in the root of your <code>source</code> branch run:</p>
-
-<pre><code>$ rake watch
-</code></pre>
-
-<p>Load up <code>http://yoursitename.dev</code></p>
-
-<h2>Theme customisation</h2>
-
-<p>I&#8217;m using the <a href="https://github.com/lucaslew/whitespace">&#8216;Whitespace&#8217; theme</a> by lucaslew.
- <a href="https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes">Other themes are available</a>.</p>
-
-<p>I&#8217;ve tweaked the header to remove the search and include navigation links to my Twitter and Github accounts.</p>
-
-<p>I installed the theme by running the following in the root of the <code>source</code> branch.
- Say yes when it asks you to overwrite existing files.</p>
-
-<pre><code>$ git clone git://github.com/lucaslew/whitespace.git .themes/whitespace
-$ rake install['whitespace']
-$ rake generate
-</code></pre>
-
-<h2>_config.yml</h2>
-
-<p>This is where the main site configuration lives. Things like the blog title and various 3rd Party Settings, your Twitter and Github handles etc.</p>
-
-<p>Changes to <code>_config.yml</code> will require you to restart the <code>rake watch</code> task if
-you&#8217;re using POW server.</p>
-
-<h2>Creating this post</h2>
-
-<p>As easy as:</p>
-
-<pre><code>rake new_post["Hello Octopress and Github pages"]
-</code></pre>
-
-<h2>Deploying to Github Pages</h2>
-
-<pre><code>$ rake generate
-$ rake deploy
-</code></pre>
-
-<p>Just rememeber to manually commit changes made in the <code>source</code> branch.</p>
-
-<h2>Custom domain</h2>
-
-<p>Github have full details on how to do this in their <a href="https://help.github.com/articles/setting-up-a-custom-domain-with-pages">GitHub Pages Documentation</a>.</p>
-
-<p>Inside your <code>source</code> branch run the following:</p>
-
-<pre><code>echo 'your-domain.com' &gt;&gt; source/CNAME
-</code></pre>
-
-<p>Regenerate your site and deploy up to Github. In your DNS settings point an
-<code>A record</code> (for your naked domain) to <code>204.232.175.78</code>.</p>
-
-<p>For <code>www</code> just point a <code>CNAME record</code> to yourgithubusername.github.io</p>
-
-<h2>Working from another machine</h2>
-
-<p>As the <code>_deploy</code> directory is in the <code>.gitignore</code>, the easiest thing is to clone
-the <code>source</code> branch and then setup the <code>_deploy</code> branch manually.</p>
-
-<pre><code>$ git clone -b source git@github.com:username/username.github.io.git username.github.io
-$ cd username.github.io
-$ bundle install
-$ mkdir _deploy
-$ cd _deploy
-$ git init
-$ git remote add origin git@github.com:username/username.github.io.git
-$ git pull origin master
-$ cd ..
-</code></pre>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="/blog/page/2/">&larr; Older</a>
     
     
   </div>
@@ -564,15 +912,23 @@ $ cd ..
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone/">Using RubyMotion to provision an app onto your iPhone</a>
+        <a href="/blog/2013/10/01/setting-the-status-bar-colour-for-ios7-in-rubymotion/">Setting the status bar colour for iOS7 in RubyMotion</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2013/04/25/objective-c-for-a-rubyist/">Objective-C for a Rubyist</a>
+        <a href="/blog/2013/07/15/using-the-rubymotion-debugger/">Using the RubyMotion debugger</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2013/04/24/hello-octopress-and-github-pages/">Hello Octopress & Github pages</a>
+        <a href="/blog/2013/07/01/how-to-use-the-crittercism-cocoapod-in-a-rubymotion-app/">How to use the Crittercism Cocoapod in a RubyMotion app</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/06/28/how-to-memory-profile-a-rubymotion-application-using-instruments/">How to Memory Profile a RubyMotion application using Instruments</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/06/27/how-to-view-the-rubymotion-release-notes/">How to view the RubyMotion release notes</a>
       </li>
     
   </ul>

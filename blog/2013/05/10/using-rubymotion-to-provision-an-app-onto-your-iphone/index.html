@@ -122,8 +122,8 @@ the same provisioning profile. Ideal for prototyping.</p>
 
 <p><code>Keychain Access &gt; Certificate Assistant &gt; Request a certificate from a certificate authority</code></p>
 
-<p>For the common name I went for <code>iOS development certificate</code>. But you can
-choose whatever you like.</p>
+<p>The &#8216;common name&#8217; is the name for your private key. You can choose whatever
+you like.</p>
 
 <p>Just make sure you select to <code>save to disk</code>.</p>
 
@@ -143,8 +143,7 @@ click it to add to your Keychain.</p>
 <p>In that same section of the website you can create an App ID by going to
 <code>Identifiers &gt; App ID's</code>.</p>
 
-<p>From what I can gather the name is just a label, it&#8217;s the ID itself that matters.
-I opted for the Wildcard App ID. The wildcard ID means I don&#8217;t need to create a
+<p>I opted for the Wildcard App ID. The wildcard ID means I don&#8217;t need to create a
 new App ID &amp; Profile for each new app I want to try out on my iPhone.</p>
 
 <p>Obviously when it comes to App Store submission, then it will make sense to have
@@ -159,18 +158,20 @@ devices you want to deploy your app onto.</p>
 <p>You only need to do this once for each device, but you&#8217;ll need to know the UDID
 for each one.</p>
 
-<p>I decided to install a handy free app (simply called UDID) that emails you this
-reference and a host of other info straight from your iPhone. There are loads
-of free apps that do similar things on the App Store.</p>
+<p>You can get your UDID by plugging your iPhone into your computer via a USB cable
+and firing up Xcode. It&#8217;s labelled as <code>Identifier</code> on the details screen that lists
+the model and serial number etc.</p>
 
 <h2>Create a Provisioning Profile</h2>
 
 <p>The last task on the iOS Dev Center website is to create a
 <code>Development Provisioning Profile</code>.</p>
 
-<p>All the instructions are self-explanatory so I won&#8217;t repeat them here.</p>
+<p>All the instructions are self-explanatory so I won&#8217;t repeat them here. Essentially
+you are combining the certificate, the App ID and the Device ID(s) that you have
+setup.</p>
 
-<p>Just make sure you download the <code>.mobileprovision</code> file at the end.</p>
+<p>Just make sure you download and double click the <code>.mobileprovision</code> file at the end.</p>
 
 <h2>Update your RubyMotion Rakefile to use the Certificate &amp; Provisioning Profile</h2>
 
@@ -234,6 +235,8 @@ program.</p>
         <a class="basic-alignment left" href="/blog/2013/04/25/objective-c-for-a-rubyist/" title="Previous Post: Objective-C for a Rubyist">&laquo; Objective-C for a Rubyist</a>
       
       
+        <a class="basic-alignment right" href="/blog/2013/05/13/setting-up-bundler-and-rvm-for-a-rubymotion-app/" title="Next Post: Setting up Bundler and RVM for a RubyMotion app">Setting up Bundler and RVM for a RubyMotion app &raquo;</a>
+      
     </p>
   </footer>
 </article>
@@ -248,15 +251,23 @@ program.</p>
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone/">Using RubyMotion to provision an app onto your iPhone</a>
+        <a href="/blog/2013/10/01/setting-the-status-bar-colour-for-ios7-in-rubymotion/">Setting the status bar colour for iOS7 in RubyMotion</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2013/04/25/objective-c-for-a-rubyist/">Objective-C for a Rubyist</a>
+        <a href="/blog/2013/07/15/using-the-rubymotion-debugger/">Using the RubyMotion debugger</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2013/04/24/hello-octopress-and-github-pages/">Hello Octopress & Github pages</a>
+        <a href="/blog/2013/07/01/how-to-use-the-crittercism-cocoapod-in-a-rubymotion-app/">How to use the Crittercism Cocoapod in a RubyMotion app</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/06/28/how-to-memory-profile-a-rubymotion-application-using-instruments/">How to Memory Profile a RubyMotion application using Instruments</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/06/27/how-to-view-the-rubymotion-release-notes/">How to view the RubyMotion release notes</a>
       </li>
     
   </ul>

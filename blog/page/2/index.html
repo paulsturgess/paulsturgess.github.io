@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Objective-C for a Rubyist - A blog about iOS dev with RubyMotion</title>
+  <title>A blog about iOS dev with RubyMotion</title>
   <meta name="author" content="Paul Sturgess">
 
   
@@ -19,7 +19,7 @@ whilst I want to avoid writing Objective-C, I do want to learn how &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://paulsturgess.github.io/blog/2013/04/25/objective-c-for-a-rubyist">
+  <link rel="canonical" href="http://paulsturgess.github.io/blog/page/2">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="A blog about iOS dev with RubyMotion" type="application/atom+xml">
@@ -71,12 +71,15 @@ whilst I want to avoid writing Objective-C, I do want to learn how &hellip;">
 </nav>
   <div id="main">
     <div id="content">
-      <div>
-<article class="hentry" role="article">
+      <div class="blog-index">
   
+  
+  
+    <article>
+      
   <header>
     
-      <h1 class="entry-title">Objective-C for a Rubyist</h1>
+      <h1 class="entry-title"><a href="/blog/2013/04/25/objective-c-for-a-rubyist/">Objective-C for a Rubyist</a></h1>
     
     
       <p class="meta">
@@ -99,7 +102,7 @@ whilst I want to avoid writing Objective-C, I do want to learn how &hellip;">
   </header>
 
 
-<div class="entry-content"><p><a href="http://www.rubymotion.com/">RubyMotion</a> does a great job of allowing iOS apps to be written in Ruby. However,
+  <div class="entry-content"><p><a href="http://www.rubymotion.com/">RubyMotion</a> does a great job of allowing iOS apps to be written in Ruby. However,
 whilst I want to avoid writing Objective-C, I do want to learn how to read it.</p>
 
 <ul>
@@ -218,54 +221,214 @@ end
 implementation. There&#8217;s loads more to get my head around, but this is a good
 starting point.</p>
 </div>
-
-
-  <footer>
-    <p class="meta">
-      
   
-
-<span class="byline author vcard">Posted by <span class="fn">Paul Sturgess</span></span>
-
-      
-
-
-
-
-
-
-
-
   
 
 
-<time datetime="2013-04-25T21:04:00+01:00" pubdate data-updated="true">Apr 25<span>th</span>, 2013</time>
+    </article>
+  
+  
+    <article>
       
-
-
-    </p>
+  <header>
     
-      <div class="sharing">
-  
-  
-  
-</div>
-
+      <h1 class="entry-title"><a href="/blog/2013/04/24/hello-octopress-and-github-pages/">Hello Octopress & Github Pages</a></h1>
     
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/blog/2013/04/24/hello-octopress-and-github-pages/" title="Previous Post: Hello Octopress & Github pages">&laquo; Hello Octopress & Github pages</a>
-      
-      
-        <a class="basic-alignment right" href="/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone/" title="Next Post: Using RubyMotion to provision an app onto your iPhone">Using RubyMotion to provision an app onto your iPhone &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
+    
+      <p class="meta">
+        
 
 
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-24T19:51:00+01:00" pubdate data-updated="true">Apr 24<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="http://octopress.org/">Octopress</a> is a static blog generator. It uses
+<a href="https://github.com/mojombo/jekyll">Jekyll</a> which was created by Github to run
+<a href="http://pages.github.com">Github Pages</a> and now I&#8217;m using it to power my
+re-launched blog.</p>
+
+<p>I&#8217;m attracted by the prospect of using Octopress because it&#8217;s dead simple. It
+generates the blog content as flat pages so it&#8217;s super fast. It allows me to
+write using <a href="http://daringfireball.net/projects/markdown/">Markdown</a> and deploy
+via <a href="http://git-scm.com/">Git</a>.</p>
+
+<p>There&#8217;s no server setup and no hosting fees, as it&#8217;s hosted using Github
+Pages. Also it&#8217;s written in Ruby, so it works with all the tools I&#8217;m familiar with.</p>
+
+<p>What follows is more for my reference than anything, so I can remember how I set
+things up.</p>
+
+<h2>Initial setup</h2>
+
+<p>Create a new Github repo named <code>yourgithubusername.github.io</code>.</p>
+
+<p>The name is important here as Github Pages will automatically find this repo and
+serve up the content it finds in the <code>master</code> branch as your website at
+<code>http://yourgithubusername.github.io</code>.</p>
+
+<p>Grab Octopress and change directory:</p>
+
+<pre><code>$ git clone git://github.com/imathis/octopress.git yourgithubusername.github.io
+$ cd yourgithubusername.github.io
+</code></pre>
+
+<p>Octopress has its&#8217; own rvmrc file, but I like to use gemsets, so I created my own
+before installing bundler and the required gems:</p>
+
+<pre><code>$ rvm use 1.9.3@yourgemsetname --create --rvmrc
+$ gem install bundler
+$ bundle install
+</code></pre>
+
+<p>Install the default theme:</p>
+
+<pre><code>$ rake install
+</code></pre>
+
+<p>Octopress has a configuration rake task that automatically sets the repo up for
+easy deployment to Github Pages:</p>
+
+<pre><code>$ rake setup_github_pages
+</code></pre>
+
+<p>This task does quite a few things. The most important is that it creates a new
+<code>_deploy</code> directory that is another git repository. This is where Octopress
+generates the flat website for deployment to the <code>master</code> branch of your repo
+on Github.</p>
+
+<p>All the Octopress code used to generate the website into the <code>_deploy</code> directory
+now lives in new branch called <code>source</code>. Note in the <code>source</code> branch the
+<code>.gitignore</code> includes <code>_deploy</code> so it doesn&#8217;t get committed in two places!</p>
+
+<p>This sounds more complicated than it is, Octopress has rake tasks to make this
+really easy to manage. It&#8217;s worth pushing up at this point to check everything
+works before tinkering:</p>
+
+<pre><code>$ rake generate
+$ rake deploy
+</code></pre>
+
+<p>This copies the generated files into <code>_deploy</code>, adds them to git, commits and
+pushes them up to the <code>master</code> branch.</p>
+
+<p>Visit <code>http://yourgithubusername.github.io</code></p>
+
+<p>Note at this point only the website has been committed, the source needs to be
+comitted separately via:</p>
+
+<pre><code>$ git add .
+$ git commit -m 'Initial source commit'
+$ git push origin source
+</code></pre>
+
+<h2>Running Octopress locally</h2>
+
+<p>Octopress works really well with <a href="http://pow.cx">POW server</a>.</p>
+
+<pre><code>$ cd ~/.pow
+$ ln -s /path/to/your/octopress/site yoursitename
+</code></pre>
+
+<p>Now that you’re setup with POW, in the root of your <code>source</code> branch run:</p>
+
+<pre><code>$ rake watch
+</code></pre>
+
+<p>Load up <code>http://yoursitename.dev</code></p>
+
+<h2>Theme customisation</h2>
+
+<p>I&#8217;m using the <a href="https://github.com/lucaslew/whitespace">&#8216;Whitespace&#8217; theme</a> by lucaslew.
+ <a href="https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes">Other themes are available</a>.</p>
+
+<p>I&#8217;ve tweaked the header to remove the search and include navigation links to my Twitter and Github accounts.</p>
+
+<p>I installed the theme by running the following in the root of the <code>source</code> branch.
+ Say yes when it asks you to overwrite existing files.</p>
+
+<pre><code>$ git clone git://github.com/lucaslew/whitespace.git .themes/whitespace
+$ rake install['whitespace']
+$ rake generate
+</code></pre>
+
+<h2>_config.yml</h2>
+
+<p>This is where the main site configuration lives. Things like the blog title and various 3rd Party Settings, your Twitter and Github handles etc.</p>
+
+<p>Changes to <code>_config.yml</code> will require you to restart the <code>rake watch</code> task if
+you&#8217;re using POW server.</p>
+
+<h2>Creating this post</h2>
+
+<p>As easy as:</p>
+
+<pre><code>rake new_post["Hello Octopress and Github pages"]
+</code></pre>
+
+<h2>Deploying to Github Pages</h2>
+
+<pre><code>$ rake generate
+$ rake deploy
+</code></pre>
+
+<p>Just rememeber to manually commit changes made in the <code>source</code> branch.</p>
+
+<h2>Custom domain</h2>
+
+<p>Github have full details on how to do this in their <a href="https://help.github.com/articles/setting-up-a-custom-domain-with-pages">GitHub Pages Documentation</a>.</p>
+
+<p>Inside your <code>source</code> branch run the following:</p>
+
+<pre><code>echo 'your-domain.com' &gt;&gt; source/CNAME
+</code></pre>
+
+<p>Regenerate your site and deploy up to Github. In your DNS settings point an
+<code>A record</code> (for your naked domain) to <code>204.232.175.78</code>.</p>
+
+<p>For <code>www</code> just point a <code>CNAME record</code> to yourgithubusername.github.io</p>
+
+<h2>Working from another machine</h2>
+
+<p>As the <code>_deploy</code> directory is in the <code>.gitignore</code>, the easiest thing is to clone
+the <code>source</code> branch and then setup the <code>_deploy</code> branch manually.</p>
+
+<pre><code>$ git clone -b source git@github.com:username/username.github.io.git username.github.io
+$ cd username.github.io
+$ bundle install
+$ mkdir _deploy
+$ cd _deploy
+$ git init
+$ git remote add origin git@github.com:username/username.github.io.git
+$ git pull origin master
+$ cd ..
+</code></pre>
 </div>
+  
+  
 
+
+    </article>
+  
+  <div class="pagination">
+    
+    
+    <a class="next" href="/">Newer &rarr;</a>
+    
+  </div>
+</div>
 <aside class="sidebar">
   
     <section>
@@ -298,7 +461,7 @@ starting point.</p>
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">
-    <li class="loading">Status updating...</li>
+    <li class="loading">Status updating&#8230;</li>
   </ul>
   
   <a href="https://github.com/paulsturgess">@paulsturgess</a> on GitHub
@@ -330,7 +493,6 @@ starting point.</p>
 
   
 </aside>
-
 
     </div>
   </div>

@@ -47,7 +47,6 @@ click it to add to your Keychain.
 In that same section of the website you can create an App ID by going to
 `Identifiers > App ID's`.
 
-From what I can gather the name is just a label, it's the ID itself that matters.
 I opted for the Wildcard App ID. The wildcard ID means I don't need to create a
 new App ID & Profile for each new app I want to try out on my iPhone.
 
@@ -63,16 +62,18 @@ devices you want to deploy your app onto.
 You only need to do this once for each device, but you'll need to know the UDID
 for each one.
 
-I decided to install a handy free app (simply called UDID) that emails you this
-reference and a host of other info straight from your iPhone. There are loads
-of free apps that do similar things on the App Store.
+You can get your UDID by plugging your iPhone into your computer via a USB cable
+and firing up Xcode. It's labelled as `Identifier` on the details screen that lists
+the model and serial number etc.
 
 ## Create a Provisioning Profile
 
 The last task on the iOS Dev Center website is to create a
 `Development Provisioning Profile`.
 
-All the instructions are self-explanatory so I won't repeat them here.
+All the instructions are self-explanatory so I won't repeat them here. Essentially
+you are combining the certificate, the App ID and the Device ID(s) that you have
+setup.
 
 Just make sure you download and double click the `.mobileprovision` file at the end.
 

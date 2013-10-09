@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about iOS dev with RubyMotion]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2013-10-01T10:55:13+01:00</updated>
+  <updated>2013-10-09T08:32:51+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,22 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[How to debug Core Data output to the console in RubyMotion]]></title>
+    <link href="http://paulsturgess.github.io/blog/2013/10/09/how-to-debug-core-data-output-to-the-console-in-rubymotion/"/>
+    <updated>2013-10-09T08:18:00+01:00</updated>
+    <id>http://paulsturgess.github.io/blog/2013/10/09/how-to-debug-core-data-output-to-the-console-in-rubymotion</id>
+    <content type="html"><![CDATA[<p>Core Data can show you the underlying queries and execution times whilst you
+are running your app. Just fire it up with:</p>
+
+<pre><code>rake args="-com.apple.CoreData.SQLDebug 1"
+</code></pre>
+
+<p>Note you can bump the number up to 2 or 3 depending on how much information
+you want. 3 goes as far as to show you the result set Core Data has fetched.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Setting the status bar colour for iOS7 in RubyMotion]]></title>
@@ -512,9 +528,8 @@ click it to add to your Keychain.</p>
 <p>In that same section of the website you can create an App ID by going to
 <code>Identifiers &gt; App ID's</code>.</p>
 
-<p>I chose a name of <code>exampleapp</code> and opted for the Wildcard App ID. The wildcard
-ID means I don&#8217;t need to create a new App ID &amp; Profile for each new app I want
-to try out on my iPhone.</p>
+<p>I opted for the Wildcard App ID. The wildcard ID means I don&#8217;t need to create a
+new App ID &amp; Profile for each new app I want to try out on my iPhone.</p>
 
 <p>Obviously when it comes to App Store submission, then it will make sense to have
 a dedicated App ID. Also Apple recommend a dedicated App ID if you&#8217;re testing
@@ -528,16 +543,18 @@ devices you want to deploy your app onto.</p>
 <p>You only need to do this once for each device, but you&#8217;ll need to know the UDID
 for each one.</p>
 
-<p>I decided to install a handy free app (simply called UDID) that emails you this
-reference and a host of other info straight from your iPhone. There are loads
-of free apps that do similar things on the App Store.</p>
+<p>You can get your UDID by plugging your iPhone into your computer via a USB cable
+and firing up Xcode. It&#8217;s labelled as <code>Identifier</code> on the details screen that lists
+the model and serial number etc.</p>
 
 <h2>Create a Provisioning Profile</h2>
 
 <p>The last task on the iOS Dev Center website is to create a
 <code>Development Provisioning Profile</code>.</p>
 
-<p>All the instructions are self-explanatory so I won&#8217;t repeat them here.</p>
+<p>All the instructions are self-explanatory so I won&#8217;t repeat them here. Essentially
+you are combining the certificate, the App ID and the Device ID(s) that you have
+setup.</p>
 
 <p>Just make sure you download and double click the <code>.mobileprovision</code> file at the end.</p>
 

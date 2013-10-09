@@ -143,9 +143,8 @@ click it to add to your Keychain.</p>
 <p>In that same section of the website you can create an App ID by going to
 <code>Identifiers &gt; App ID's</code>.</p>
 
-<p>I chose a name of <code>exampleapp</code> and opted for the Wildcard App ID. The wildcard
-ID means I don&#8217;t need to create a new App ID &amp; Profile for each new app I want
-to try out on my iPhone.</p>
+<p>I opted for the Wildcard App ID. The wildcard ID means I don&#8217;t need to create a
+new App ID &amp; Profile for each new app I want to try out on my iPhone.</p>
 
 <p>Obviously when it comes to App Store submission, then it will make sense to have
 a dedicated App ID. Also Apple recommend a dedicated App ID if you&#8217;re testing
@@ -159,16 +158,18 @@ devices you want to deploy your app onto.</p>
 <p>You only need to do this once for each device, but you&#8217;ll need to know the UDID
 for each one.</p>
 
-<p>I decided to install a handy free app (simply called UDID) that emails you this
-reference and a host of other info straight from your iPhone. There are loads
-of free apps that do similar things on the App Store.</p>
+<p>You can get your UDID by plugging your iPhone into your computer via a USB cable
+and firing up Xcode. It&#8217;s labelled as <code>Identifier</code> on the details screen that lists
+the model and serial number etc.</p>
 
 <h2>Create a Provisioning Profile</h2>
 
 <p>The last task on the iOS Dev Center website is to create a
 <code>Development Provisioning Profile</code>.</p>
 
-<p>All the instructions are self-explanatory so I won&#8217;t repeat them here.</p>
+<p>All the instructions are self-explanatory so I won&#8217;t repeat them here. Essentially
+you are combining the certificate, the App ID and the Device ID(s) that you have
+setup.</p>
 
 <p>Just make sure you download and double click the <code>.mobileprovision</code> file at the end.</p>
 
@@ -250,6 +251,10 @@ program.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/10/09/how-to-debug-core-data-output-to-the-console-in-rubymotion/">How to debug Core Data output to the console in RubyMotion</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/10/01/setting-the-status-bar-colour-for-ios7-in-rubymotion/">Setting the status bar colour for iOS7 in RubyMotion</a>
       </li>
     
@@ -263,10 +268,6 @@ program.</p>
     
       <li class="post">
         <a href="/blog/2013/06/28/how-to-memory-profile-a-rubymotion-application-using-instruments/">How to Memory Profile a RubyMotion application using Instruments</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/06/27/how-to-view-the-rubymotion-release-notes/">How to view the RubyMotion release notes</a>
       </li>
     
   </ul>

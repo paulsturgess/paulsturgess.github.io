@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about iOS dev with RubyMotion]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2013-10-09T08:32:51+01:00</updated>
+  <updated>2013-10-11T17:14:40+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -433,7 +433,17 @@ available &#8216;Pods&#8217;.</p>
 end
 </code></pre>
 
-<p>ViewDeck will be automatically downloaded, built and linked the next time you build your app.</p>
+<p>Finally tell <code>motion-cocoapods</code> to download your dependencies by running:</p>
+
+<pre><code>$ rake pod:install
+</code></pre>
+
+<p>ViewDeck will be automatically built and linked the next time you build your app.</p>
+
+<p>In future you can grab updated versions by running:</p>
+
+<pre><code>$ rake pod:update
+</code></pre>
 
 <h2>Using ViewDeck</h2>
 

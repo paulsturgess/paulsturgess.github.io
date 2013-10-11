@@ -63,7 +63,15 @@ In your Rakefile you need to add the ViewDeck pod and QuartzCore Framework
       end
     end
 
-ViewDeck will be automatically downloaded, built and linked the next time you build your app.
+Finally tell `motion-cocoapods` to download your dependencies by running:
+
+    $ rake pod:install
+
+ViewDeck will be automatically built and linked the next time you build your app.
+
+In future you can grab updated versions by running:
+
+    $ rake pod:update
 
 ## Using ViewDeck
 I've ported the Objective-C example ViewDeck application over to RubyMotion.

@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Using the RubyMotion debugger - A blog about iOS dev with RubyMotion</title>
+  <title>Using LLDB to debug a RubyMotion app - A blog about iOS dev with RubyMotion</title>
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="If you haven&#8217;t read The Official RubyMotion Debugging guide then I&#8217;d recommend starting there. However, this is a summary of useful &hellip;">
+  <meta name="description" content="RubyMotion now uses LLDB for debugging. Previously it
+used GDB. If you&#8217;re getting random crashes with little or no backtrace it may be down to &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://paulsturgess.github.io/blog/2013/07/15/using-the-rubymotion-debugger">
+  <link rel="canonical" href="http://paulsturgess.github.io/blog/2013/10/16/using-lldb-to-debug-a-rubymotion-app">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="A blog about iOS dev with RubyMotion" type="application/atom+xml">
@@ -75,7 +76,7 @@
   
   <header>
     
-      <h1 class="entry-title">Using the RubyMotion Debugger</h1>
+      <h1 class="entry-title">Using LLDB to Debug a RubyMotion App</h1>
     
     
       <p class="meta">
@@ -91,65 +92,64 @@
   
 
 
-<time datetime="2013-07-15T13:47:00+01:00" pubdate data-updated="true">Jul 15<span>th</span>, 2013</time>
+<time datetime="2013-10-16T12:37:00+01:00" pubdate data-updated="true">Oct 16<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>If you haven&#8217;t read <a href="http://www.rubymotion.com/developer-center/articles/debugging/">The Official RubyMotion Debugging guide</a> then I&#8217;d recommend starting there. However, this is a summary of useful commands I tend to use.</p>
+<div class="entry-content"><p>RubyMotion now uses <a href="http://lldb.llvm.org/">LLDB</a> for debugging. Previously it
+used GDB.</p>
+
+<p>If you&#8217;re getting random crashes with little or no backtrace it may be down to
+a memory allocation issue.</p>
 
 <p>Launch your application with the debugger running via:</p>
 
-<pre><code>$ rake debug=1
+<pre><code>$ rake debug=1 NSZombieEnabled=YES MallocStackLogging=1
 </code></pre>
 
-<p>Your app will pause, take the oppportunity to setup the debugger or just continue with:</p>
+<p>Trigger your bug and you should get output in Terminal like this:</p>
 
-<pre><code>$ c
+<pre><code>2013-10-16 10:17:19.594 YourAppName[68253:a0b] *** -[UIBarButtonItem isSystemItem]: message sent to deallocated instance 0x9fd56f0
+Process 68253 stopped
+* thread #1: tid = 0x3127cd, 0x03ac0811 CoreFoundation`___forwarding___ + 769, queue = 'com.apple.main-thread, stop reason = EXC_BREAKPOINT (code=EXC_I386_BPT, subcode=0x0)
+    frame #0: 0x03ac0811 CoreFoundation`___forwarding___ + 769
+CoreFoundation`___forwarding___ + 769:
+-&gt; 0x3ac0811:  jmp    0x3ac090c                 ; ___forwarding___ + 1020
+   0x3ac0816:  movl   %edi, (%esp)
+   0x3ac0819:  calll  0x3bb840e                 ; symbol stub for: class_getSuperclass
+   0x3ac081e:  movl   %eax, %edi
+(lldb)
 </code></pre>
 
-<p>When your app crashes you can view the backtrace via:</p>
+<p>Leave your application running and open a separate tab in Terminal. You can
+inspect the <code>malloc_history</code> of the object that has been deallocated via:</p>
 
-<pre><code>$ bt
+<pre><code>/usr/bin/malloc_history 68253 0x9fd56f0
 </code></pre>
 
-<p>I had an error that recommended setting a breakpoint in <code>malloc_error_break</code>.</p>
+<p>Note the first argument is the Process ID as indicated where it says
+<code>Process 68253 stopped</code>. Note that the Ruby process that performs the build and
+launches your app (i.e. rake) is not the same as your app process.</p>
 
-<p>This can be achieved either on the fly by:</p>
+<p>The last argument is the Object Reference as indicatated by <code>message sent to deallocated instance 0x9fd56f0</code>.</p>
 
-<pre><code>$ break malloc_error_break
-</code></pre>
+<p>This will give you a dump of information from the stack logs. The output and how
+you interrogate it is going to depend on the specifics of your application.</p>
 
-<p>Enter <code>y</code> to &#8220;make breakpoint pending on future shared library load&#8221;</p>
+<p>In my case it showed that, at a specific memory location, there had been two
+mallocs in the life span of the app and only one was freed. You&#8217;ll see this by
+the number of blocks of text that start with either <code>ALLOC</code> or <code>FREE</code>.</p>
 
-<p>Alternatively, a handy way of setting this up for all apps is to create a <code>.gdbinit</code> file:</p>
+<p>Each block of text displays the lifetime from left to right.</p>
 
-<pre><code>$ vim ~/.gdbinit
-</code></pre>
+<p>If I was not expecting the first ALLOC to be freed then I would investigate the
+trace of the FREE to figure out why it was freed. Alternatively if I was expecting
+the second ALLOC to be FREEd as well then I would know that did not happen.</p>
 
-<p>With the line:</p>
-
-<pre><code>fb malloc_error_break
-</code></pre>
-
-<p>Now when you launch via <code>rake debug=1</code> the <code>malloc_error_break</code> breakpoint will
-automatically be setup and ready to use.</p>
-
-<h2>NSZombies</h2>
-
-<p>Running your app with NSZombies will reveal even more debugging info.</p>
-
-<p>Launch your app via:</p>
-
-<pre><code>rake debug=1 NSZombieEnabled=YES MallocStackLoggingNoCompact=1
-</code></pre>
-
-<p>If you get a problem with a specifc instance you can reveal more info via:</p>
-
-<pre><code>info malloc-history &lt;your-object-ref&gt;
-</code></pre>
+<p>Hopefully this is a good start for debugging any memory bugs in your RubyMotion apps.</p>
 </div>
 
 
@@ -172,7 +172,7 @@ automatically be setup and ready to use.</p>
   
 
 
-<time datetime="2013-07-15T13:47:00+01:00" pubdate data-updated="true">Jul 15<span>th</span>, 2013</time>
+<time datetime="2013-10-16T12:37:00+01:00" pubdate data-updated="true">Oct 16<span>th</span>, 2013</time>
       
 
 
@@ -187,10 +187,8 @@ automatically be setup and ready to use.</p>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/07/01/how-to-use-the-crittercism-cocoapod-in-a-rubymotion-app/" title="Previous Post: How to use the Crittercism Cocoapod in a RubyMotion app">&laquo; How to use the Crittercism Cocoapod in a RubyMotion app</a>
+        <a class="basic-alignment left" href="/blog/2013/10/09/how-to-debug-core-data-output-to-the-console-in-rubymotion/" title="Previous Post: How to debug Core Data output to the console in RubyMotion">&laquo; How to debug Core Data output to the console in RubyMotion</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/10/01/setting-the-status-bar-colour-for-ios7-in-rubymotion/" title="Next Post: Setting the status bar colour for iOS7 in RubyMotion">Setting the status bar colour for iOS7 in RubyMotion &raquo;</a>
       
     </p>
   </footer>
@@ -206,15 +204,15 @@ automatically be setup and ready to use.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/10/16/using-lldb-to-debug-a-rubymotion-app/">Using LLDB to debug a RubyMotion app</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/10/09/how-to-debug-core-data-output-to-the-console-in-rubymotion/">How to debug Core Data output to the console in RubyMotion</a>
       </li>
     
       <li class="post">
         <a href="/blog/2013/10/01/setting-the-status-bar-colour-for-ios7-in-rubymotion/">Setting the status bar colour for iOS7 in RubyMotion</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/07/15/using-the-rubymotion-debugger/">Using the RubyMotion debugger</a>
       </li>
     
       <li class="post">

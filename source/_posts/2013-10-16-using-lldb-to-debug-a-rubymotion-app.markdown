@@ -38,19 +38,75 @@ Note the first argument is the Process ID as indicated where it says
 `Process 68253 stopped`. Note that the Ruby process that performs the build and
 launches your app (i.e. rake) is not the same as your app process.
 
-The last argument is the Object Reference as indicatated by `message sent to deallocated instance 0x9fd56f0`.
+The last argument is the Object Reference as indicated by `message sent to deallocated instance 0x9fd56f0`.
 
-This will give you a dump of information from the stack logs. The output and how
-you interrogate it is going to depend on the specifics of your application.
+This (hex) number is the address of a piece of memory where the object we are
+interested in (was) located. The other traces in the malloc history are cases
+where that same memory location was used.
 
-In my case it showed that, at a specific memory location, there had been two
-mallocs in the life span of the app and only one was freed. You'll see this by
-the number of blocks of text that start with either `ALLOC` or `FREE`.
+Running the above command will give you a dump of information from the stack logs.
+I've truncated the following example, as the information is plentiful, but it
+shows the kind of output you can expect:
 
-Each block of text displays the lifetime from left to right.
+    malloc_history Report Version:  2.0
+    Process:         YourAppName [68253]
+    Path:            /path/to/YourAppName
+    Load Address:    0x1000
+    Identifier:      YourAppName
+    Version:         ??? (???)
+    Code Type:       X86 (Native)
+    Parent Process:  debugserver [68922]
 
-If I was not expecting the first ALLOC to be freed then I would investigate the
+    Date/Time:       2013-10-16 11:14:24.104 +0100
+    OS Version:      Mac OS X 10.8.5 (12F45)
+    Report Version:  7
+
+    ALLOC 0x9fd56f0-0xa64da98 [size=425]: thread_4925a28 |start | main | UIApplicationMain | -[UIApplication _run] | CFRunLoopRunInMode | CFRunLoopRunSpecific | __CFRunLoopRun | __CFRunLoopDoSource1 | __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE1_PERFORM_FUNCTION__ | PurpleEventCallback | _PurpleEventCallback | _UIApplicationHandleEvent | -[UIApplication sendEvent:] | ...
+
+    FREE  0x9fd56f0-0xa64da98 [size=425]: thread_4925a28 |start | main | UIApplicationMain | -[UIApplication _run] | CFRunLoopRunInMode | CFRunLoopRunSpecific | __CFRunLoopRun | __CFRunLoopDoSource1 | __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE1_PERFORM_FUNCTION__ | PurpleEventCallback | _PurpleEventCallback | _UIApplicationHandleEvent | -[UIApplication sendEvent:] | ...
+
+    ALLOC 0x9fd56f0-0xa64dacf [size=112]: thread_4925a28 |start | main | UIApplicationMain | GSEventRun | GSEventRunModal | CFRunLoopRunInMode | CFRunLoopRunSpecific | ... | rb_scope__initWithFillColor:__ | vm_dispatch | rb_vm_dispatch | builtin_ostub1(objc_object* (*)(objc_object*, objc_selector*, ...), objc_selector*, objc_object*, unsigned char, int, unsigned long*) | _objc_rootAlloc | class_createInstance | calloc | malloc_zone_calloc
+
+The output shows there had been two mallocs in the life span of the app and only
+one was freed.
+
+If I was not expecting the first ALLOC to be freed, then I would investigate the
 trace of the FREE to figure out why it was freed. Alternatively if I was expecting
-the second ALLOC to be FREEd as well then I would know that did not happen.
+the second ALLOC to be FREEd as well, then I would know that did not happen.
 
-Hopefully this is a good start for debugging any memory bugs in your RubyMotion apps. Thanks to the latest HipByte employee [Eloy Durán](http://blog.rubymotion.com/post/62652618638/eloy-duran-joins-the-rubymotion-team) for the tips!
+I knew I was expecting the memory to be freed and it was towards the end of the
+second ALLOC block I could see my own method `initWithFillColor` being called.
+
+I was subclassing `UIBarButtonItem` with my method `initWithFillColor` like so:
+
+      class MenuButton < UIBarButtonItem
+
+        def initWithFillColor(fillColor)
+          UIBarButtonItem.alloc.initWithCustomView(button(fillColor))
+        end
+
+        private
+
+        def showMenu
+          # ...
+        end
+
+        def button(fillColor)
+          UIMenuButtonIcon.alloc.initWithFrame(CGRectMake(0.0, 0.0, 25, 15), fillColor:fillColor).tap do |button|
+            button.addTarget(self, action:"showMenu", forControlEvents:UIControlEventTouchUpInside)
+          end
+        end
+
+      end
+
+My `initWithFillColor` method obviously doesn't need to create another instance
+of `UIBarButtonItem`. So I updated it to the following and my memory bug was gone:
+
+    def initWithFillColor(fillColor)
+      initWithCustomView(button(fillColor))
+    end
+
+Hopefully this is a good start for debugging any memory bugs in your RubyMotion
+apps.
+
+Thanks to the latest HipByte employee, [Eloy Durán](http://blog.rubymotion.com/post/62652618638/eloy-duran-joins-the-rubymotion-team), for the tips!

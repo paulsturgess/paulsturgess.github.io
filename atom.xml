@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about iOS dev with RubyMotion]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2013-10-16T13:18:48+01:00</updated>
+  <updated>2013-10-16T14:49:17+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -53,22 +53,81 @@ inspect the <code>malloc_history</code> of the object that has been deallocated 
 <code>Process 68253 stopped</code>. Note that the Ruby process that performs the build and
 launches your app (i.e. rake) is not the same as your app process.</p>
 
-<p>The last argument is the Object Reference as indicatated by <code>message sent to deallocated instance 0x9fd56f0</code>.</p>
+<p>The last argument is the Object Reference as indicated by <code>message sent to deallocated instance 0x9fd56f0</code>.</p>
 
-<p>This will give you a dump of information from the stack logs. The output and how
-you interrogate it is going to depend on the specifics of your application.</p>
+<p>This (hex) number is the address of a piece of memory where the object we are
+interested in (was) located. The other traces in the malloc history are cases
+where that same memory location was used.</p>
 
-<p>In my case it showed that, at a specific memory location, there had been two
-mallocs in the life span of the app and only one was freed. You&#8217;ll see this by
-the number of blocks of text that start with either <code>ALLOC</code> or <code>FREE</code>.</p>
+<p>Running the above command will give you a dump of information from the stack logs.
+I&#8217;ve truncated the following example, as the information is plentiful, but it
+shows the kind of output you can expect:</p>
 
-<p>Each block of text displays the lifetime from left to right.</p>
+<pre><code>malloc_history Report Version:  2.0
+Process:         YourAppName [68253]
+Path:            /path/to/YourAppName
+Load Address:    0x1000
+Identifier:      YourAppName
+Version:         ??? (???)
+Code Type:       X86 (Native)
+Parent Process:  debugserver [68922]
 
-<p>If I was not expecting the first ALLOC to be freed then I would investigate the
+Date/Time:       2013-10-16 11:14:24.104 +0100
+OS Version:      Mac OS X 10.8.5 (12F45)
+Report Version:  7
+
+ALLOC 0x9fd56f0-0xa64da98 [size=425]: thread_4925a28 |start | main | UIApplicationMain | -[UIApplication _run] | CFRunLoopRunInMode | CFRunLoopRunSpecific | __CFRunLoopRun | __CFRunLoopDoSource1 | __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE1_PERFORM_FUNCTION__ | PurpleEventCallback | _PurpleEventCallback | _UIApplicationHandleEvent | -[UIApplication sendEvent:] | ...
+
+FREE  0x9fd56f0-0xa64da98 [size=425]: thread_4925a28 |start | main | UIApplicationMain | -[UIApplication _run] | CFRunLoopRunInMode | CFRunLoopRunSpecific | __CFRunLoopRun | __CFRunLoopDoSource1 | __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE1_PERFORM_FUNCTION__ | PurpleEventCallback | _PurpleEventCallback | _UIApplicationHandleEvent | -[UIApplication sendEvent:] | ...
+
+ALLOC 0x9fd56f0-0xa64dacf [size=112]: thread_4925a28 |start | main | UIApplicationMain | GSEventRun | GSEventRunModal | CFRunLoopRunInMode | CFRunLoopRunSpecific | ... | rb_scope__initWithFillColor:__ | vm_dispatch | rb_vm_dispatch | builtin_ostub1(objc_object* (*)(objc_object*, objc_selector*, ...), objc_selector*, objc_object*, unsigned char, int, unsigned long*) | _objc_rootAlloc | class_createInstance | calloc | malloc_zone_calloc
+</code></pre>
+
+<p>The output shows there had been two mallocs in the life span of the app and only
+one was freed.</p>
+
+<p>If I was not expecting the first ALLOC to be freed, then I would investigate the
 trace of the FREE to figure out why it was freed. Alternatively if I was expecting
-the second ALLOC to be FREEd as well then I would know that did not happen.</p>
+the second ALLOC to be FREEd as well, then I would know that did not happen.</p>
 
-<p>Hopefully this is a good start for debugging any memory bugs in your RubyMotion apps. Thanks to the latest HipByte employee <a href="http://blog.rubymotion.com/post/62652618638/eloy-duran-joins-the-rubymotion-team">Eloy Durán</a> for the tips!</p>
+<p>I knew I was expecting the memory to be freed and it was towards the end of the
+second ALLOC block I could see my own method <code>initWithFillColor</code> being called.</p>
+
+<p>I was subclassing <code>UIBarButtonItem</code> with my method <code>initWithFillColor</code> like so:</p>
+
+<pre><code>  class MenuButton &lt; UIBarButtonItem
+
+    def initWithFillColor(fillColor)
+      UIBarButtonItem.alloc.initWithCustomView(button(fillColor))
+    end
+
+    private
+
+    def showMenu
+      # ...
+    end
+
+    def button(fillColor)
+      UIMenuButtonIcon.alloc.initWithFrame(CGRectMake(0.0, 0.0, 25, 15), fillColor:fillColor).tap do |button|
+        button.addTarget(self, action:"showMenu", forControlEvents:UIControlEventTouchUpInside)
+      end
+    end
+
+  end
+</code></pre>
+
+<p>My <code>initWithFillColor</code> method obviously doesn&#8217;t need to create another instance
+of <code>UIBarButtonItem</code>. So I updated it to the following and my memory bug was gone:</p>
+
+<pre><code>def initWithFillColor(fillColor)
+  initWithCustomView(button(fillColor))
+end
+</code></pre>
+
+<p>Hopefully this is a good start for debugging any memory bugs in your RubyMotion
+apps.</p>
+
+<p>Thanks to the latest HipByte employee, <a href="http://blog.rubymotion.com/post/62652618638/eloy-duran-joins-the-rubymotion-team">Eloy Durán</a>, for the tips!</p>
 ]]></content>
   </entry>
   

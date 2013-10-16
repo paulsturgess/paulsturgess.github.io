@@ -53,4 +53,4 @@ If I was not expecting the first ALLOC to be freed then I would investigate the
 trace of the FREE to figure out why it was freed. Alternatively if I was expecting
 the second ALLOC to be FREEd as well then I would know that did not happen.
 
-Hopefully this is a good start for debugging any memory bugs in your RubyMotion apps.
+Hopefully this is a good start for debugging any memory bugs in your RubyMotion apps. Thanks to the latest HipByte employee [Eloy Durán](http://blog.rubymotion.com/post/62652618638/eloy-duran-joins-the-rubymotion-team) for the tips!

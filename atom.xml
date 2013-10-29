@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about iOS dev with RubyMotion]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2013-10-16T14:49:17+01:00</updated>
+  <updated>2013-10-29T09:03:09+00:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,42 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Logging to the console in RubyMotion]]></title>
+    <link href="http://paulsturgess.github.io/blog/2013/10/29/logging-to-the-console-in-rubymotion/"/>
+    <updated>2013-10-29T08:44:00+00:00</updated>
+    <id>http://paulsturgess.github.io/blog/2013/10/29/logging-to-the-console-in-rubymotion</id>
+    <content type="html"><![CDATA[<p>The simplest way to output to the console from your RubyMotion app is to use
+<code>puts</code>. This works fine when your app is running in the simulator. However,
+<code>puts</code> does not output to the console when your app is running on the device
+itself.</p>
+
+<p>You can view the live logs while your app is running on your usb connected device via:</p>
+
+<pre><code>$ motion device:console
+</code></pre>
+
+<p>You will see messages from your application alongside those from other apps or
+the system itself.</p>
+
+<p>Instead of using <code>puts</code>, you&#8217;ll need to make use of <code>NSLog</code>. For example</p>
+
+<pre><code>NSLog("My debug messge")
+</code></pre>
+
+<p>Note, however, that the first argument for <code>NSLog</code> is actually a <a href="https://developer.apple.com/library/ios/documentation/cocoa/conceptual/Strings/Articles/formatSpecifiers.html">String Format Specifier</a>.</p>
+
+<p>The following are equivalent:</p>
+
+<pre><code>puts "A #{variable} goes here"
+NSLog("A %@ goes here", variable)
+</code></pre>
+
+<p>Just remember that any <code>NSLog</code> messages you leave in your app will be visible
+to the curious, even after you&#8217;ve released to the App Store.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Using LLDB to debug a RubyMotion app]]></title>

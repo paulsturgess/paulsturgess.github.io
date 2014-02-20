@@ -91,6 +91,20 @@ class Database
     NSManagedObjectContext.MR_confinementContextWithParent(defaultLocalContext)
   end
 
+  def self.save_specific_context(localContext, callback = nil)
+    localContext.MR_saveToPersistentStoreWithCompletion(
+      lambda { |success, error|
+        NSLog("success: %@", success)
+        if success
+          callback.call if callback
+        else
+          NSLog "Error saving Seed Data"
+          NSLog("description: %@", error.description)
+        end
+      }
+    )
+  end
+
   def self.save_test_db!
     defaultLocalContext.MR_saveToPersistentStoreAndWait
   end

@@ -81,7 +81,11 @@ comitted separately via:
 
 ## Running Octopress locally
 
-Octopress works really well with [POW server](http://pow.cx).
+The simplest thing to do is fire up your site on `http://localhost:4000` via:
+
+    $ rake preview
+
+Alternatively, Octopress works really well with [POW server](http://pow.cx).
 
     $ cd ~/.pow
     $ ln -s /path/to/your/octopress/site yoursitename

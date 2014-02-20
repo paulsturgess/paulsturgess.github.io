@@ -9,7 +9,8 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="Create your rvm .ruby-version and .ruby-gemset files via: $ rvm use 1.9.3@yourgemsetname --create --ruby-version Add bundler to your Rakefile require &hellip;">
+  <meta name="description" content="Whilst RubyMotion is new, and the number of RubyMotion specific libraries
+is growing fast, there are already loads of native Objective-C libraries &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,6 +73,123 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/15/using-native-objective-c-cocoapod-libraries-in-rubymotion/">Using Native Objective-C Cocoapod Libraries in RubyMotion</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-15T13:40:00+01:00" pubdate data-updated="true">May 15<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Whilst RubyMotion is new, and the number of <a href="http://rubymotion-wrappers.com/">RubyMotion specific libraries</a>
+is growing fast, there are already loads of native Objective-C libraries out there.</p>
+
+<p>These instructions show you how to use <a href="http://cocoapods.org">Cocoapods</a> in
+combination with <a href="http://gembundler.com">Bundler</a>.</p>
+
+<p>Cocoapods is a dependency manager, like <a href="http://rubygems.org">RubyGems</a>, but for
+Objective-C projects.</p>
+
+<p>In this example, I&#8217;ve chosen to install <a href="https://github.com/Inferis/ViewDeck">ViewDeck</a>. ViewDeck
+makes it easy to implement the sliding panel user interface made popular by the
+Facebook iOS app.</p>
+
+<p>The <a href="http://cocoapods.org">CocoaPods website</a> is a great place to search for
+available &#8216;Pods&#8217;.</p>
+
+<h2>Summary of steps</h2>
+
+<ul>
+<li>Include the motion-cocoapods gem</li>
+<li>Setup Cocoapods</li>
+<li>Add ViewDeck to your application Rakefile</li>
+</ul>
+
+
+<h2>Bundler</h2>
+
+<p>If you haven&#8217;t got Bundler setup, I&#8217;ve written some
+<a href="http://paulsturgess.co.uk/blog/2013/05/13/setting-up-bundler-and-rvm-for-a-rubymotion-app/">instructions for using Bundler with RubyMotion</a>.</p>
+
+<h2>Cocoapods</h2>
+
+<p>Add cocoapods to your Gemfile:</p>
+
+<pre><code>gem 'motion-cocoapods'
+</code></pre>
+
+<p>Install the gem via bundler:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>Setup Cocoapods via:</p>
+
+<pre><code>$ pod setup
+</code></pre>
+
+<h2>Add ViewDeck to your Rakefile</h2>
+
+<p>In your Rakefile you need to add the ViewDeck pod and QuartzCore Framework
+(required by ViewDeck):</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+  # Frameworks
+  app.frameworks += [
+    'QuartzCore'
+  ]
+
+  # Cocoapods
+  app.pods do
+    pod 'ViewDeck'
+  end
+end
+</code></pre>
+
+<p>Finally tell <code>motion-cocoapods</code> to download your dependencies by running:</p>
+
+<pre><code>$ rake pod:install
+</code></pre>
+
+<p>ViewDeck will be automatically built and linked the next time you build your app.</p>
+
+<p>In future you can grab updated versions by running:</p>
+
+<pre><code>$ rake pod:update
+</code></pre>
+
+<h2>Using ViewDeck</h2>
+
+<p>I&#8217;ve ported the Objective-C example ViewDeck application over to RubyMotion.</p>
+
+<p><a href="https://github.com/paulsturgess/ViewDeckExample-RubyMotion">Feel free to check it out</a>.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -529,7 +647,12 @@ $ git push origin source
 
 <h2>Running Octopress locally</h2>
 
-<p>Octopress works really well with <a href="http://pow.cx">POW server</a>.</p>
+<p>The simplest thing to do is fire up your site on <code>http://localhost:4000</code> via:</p>
+
+<pre><code>$ rake preview
+</code></pre>
+
+<p>Alternatively, Octopress works really well with <a href="http://pow.cx">POW server</a>.</p>
 
 <pre><code>$ cd ~/.pow
 $ ln -s /path/to/your/octopress/site yoursitename
@@ -629,6 +752,10 @@ $ cd ..
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/02/20/using-magicalrecord-and-core-data-in-rubymotion/">Using MagicalRecord and Core Data in RubyMotion</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/10/29/logging-to-the-console-in-rubymotion/">Logging to the console in RubyMotion</a>
       </li>
     
@@ -642,10 +769,6 @@ $ cd ..
     
       <li class="post">
         <a href="/blog/2013/10/01/setting-the-status-bar-colour-for-ios7-in-rubymotion/">Setting the status bar colour for iOS7 in RubyMotion</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/07/01/how-to-use-the-crittercism-cocoapod-in-a-rubymotion-app/">How to use the Crittercism Cocoapod in a RubyMotion app</a>
       </li>
     
   </ul>
@@ -690,7 +813,7 @@ $ cd ..
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Paul Sturgess -
+  Copyright &copy; 2014 - Paul Sturgess -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

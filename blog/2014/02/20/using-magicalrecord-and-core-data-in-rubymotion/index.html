@@ -369,13 +369,14 @@ will be a <code>.xcdatamodeld</code> file. Select this and you can create your e
 <p>One thing to remember is to set the <code>Class</code> of each Entity to the corresponding <code>Class</code>
 in your app. Otherwise it will be a standard <code>NSManagedObject</code>.</p>
 
-<p>So for each Entiy I create a corresponding class like so:</p>
+<p>So for each Entiy I create a corresponding class like so. Note it inherits from my
+own <code>CustomNSManagedObject</code>.</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>class ToDoItem &lt; NSManagedObject
-</span><span class='line'>    # custom methods go here
+</pre></td><td class='code'><pre><code class=''><span class='line'>class ToDoItem &lt; CustomNSManagedObject
+</span><span class='line'>  # more methods go here
 </span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
 
 
@@ -383,7 +384,7 @@ in your app. Otherwise it will be a standard <code>NSManagedObject</code>.</p>
 
 <h2>ActiveRecord Style Behaviour</h2>
 
-<p>The next key part is a module I use to give behaviour to all my <code>NSManagedObject</code> classes.</p>
+<p>The subclass of NSManagedObject I use looks like this:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -432,82 +433,57 @@ in your app. Otherwise it will be a standard <code>NSManagedObject</code>.</p>
 <span class='line-number'>45</span>
 <span class='line-number'>46</span>
 <span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>module ModelSupport
+</pre></td><td class='code'><pre><code class=''><span class='line'>class CustomNSManagedObject &lt; NSManagedObject
 </span><span class='line'>
-</span><span class='line'>  def self.included(base)
-</span><span class='line'>    base.extend ClassMethods
+</span><span class='line'>  def self.defaultContext
+</span><span class='line'>    CurrentSaveGame.localContext
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.all(context = nil)
+</span><span class='line'>    localContext = context || defaultContext
+</span><span class='line'>    self.MR_findAllSortedBy("created_at", ascending:true, inContext: localContext)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.first(context = nil)
+</span><span class='line'>    localContext = context || defaultContext
+</span><span class='line'>    self.MR_findFirstOrderedByAttribute("created_at", ascending:true, inContext: localContext)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.last(context = nil)
+</span><span class='line'>    localContext = context || defaultContext
+</span><span class='line'>    self.MR_findFirstOrderedByAttribute("created_at", ascending:false, inContext: localContext)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.count
+</span><span class='line'>    self.MR_numberOfEntities
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.find(id, context = nil)
+</span><span class='line'>    localContext = context || defaultContext
+</span><span class='line'>    self.MR_findFirstByAttribute("id", withValue:id, inContext: localContext)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.new(attributes)
+</span><span class='line'>    self.build(attributes)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.build(attributes = {}, context = nil)
+</span><span class='line'>    localContext = context || defaultContext
+</span><span class='line'>    model = self.MR_createInContext(localContext)
+</span><span class='line'>    model.setValuesForKeysWithDictionary(attributes)
+</span><span class='line'>    model.created_at = Time.now
+</span><span class='line'>    model
 </span><span class='line'>  end
 </span><span class='line'>
 </span><span class='line'>  def switch_context(localContext)
 </span><span class='line'>    self.MR_inContext(localContext)
 </span><span class='line'>  end
 </span><span class='line'>
-</span><span class='line'>  module ClassMethods
-</span><span class='line'>    def defaultContext
-</span><span class='line'>      Database.defaultLocalContext
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>    def all(context = nil)
-</span><span class='line'>      localContext = context || defaultContext
-</span><span class='line'>      self.MR_findAllSortedBy("created_at", ascending:true, inContext: localContext)
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>    def first(context = nil)
-</span><span class='line'>      localContext = context || defaultContext
-</span><span class='line'>      self.MR_findFirstOrderedByAttribute("created_at", ascending:true, inContext: localContext)
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>    def last(context = nil)
-</span><span class='line'>      localContext = context || defaultContext
-</span><span class='line'>      self.MR_findFirstOrderedByAttribute("created_at", ascending:false, inContext: localContext)
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>    def count
-</span><span class='line'>      self.MR_numberOfEntities
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>    def find(id, context = nil)
-</span><span class='line'>      localContext = context || defaultContext
-</span><span class='line'>      self.MR_findFirstByAttribute("id", withValue:id, inContext: localContext)
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>    def new(attributes)
-</span><span class='line'>      self.build(attributes)
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>    def build(attributes = {}, context = nil)
-</span><span class='line'>      localContext = context || defaultContext
-</span><span class='line'>      model = self.MR_createInContext(localContext)
-</span><span class='line'>      model.setValuesForKeysWithDictionary(attributes)
-</span><span class='line'>      model.created_at = Time.now
-</span><span class='line'>      model
-</span><span class='line'>    end
-</span><span class='line'>  end
-</span><span class='line'>
 </span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
 
 
-<p>Essentially this class gives me ActiveRecord like behaviour to my <code>NSManagedObject</code> classes.</p>
-
-<p>Also, like my <code>Database</code> class, it ensures I contain some more <code>MagicalRecord</code> calls
-to a single place.</p>
-
-<p>To prevent repeating the inclusion of the module all over the place I just open up the <code>NSManagedObject</code>
-class and include it like so:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>class NSManagedObject
-</span><span class='line'>  include ModelSupport
-</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
-
+<p>Essentially this class gives me ActiveRecord like behaviour. Also, like my <code>Database</code> class,
+it ensures I contain some more <code>MagicalRecord</code> calls to a single place.</p>
 
 <p>This means I can do:</p>
 

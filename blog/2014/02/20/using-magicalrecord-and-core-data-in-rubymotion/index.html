@@ -502,14 +502,14 @@ it ensures I contain some more <code>MagicalRecord</code> calls to a single plac
 <p>By default <code>MagicalRecord.setupAutoMigratingCoreDataStack</code> will use SQLite to
 persist your data.</p>
 
-<p>Note that I don&#8217;t include a <code>save</code> method in <code>ModelSupport</code>. Saving an individual
+<p>Note that I don&#8217;t include a <code>save</code> method in <code>CustomNSManagedObject</code>. Saving an individual
 record isn&#8217;t the most efficient way to persist changes in Core Data. Everything is held
 in memory until the relevant context is told to save. Hence why I&#8217;ve put the
 <code>save</code> method in the <code>Database</code> class.</p>
 
 <h2>Persisting data on the main thread</h2>
 
-<p>If you&#8217;ve used any of the ModelSupport methods like <code>find</code>, <code>all</code>, or <code>build</code>
+<p>If you&#8217;ve used any of the CustomNSManagedObject methods like <code>find</code>, <code>all</code>, or <code>build</code>
 without passing in a context then using <code>Database.save_on_main_thread!</code> will persist any
 changes made. For example:</p>
 
@@ -583,7 +583,7 @@ context which is handled by <code>Database.save_on_background_thread!</code>.</p
 </span><span class='line'>Database.save_specific_context(localContext)</span></code></pre></td></tr></table></div></figure>
 
 
-<p>Note most of the class methods in <code>ModelSupport</code> take an optional context so they
+<p>Note most of the class methods in <code>CustomNSManagedObject</code> take an optional context so they
 can be used on background threads.</p>
 
 <h2>Testing</h2>

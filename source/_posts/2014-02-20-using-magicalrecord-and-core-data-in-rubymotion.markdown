@@ -171,11 +171,12 @@ will be a `.xcdatamodeld` file. Select this and you can create your entities.
 One thing to remember is to set the `Class` of each Entity to the corresponding `Class`
 in your app. Otherwise it will be a standard `NSManagedObject`.
 
-So for each Entiy I create a corresponding class like so:
+So for each Entiy I create a corresponding class like so. Note it inherits from my
+own `CustomNSManagedObject`.
 
 ```
-class ToDoItem < NSManagedObject
-    # custom methods go here
+class ToDoItem < CustomNSManagedObject
+  # more methods go here
 end
 ```
 
@@ -183,77 +184,60 @@ I give each Entity `created_at` and `id` attributes in order to help with queryi
 
 ## ActiveRecord Style Behaviour
 
-The next key part is a module I use to give behaviour to all my `NSManagedObject` classes.
+The subclass of NSManagedObject I use looks like this:
 
 ```
-module ModelSupport
+class CustomNSManagedObject < NSManagedObject
 
-  def self.included(base)
-    base.extend ClassMethods
+  def self.defaultContext
+    CurrentSaveGame.localContext
+  end
+
+  def self.all(context = nil)
+    localContext = context || defaultContext
+    self.MR_findAllSortedBy("created_at", ascending:true, inContext: localContext)
+  end
+
+  def self.first(context = nil)
+    localContext = context || defaultContext
+    self.MR_findFirstOrderedByAttribute("created_at", ascending:true, inContext: localContext)
+  end
+
+  def self.last(context = nil)
+    localContext = context || defaultContext
+    self.MR_findFirstOrderedByAttribute("created_at", ascending:false, inContext: localContext)
+  end
+
+  def self.count
+    self.MR_numberOfEntities
+  end
+
+  def self.find(id, context = nil)
+    localContext = context || defaultContext
+    self.MR_findFirstByAttribute("id", withValue:id, inContext: localContext)
+  end
+
+  def self.new(attributes)
+    self.build(attributes)
+  end
+
+  def self.build(attributes = {}, context = nil)
+    localContext = context || defaultContext
+    model = self.MR_createInContext(localContext)
+    model.setValuesForKeysWithDictionary(attributes)
+    model.created_at = Time.now
+    model
   end
 
   def switch_context(localContext)
     self.MR_inContext(localContext)
   end
 
-  module ClassMethods
-    def defaultContext
-      Database.defaultLocalContext
-    end
-
-    def all(context = nil)
-      localContext = context || defaultContext
-      self.MR_findAllSortedBy("created_at", ascending:true, inContext: localContext)
-    end
-
-    def first(context = nil)
-      localContext = context || defaultContext
-      self.MR_findFirstOrderedByAttribute("created_at", ascending:true, inContext: localContext)
-    end
-
-    def last(context = nil)
-      localContext = context || defaultContext
-      self.MR_findFirstOrderedByAttribute("created_at", ascending:false, inContext: localContext)
-    end
-
-    def count
-      self.MR_numberOfEntities
-    end
-
-    def find(id, context = nil)
-      localContext = context || defaultContext
-      self.MR_findFirstByAttribute("id", withValue:id, inContext: localContext)
-    end
-
-    def new(attributes)
-      self.build(attributes)
-    end
-
-    def build(attributes = {}, context = nil)
-      localContext = context || defaultContext
-      model = self.MR_createInContext(localContext)
-      model.setValuesForKeysWithDictionary(attributes)
-      model.created_at = Time.now
-      model
-    end
-  end
-
 end
 ```
 
-Essentially this class gives me ActiveRecord like behaviour to my `NSManagedObject` classes.
-
-Also, like my `Database` class, it ensures I contain some more `MagicalRecord` calls
-to a single place.
-
-To prevent repeating the inclusion of the module all over the place I just open up the `NSManagedObject`
-class and include it like so:
-
-```
-class NSManagedObject
-  include ModelSupport
-end
-```
+Essentially this class gives me ActiveRecord like behaviour. Also, like my `Database` class,
+it ensures I contain some more `MagicalRecord` calls to a single place.
 
 This means I can do:
 

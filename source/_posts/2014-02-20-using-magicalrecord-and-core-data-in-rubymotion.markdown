@@ -255,14 +255,14 @@ My build method automatically inserts a `created_at` for every new record.
 By default `MagicalRecord.setupAutoMigratingCoreDataStack` will use SQLite to
 persist your data.
 
-Note that I don't include a `save` method in `ModelSupport`. Saving an individual
+Note that I don't include a `save` method in `CustomNSManagedObject`. Saving an individual
 record isn't the most efficient way to persist changes in Core Data. Everything is held
 in memory until the relevant context is told to save. Hence why I've put the
 `save` method in the `Database` class.
 
 ## Persisting data on the main thread
 
-If you've used any of the ModelSupport methods like `find`, `all`, or `build`
+If you've used any of the CustomNSManagedObject methods like `find`, `all`, or `build`
 without passing in a context then using `Database.save_on_main_thread!` will persist any
 changes made. For example:
 
@@ -312,7 +312,7 @@ new_item = ToDoItem.build(
 Database.save_specific_context(localContext)
 ```
 
-Note most of the class methods in `ModelSupport` take an optional context so they
+Note most of the class methods in `CustomNSManagedObject` take an optional context so they
 can be used on background threads.
 
 ## Testing

@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about iOS dev with RubyMotion]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2014-02-20T15:28:55+00:00</updated>
+  <updated>2014-03-10T16:41:16+00:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -174,11 +174,11 @@ as, for example, there are many ways to persist your data.</p>
 </span><span class='line'>  end
 </span><span class='line'>
 </span><span class='line'>  def self.loadOrCreate
-</span><span class='line'>    MagicalRecord.setupAutoMigratingCoreDataStack
+</span><span class='line'>    MagicalRecord.setupAutoMigratingStack
 </span><span class='line'>  end
 </span><span class='line'>
 </span><span class='line'>  def self.createTestDB
-</span><span class='line'>    MagicalRecord.setupCoreDataStackWithInMemoryStore
+</span><span class='line'>    MagicalRecord.setupStackWithInMemoryStore
 </span><span class='line'>  end
 </span><span class='line'>
 </span><span class='line'>  def self.delete
@@ -352,6 +352,12 @@ own <code>CustomNSManagedObject</code>.</p>
 <span class='line-number'>45</span>
 <span class='line-number'>46</span>
 <span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>class CustomNSManagedObject &lt; NSManagedObject
 </span><span class='line'>
 </span><span class='line'>  def self.defaultContext
@@ -396,6 +402,12 @@ own <code>CustomNSManagedObject</code>.</p>
 </span><span class='line'>
 </span><span class='line'>  def switch_context(localContext)
 </span><span class='line'>    self.MR_inContext(localContext)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def attributes
+</span><span class='line'>    self.entity.attributesByName.keys.each_with_object({}) do |attribute, attributes_hash|
+</span><span class='line'>      attributes_hash[attribute] = self.send(attribute)
+</span><span class='line'>    end
 </span><span class='line'>  end
 </span><span class='line'>
 </span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
@@ -553,8 +565,6 @@ can be used on background threads.</p>
 </span><span class='line'>  end
 </span><span class='line'>
 </span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
-
-
 
 ]]></content>
   </entry>

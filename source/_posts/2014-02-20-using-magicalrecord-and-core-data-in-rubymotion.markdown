@@ -3,7 +3,7 @@ layout: post
 title: "Using MagicalRecord and Core Data in RubyMotion"
 date: 2014-02-20 13:36
 comments: false
-categories: 
+categories:
 ---
 [MagicalRecord](https://github.com/magicalpanda/MagicalRecord) is a wrapper around Apple's [Core Data Framework](http://en.wikipedia.org/wiki/Core_Data). Written in Objective-C,
 it's one of the most popular and mature libraries for working with Core Data.
@@ -60,11 +60,11 @@ class Database
   end
 
   def self.loadOrCreate
-    MagicalRecord.setupAutoMigratingCoreDataStack
+    MagicalRecord.setupAutoMigratingStack
   end
 
   def self.createTestDB
-    MagicalRecord.setupCoreDataStackWithInMemoryStore
+    MagicalRecord.setupStackWithInMemoryStore
   end
 
   def self.delete
@@ -233,6 +233,12 @@ class CustomNSManagedObject < NSManagedObject
     self.MR_inContext(localContext)
   end
 
+  def attributes
+    self.entity.attributesByName.keys.each_with_object({}) do |attribute, attributes_hash|
+      attributes_hash[attribute] = self.send(attribute)
+    end
+  end
+
 end
 ```
 
@@ -344,4 +350,3 @@ describe "SomeTest" do
 
 end
 ```
-

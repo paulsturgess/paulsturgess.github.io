@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about iOS dev with RubyMotion]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2014-03-10T16:41:16+00:00</updated>
+  <updated>2014-03-31T09:19:23+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -1319,7 +1319,7 @@ brackets.</p>
 
 <p>To chain methods in Objective-C it looks like:</p>
 
-<pre><code>NSMutableArray *myArray = [NSMutableArray alloc] init];
+<pre><code>NSMutableArray *myArray = [[NSMutableArray alloc] init];
 </code></pre>
 
 <p>This is equivalent to the Ruby:</p>

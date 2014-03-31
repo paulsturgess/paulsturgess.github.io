@@ -63,7 +63,7 @@ The Ruby equivalent:
 
 To chain methods in Objective-C it looks like:
 
-    NSMutableArray *myArray = [NSMutableArray alloc] init];
+    NSMutableArray *myArray = [[NSMutableArray alloc] init];
 
 This is equivalent to the Ruby:
 

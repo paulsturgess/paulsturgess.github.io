@@ -3,7 +3,7 @@ layout: post
 title: "Using LLDB to debug a RubyMotion app"
 date: 2013-10-16 12:37
 comments: false
-categories: 
+categories:
 ---
 
 RubyMotion now uses [LLDB](http://lldb.llvm.org/) for debugging. Previously it
@@ -14,7 +14,7 @@ a memory allocation issue.
 
 Launch your application with the debugger running via:
 
-    $ rake debug=1 NSZombieEnabled=YES MallocStackLogging=1
+    $ bundle exec rake debug=1 NSZombieEnabled=YES MallocStackLogging=1
 
 Trigger your bug and you should get output in Terminal like this:
 

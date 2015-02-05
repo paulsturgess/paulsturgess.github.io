@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Using LLDB to debug a RubyMotion app - A blog about iOS dev with RubyMotion</title>
+  <meta name="author" content="Paul Sturgess">
+
+  
+  <meta name="description" content="RubyMotion now uses LLDB for debugging. Previously it
+used GDB. If you&#8217;re getting random crashes with little or no backtrace it may be down to &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://paulsturgess.github.io/blog/2013/10/16/using-lldb-to-debug-a-rubymotion-app">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="A blog about iOS dev with RubyMotion" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-75197-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">A blog about iOS dev with RubyMotion</a></h1>
+  
+    <h2>Paul Sturgess</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/">Index</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="https://twitter.com/paulsturgess">@paulsturgess</a></li>
+  <li><a href="https://github.com/paulsturgess">Github</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Using LLDB to Debug a RubyMotion App</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-16T12:37:00+01:00" pubdate data-updated="true">Oct 16<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>RubyMotion now uses <a href="http://lldb.llvm.org/">LLDB</a> for debugging. Previously it
+used GDB.</p>
+
+<p>If you&#8217;re getting random crashes with little or no backtrace it may be down to
+a memory allocation issue.</p>
+
+<p>Launch your application with the debugger running via:</p>
+
+<pre><code>$ bundle exec rake debug=1 NSZombieEnabled=YES MallocStackLogging=1
+</code></pre>
+
+<p>Trigger your bug and you should get output in Terminal like this:</p>
+
+<pre><code>2013-10-16 10:17:19.594 YourAppName[68253:a0b] *** -[UIBarButtonItem isSystemItem]: message sent to deallocated instance 0x9fd56f0
+Process 68253 stopped
+* thread #1: tid = 0x3127cd, 0x03ac0811 CoreFoundation`___forwarding___ + 769, queue = 'com.apple.main-thread, stop reason = EXC_BREAKPOINT (code=EXC_I386_BPT, subcode=0x0)
+    frame #0: 0x03ac0811 CoreFoundation`___forwarding___ + 769
+CoreFoundation`___forwarding___ + 769:
+-&gt; 0x3ac0811:  jmp    0x3ac090c                 ; ___forwarding___ + 1020
+   0x3ac0816:  movl   %edi, (%esp)
+   0x3ac0819:  calll  0x3bb840e                 ; symbol stub for: class_getSuperclass
+   0x3ac081e:  movl   %eax, %edi
+(lldb)
+</code></pre>
+
+<p>Leave your application running and open a separate tab in Terminal. You can
+inspect the <code>malloc_history</code> of the object that has been deallocated via:</p>
+
+<pre><code>/usr/bin/malloc_history 68253 0x9fd56f0
+</code></pre>
+
+<p>Note the first argument is the Process ID as indicated where it says
+<code>Process 68253 stopped</code>. Note that the Ruby process that performs the build and
+launches your app (i.e. rake) is not the same as your app process.</p>
+
+<p>The last argument is the Object Reference as indicated by <code>message sent to deallocated instance 0x9fd56f0</code>.</p>
+
+<p>This (hex) number is the address of a piece of memory where the object we are
+interested in (was) located. The other traces in the malloc history are cases
+where that same memory location was used.</p>
+
+<p>Running the above command will give you a dump of information from the stack logs.
+I&#8217;ve truncated the following example, as the information is plentiful, but it
+shows the kind of output you can expect:</p>
+
+<pre><code>malloc_history Report Version:  2.0
+Process:         YourAppName [68253]
+Path:            /path/to/YourAppName
+Load Address:    0x1000
+Identifier:      YourAppName
+Version:         ??? (???)
+Code Type:       X86 (Native)
+Parent Process:  debugserver [68922]
+
+Date/Time:       2013-10-16 11:14:24.104 +0100
+OS Version:      Mac OS X 10.8.5 (12F45)
+Report Version:  7
+
+ALLOC 0x9fd56f0-0xa64da98 [size=425]: thread_4925a28 |start | main | UIApplicationMain | -[UIApplication _run] | CFRunLoopRunInMode | CFRunLoopRunSpecific | __CFRunLoopRun | __CFRunLoopDoSource1 | __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE1_PERFORM_FUNCTION__ | PurpleEventCallback | _PurpleEventCallback | _UIApplicationHandleEvent | -[UIApplication sendEvent:] | ...
+
+FREE  0x9fd56f0-0xa64da98 [size=425]: thread_4925a28 |start | main | UIApplicationMain | -[UIApplication _run] | CFRunLoopRunInMode | CFRunLoopRunSpecific | __CFRunLoopRun | __CFRunLoopDoSource1 | __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE1_PERFORM_FUNCTION__ | PurpleEventCallback | _PurpleEventCallback | _UIApplicationHandleEvent | -[UIApplication sendEvent:] | ...
+
+ALLOC 0x9fd56f0-0xa64dacf [size=112]: thread_4925a28 |start | main | UIApplicationMain | GSEventRun | GSEventRunModal | CFRunLoopRunInMode | CFRunLoopRunSpecific | ... | rb_scope__initWithFillColor:__ | vm_dispatch | rb_vm_dispatch | builtin_ostub1(objc_object* (*)(objc_object*, objc_selector*, ...), objc_selector*, objc_object*, unsigned char, int, unsigned long*) | _objc_rootAlloc | class_createInstance | calloc | malloc_zone_calloc
+</code></pre>
+
+<p>The output shows there had been two mallocs in the life span of the app and only
+one was freed.</p>
+
+<p>If I was not expecting the first ALLOC to be freed, then I would investigate the
+trace of the FREE to figure out why it was freed. Alternatively if I was expecting
+the second ALLOC to be FREEd as well, then I would know that did not happen.</p>
+
+<p>I knew I was expecting the memory to be freed and it was towards the end of the
+second ALLOC block I could see my own method <code>initWithFillColor</code> being called.</p>
+
+<p>I was subclassing <code>UIBarButtonItem</code> with my method <code>initWithFillColor</code> like so:</p>
+
+<pre><code>  class MenuButton &lt; UIBarButtonItem
+
+    def initWithFillColor(fillColor)
+      UIBarButtonItem.alloc.initWithCustomView(button(fillColor))
+    end
+
+    private
+
+    def showMenu
+      # ...
+    end
+
+    def button(fillColor)
+      UIMenuButtonIcon.alloc.initWithFrame(CGRectMake(0.0, 0.0, 25, 15), fillColor:fillColor).tap do |button|
+        button.addTarget(self, action:"showMenu", forControlEvents:UIControlEventTouchUpInside)
+      end
+    end
+
+  end
+</code></pre>
+
+<p>My <code>initWithFillColor</code> method obviously doesn&#8217;t need to create another instance
+of <code>UIBarButtonItem</code>. So I updated it to the following and my memory bug was gone:</p>
+
+<pre><code>def initWithFillColor(fillColor)
+  initWithCustomView(button(fillColor))
+end
+</code></pre>
+
+<p>Hopefully this is a good start for debugging any memory bugs in your RubyMotion
+apps.</p>
+
+<p>Thanks to the latest HipByte employee, <a href="http://blog.rubymotion.com/post/62652618638/eloy-duran-joins-the-rubymotion-team">Eloy Durán</a>, for the tips!</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Paul Sturgess</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-16T12:37:00+01:00" pubdate data-updated="true">Oct 16<span>th</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/10/09/how-to-debug-core-data-output-to-the-console-in-rubymotion/" title="Previous Post: How to debug Core Data output to the console in RubyMotion">&laquo; How to debug Core Data output to the console in RubyMotion</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/10/29/logging-to-the-console-in-rubymotion/" title="Next Post: Logging to the console in RubyMotion">Logging to the console in RubyMotion &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/02/05/tweeting-a-screenshot-in-rubymotion-with-uiactivityviewcontroller/">Tweeting a screenshot in RubyMotion with UIActivityViewController</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/07/using-nsuserdefaults-in-rubymotion/">Using NSUserDefaults in RubyMotion</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/20/using-magicalrecord-and-core-data-in-rubymotion/">Using MagicalRecord and Core Data in RubyMotion</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/29/logging-to-the-console-in-rubymotion/">Logging to the console in RubyMotion</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/16/using-lldb-to-debug-a-rubymotion-app/">Using LLDB to debug a RubyMotion app</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/paulsturgess">@paulsturgess</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'paulsturgess',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Paul Sturgess -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -9,8 +9,7 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="First things first you need to set UIViewControllerBasedStatusBarAppearance in
-your info.plist. This is done by updating your Rakefile like so: app. &hellip;">
+  <meta name="description" content="The easiest way to allow users to share content from inside your app is to use UIActivityViewController. Use it when you want to allow the user to: &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -22,6 +21,7 @@ your info.plist. This is done by updating your Rakefile like so: app. &hellip;">
   <link rel="canonical" href="http://paulsturgess.github.io">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="A blog about iOS dev with RubyMotion" type="application/atom+xml">
   <script src="/javascripts/modernizr-2.0.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -73,6 +73,1184 @@ your info.plist. This is done by updating your Rakefile like so: app. &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/02/05/tweeting-a-screenshot-in-rubymotion-with-uiactivityviewcontroller/">Tweeting a Screenshot in RubyMotion With UIActivityViewController</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-05T18:47:00+00:00" pubdate data-updated="true">Feb 5<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The easiest way to allow users to share content from inside your app is to use <code>UIActivityViewController</code>.</p>
+
+<p>Use it when you want to allow the user to:</p>
+
+<ul>
+<li>Send a Tweet</li>
+<li>Share on Facebook</li>
+<li>Save an image to photos</li>
+<li>Send an SMS message / iMessage</li>
+<li>Send an email</li>
+</ul>
+
+
+<p>In iOS 8 it slides up a panel at the bottom of the screen. The user chooses
+how they want to share the content. The options are based on the applications
+they have installed. You can also specify which ones to include/exclude.</p>
+
+<p>Here&#8217;s enough code to create an app with a button that brings up the <code>UIActivityViewController</code>,
+takes a screenshot and allows the user to share it along with some text.</p>
+
+<p>Hopefully the code and my comments are self-documenting enough to make sense.</p>
+
+<p>I figured this out through a combination of the Apple docs and this <a href="http://nshipster.com/uiactivityviewcontroller/">NSHipster article</a>.</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">AppDelegate</span>
+
+  <span class="kp">attr_reader</span> <span class="ss">:window</span>
+
+  <span class="k">def</span> <span class="nf">application</span><span class="p">(</span><span class="n">application</span><span class="p">,</span> <span class="ss">didFinishLaunchingWithOptions</span><span class="p">:</span><span class="n">launchOptions</span><span class="p">)</span>
+    <span class="n">rootViewController</span> <span class="o">=</span> <span class="no">MyController</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">init</span>
+    <span class="n">rootViewController</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;ActivityViewController Demo&#39;</span>
+    <span class="n">rootViewController</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">backgroundColor</span> <span class="o">=</span> <span class="no">UIColor</span><span class="o">.</span><span class="n">whiteColor</span>
+
+    <span class="n">navigationController</span> <span class="o">=</span> <span class="no">UINavigationController</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">initWithRootViewController</span><span class="p">(</span>
+      <span class="n">rootViewController</span>
+    <span class="p">)</span>
+
+    <span class="vi">@window</span> <span class="o">=</span> <span class="no">UIWindow</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">initWithFrame</span><span class="p">(</span><span class="no">UIScreen</span><span class="o">.</span><span class="n">mainScreen</span><span class="o">.</span><span class="n">bounds</span><span class="p">)</span>
+    <span class="vi">@window</span><span class="o">.</span><span class="n">rootViewController</span> <span class="o">=</span> <span class="n">navigationController</span>
+    <span class="vi">@window</span><span class="o">.</span><span class="n">makeKeyAndVisible</span>
+
+    <span class="kp">true</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1"># This subclass is not technically required</span>
+<span class="c1"># It allows you to switch the text based on the type of service it will be shared on</span>
+<span class="k">class</span> <span class="nc">ShareText</span> <span class="o">&lt;</span> <span class="no">UIActivityItemProvider</span>
+
+  <span class="kp">attr_accessor</span> <span class="ss">:text</span>
+
+  <span class="c1"># The placeholder text</span>
+  <span class="k">def</span> <span class="nf">activityViewControllerPlaceholderItem</span><span class="p">(</span><span class="n">controller</span><span class="p">)</span>
+    <span class="s2">&quot;&quot;</span>
+  <span class="k">end</span>
+
+  <span class="c1"># The text that will be inserted into the Tweet / Email / SMS etc.</span>
+  <span class="c1"># You could easily respond to more activity types if you wanted</span>
+  <span class="k">def</span> <span class="nf">activityViewController</span><span class="p">(</span><span class="n">controller</span><span class="p">,</span> <span class="ss">itemForActivityType</span><span class="p">:</span> <span class="n">activityType</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">activityType</span> <span class="o">==</span> <span class="no">UIActivityTypePostToTwitter</span>
+      <span class="s2">&quot;</span><span class="si">#{</span><span class="n">text</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">twitter_handle</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">hashtag</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">else</span>
+      <span class="s2">&quot;</span><span class="si">#{</span><span class="n">text</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">website</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">hashtag</span>
+    <span class="s2">&quot;#yourhashtag&quot;</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">website</span>
+    <span class="s2">&quot;http://yourwebsite.com&quot;</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">twitter_handle</span>
+    <span class="s2">&quot;@YourTwitterHandle&quot;</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+<span class="c1"># This is a simple controller with one button</span>
+<span class="k">class</span> <span class="nc">MyController</span> <span class="o">&lt;</span> <span class="no">UIViewController</span>
+
+  <span class="k">def</span> <span class="nf">viewDidLoad</span>
+    <span class="n">button</span> <span class="o">=</span> <span class="no">UIButton</span><span class="o">.</span><span class="n">buttonWithType</span><span class="p">(</span><span class="no">UIButtonTypeRoundedRect</span><span class="p">)</span>
+    <span class="n">button</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s1">&#39;Start&#39;</span><span class="p">,</span> <span class="ss">forState</span><span class="p">:</span><span class="no">UIControlStateNormal</span><span class="p">)</span>
+    <span class="n">button</span><span class="o">.</span><span class="n">addTarget</span><span class="p">(</span>
+      <span class="nb">self</span><span class="p">,</span>
+      <span class="ss">action</span><span class="p">:</span> <span class="s1">&#39;button_tapped&#39;</span><span class="p">,</span>
+      <span class="ss">forControlEvents</span><span class="p">:</span> <span class="no">UIControlEventTouchUpInside</span>
+    <span class="p">)</span>
+    <span class="n">button</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="o">[[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">260</span><span class="o">]</span><span class="p">,</span> <span class="o">[</span><span class="n">view</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">40</span><span class="o">]]</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">addSubview</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="c1"># This method generates the image of the entire screen</span>
+  <span class="c1"># Note it will not include the status bar</span>
+  <span class="k">def</span> <span class="nf">screenshot</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="no">UIApplication</span><span class="o">.</span><span class="n">sharedApplication</span><span class="o">.</span><span class="n">keyWindow</span>
+    <span class="no">UIGraphicsBeginImageContextWithOptions</span><span class="p">(</span>
+      <span class="n">window</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+      <span class="kp">false</span><span class="p">,</span>
+      <span class="no">UIScreen</span><span class="o">.</span><span class="n">mainScreen</span><span class="o">.</span><span class="n">scale</span>
+    <span class="p">)</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">drawViewHierarchyInRect</span><span class="p">(</span>
+      <span class="n">window</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span>
+      <span class="ss">afterScreenUpdates</span><span class="p">:</span><span class="kp">true</span>
+    <span class="p">)</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="no">UIGraphicsGetImageFromCurrentImageContext</span><span class="p">()</span>
+    <span class="no">UIGraphicsEndImageContext</span><span class="p">()</span>
+    <span class="n">image</span>
+  <span class="k">end</span>
+
+  <span class="c1"># We create an instance of our ShareText subclass</span>
+  <span class="c1"># Pass it into the UIActivityViewController along with the screenshot</span>
+  <span class="c1"># The UIActivityViewController handles everything else, all you have to do is present the controller.</span>
+  <span class="k">def</span> <span class="nf">button_tapped</span>
+    <span class="n">tc_share_text</span> <span class="o">=</span> <span class="no">ShareText</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">init</span>
+    <span class="n">tc_share_text</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Check out this screengrab!&quot;</span>
+    <span class="n">controller</span> <span class="o">=</span> <span class="no">UIActivityViewController</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">initWithActivityItems</span><span class="p">(</span>
+      <span class="o">[</span><span class="n">tc_share_text</span><span class="p">,</span> <span class="n">screenshot</span><span class="o">]</span><span class="p">,</span>
+      <span class="ss">applicationActivities</span><span class="p">:</span> <span class="kp">nil</span>
+    <span class="p">)</span>
+
+    <span class="n">controller</span><span class="o">.</span><span class="n">excludedActivityTypes</span> <span class="o">=</span> <span class="o">[</span>
+      <span class="no">UIActivityTypePrint</span><span class="p">,</span>
+      <span class="no">UIActivityTypeAssignToContact</span><span class="p">,</span>
+      <span class="no">UIActivityTypeAddToReadingList</span><span class="p">,</span>
+      <span class="no">UIActivityTypePostToFlickr</span><span class="p">,</span>
+      <span class="no">UIActivityTypeAirDrop</span>
+    <span class="o">]</span>
+
+    <span class="nb">self</span><span class="o">.</span><span class="n">presentViewController</span><span class="p">(</span>
+      <span class="n">controller</span><span class="p">,</span>
+      <span class="ss">animated</span><span class="p">:</span><span class="kp">true</span><span class="p">,</span>
+      <span class="ss">completion</span><span class="p">:</span><span class="kp">nil</span>
+    <span class="p">)</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/05/07/using-nsuserdefaults-in-rubymotion/">Using NSUserDefaults in RubyMotion</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-05-07T09:19:00+01:00" pubdate data-updated="true">May 7<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Apple describe <a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/nsuserdefaults_Class/Reference/Reference.html">NSUserDefaults</a> as &#8220;a programmatic interface for interacting with the defaults system&#8221;.</p>
+
+<p>It also provides a convenient store for persisting and retrieving user preferences for your application. You can think of it as a <code>key</code> <code>value</code> hash like structure, although it is a bit smarter than that.</p>
+
+<p>Here&#8217;s a really simple implementation I&#8217;ve been using:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>class Cache
+</span><span class='line'>
+</span><span class='line'>  class &lt;&lt; self
+</span><span class='line'>
+</span><span class='line'>    def set_default(key, data)
+</span><span class='line'>      return if read(key)
+</span><span class='line'>      write(key, data)
+</span><span class='line'>    end
+</span><span class='line'>
+</span><span class='line'>    def write(key, data)
+</span><span class='line'>      NSUserDefaults.standardUserDefaults[storage_key(key)] = data
+</span><span class='line'>      NSUserDefaults.standardUserDefaults.synchronize
+</span><span class='line'>    end
+</span><span class='line'>
+</span><span class='line'>    def read(key)
+</span><span class='line'>      NSUserDefaults.standardUserDefaults[storage_key(key)]
+</span><span class='line'>    end
+</span><span class='line'>
+</span><span class='line'>    private
+</span><span class='line'>
+</span><span class='line'>    def storage_key_prefix
+</span><span class='line'>      "#{cache_namespace}_"
+</span><span class='line'>    end
+</span><span class='line'>
+</span><span class='line'>    def storage_key key
+</span><span class='line'>      "#{storage_key_prefix}#{key}"
+</span><span class='line'>    end
+</span><span class='line'>
+</span><span class='line'>    def cache_namespace
+</span><span class='line'>      raise NotImplementedError
+</span><span class='line'>    end
+</span><span class='line'>
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>class UserSearchSettings &lt; Cache
+</span><span class='line'>
+</span><span class='line'>  class &lt;&lt; self
+</span><span class='line'>
+</span><span class='line'>    private
+</span><span class='line'>
+</span><span class='line'>    def cache_namespace
+</span><span class='line'>      "user_search"
+</span><span class='line'>    end
+</span><span class='line'>
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>end
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I use it like this:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>UserSearchSettings.write("sort_by", "name")
+</span><span class='line'>=&gt; true
+</span><span class='line'>NSUserDefaults.standardUserDefaults.dictionaryRepresentation
+</span><span class='line'>=&gt; {"user_search_sort_by" =&gt; "name"} # note there will be a lot of other key values in the hash
+</span><span class='line'>UserSearchSettings.read("sort_by")
+</span><span class='line'>=&gt; "name"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>My intention is not to call the <code>Cache</code> class directly and to only use the subclass <code>UserSearchSettings</code>. This forces me to group settings with a prefix defined by the <code>cache_namespace</code> method. This will help avoid accidentally defining the same key name for different values. It also nicely groups related settings.</p>
+
+<p>Each application has its&#8217; own <code>NSUserDefaults.standardUserDefaults</code> so there is no need to prefix the keys with the application name.</p>
+
+<p>This store will persist until the user removes your application from their device.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/02/20/using-magicalrecord-and-core-data-in-rubymotion/">Using MagicalRecord and Core Data in RubyMotion</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-20T13:36:00+00:00" pubdate data-updated="true">Feb 20<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="https://github.com/magicalpanda/MagicalRecord">MagicalRecord</a> is a wrapper around Apple&#8217;s <a href="http://en.wikipedia.org/wiki/Core_Data">Core Data Framework</a>. Written in Objective-C,
+it&#8217;s one of the most popular and mature libraries for working with Core Data.</p>
+
+<p>I really like it as it simplifies a lot of the code, whilst
+it still allows you to &#8216;get your hands dirty&#8217; when necessary.</p>
+
+<p>This article details how I&#8217;m using it. This is by no means the &#8216;perfect&#8217; solution,
+as I am evolving it all the time, but it is working well for me. By all means
+get in touch if you think I&#8217;m missing any obvious tricks.</p>
+
+<p>One thing I have found is that it&#8217;s pretty much impossible to hide the fact you
+are using CoreData. Particularly with the requirement of a different context for each
+thread. But what I do want to do is make things as simple, consistent and maintainable
+as possible.</p>
+
+<h2>Installation</h2>
+
+<p>At the time of writing I&#8217;m using the <a href="https://github.com/magicalpanda/MagicalRecord/tree/release/3.0">MagicalRecord 3.0 branch</a>,
+installed via <a href="https://github.com/HipByte/motion-cocoapods">motion-cocoaopds</a>. My <code>Rakefile</code> includes:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>app.pods do
+</span><span class='line'>  pod 'MagicalRecord', :git =&gt; 'https://github.com/magicalpanda/MagicalRecord.git', :branch =&gt;'release/3.0'
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Wrapping MagicalRecord</h2>
+
+<p>First I have a <code>Database</code> class to wrap common MagicalRecord tasks.</p>
+
+<p>The main reason for this class is so that I do not sprinkle MagicalRecord calls
+all around my code. Having them all in one place will make it easy to update if/when
+the MagicalRecord api changes. It also encourages consistency in my usage of MagicalRecord
+as, for example, there are many ways to persist your data.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>class Database
+</span><span class='line'>
+</span><span class='line'>  def self.filename
+</span><span class='line'>    "YourApplicationName.sqlite"
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.path
+</span><span class='line'>    File.join(
+</span><span class='line'>      NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, true),
+</span><span class='line'>      "YourApplicationName",
+</span><span class='line'>      self.filename
+</span><span class='line'>    )
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.created?
+</span><span class='line'>    File.exist?(self.path)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.loadOrCreate
+</span><span class='line'>    MagicalRecord.setupAutoMigratingStack
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.createTestDB
+</span><span class='line'>    MagicalRecord.setupStackWithInMemoryStore
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.delete
+</span><span class='line'>    if self.created?
+</span><span class='line'>      self.cleanUp
+</span><span class='line'>      File.delete(self.path)
+</span><span class='line'>    end
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.reset
+</span><span class='line'>    Database.delete
+</span><span class='line'>    Database.loadOrCreate
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.cleanUp
+</span><span class='line'>    MagicalRecord.cleanUp
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.defaultLocalContext
+</span><span class='line'>    MagicalRecordStack.defaultStack.context
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.backgroundLocalContext
+</span><span class='line'>    NSManagedObjectContext.MR_confinementContextWithParent(defaultLocalContext)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.save_specific_context(localContext, callback = nil)
+</span><span class='line'>    localContext.MR_saveToPersistentStoreWithCompletion(
+</span><span class='line'>      lambda { |success, error|
+</span><span class='line'>        NSLog("success: %@", success)
+</span><span class='line'>        if success
+</span><span class='line'>          callback.call if callback
+</span><span class='line'>        else
+</span><span class='line'>          NSLog "Error saving Seed Data"
+</span><span class='line'>          NSLog("description: %@", error.description)
+</span><span class='line'>        end
+</span><span class='line'>      }
+</span><span class='line'>    )
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.save_test_db!
+</span><span class='line'>    defaultLocalContext.MR_saveToPersistentStoreAndWait
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.save_on_main_thread!(callback = nil)
+</span><span class='line'>    defaultLocalContext.MR_saveToPersistentStoreWithCompletion(
+</span><span class='line'>      lambda { |success, error|
+</span><span class='line'>        NSLog("success: %@", success)
+</span><span class='line'>        if success
+</span><span class='line'>          callback.call(defaultLocalContext) if callback
+</span><span class='line'>        else
+</span><span class='line'>          NSLog "Error saving Core Data"
+</span><span class='line'>          NSLog("description: %@", error.description)
+</span><span class='line'>        end
+</span><span class='line'>      }
+</span><span class='line'>    )
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.save_on_background_thread!(callback = nil, completion_callback = nil)
+</span><span class='line'>    MagicalRecord.saveWithBlock(
+</span><span class='line'>      lambda { |localContext|
+</span><span class='line'>        callback.call(localContext) if callback
+</span><span class='line'>      },
+</span><span class='line'>      completion: lambda { |success, error|
+</span><span class='line'>        NSLog("success: %@", success)
+</span><span class='line'>        if success
+</span><span class='line'>          completion_callback.call if completion_callback
+</span><span class='line'>        else
+</span><span class='line'>          NSLog "Error saving Core Data"
+</span><span class='line'>          NSLog("description: %@", error.description)
+</span><span class='line'>        end
+</span><span class='line'>      }
+</span><span class='line'>    )
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In <code>AppDelegate</code> <code>didFinishLaunchingWithOptions</code> I call <code>Database.loadOrCreate</code>. As the name implies, this
+will either load my existing Core Data stack or it will set up a new one.</p>
+
+<p>I also cleanup the database when my app closes via this method in the <code>AppDelegate</code>:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  def applicationWillTerminate application
+</span><span class='line'>    Database.cleanUp
+</span><span class='line'>  end</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Entities</h2>
+
+<p>I create my Core Data entities in Xcode (although I do intend to look at the <a href="https://github.com/infinitered/ruby-xcdm">ruby-xcdm gem</a> so I can stop using Xcode).</p>
+
+<p>For now, the <a href="https://github.com/yury/ib">ib gem</a> is great for allowing us to fire up Xcode just when we need it.
+The gem is mostly geared around using Interface Builder but I don&#8217;t use it for that.</p>
+
+<p>Once you&#8217;ve installed the gem run:</p>
+
+<pre><code>$ rake ib:open
+</code></pre>
+
+<p>This will open Xcode. Inside the Resources folder on the left hand side there
+will be a <code>.xcdatamodeld</code> file. Select this and you can create your entities.</p>
+
+<p>One thing to remember is to set the <code>Class</code> of each Entity to the corresponding <code>Class</code>
+in your app. Otherwise it will be a standard <code>NSManagedObject</code>.</p>
+
+<p>So for each Entiy I create a corresponding class like so. Note it inherits from my
+own <code>CustomNSManagedObject</code>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>class ToDoItem &lt; CustomNSManagedObject
+</span><span class='line'>  # more methods go here
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I give each Entity <code>created_at</code> and <code>id</code> attributes in order to help with querying.</p>
+
+<h2>ActiveRecord Style Behaviour</h2>
+
+<p>The subclass of NSManagedObject I use looks like this:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>class CustomNSManagedObject &lt; NSManagedObject
+</span><span class='line'>
+</span><span class='line'>  def self.defaultContext
+</span><span class='line'>    CurrentSaveGame.localContext
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.all(context = nil)
+</span><span class='line'>    localContext = context || defaultContext
+</span><span class='line'>    self.MR_findAllSortedBy("created_at", ascending:true, inContext: localContext)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.first(context = nil)
+</span><span class='line'>    localContext = context || defaultContext
+</span><span class='line'>    self.MR_findFirstOrderedByAttribute("created_at", ascending:true, inContext: localContext)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.last(context = nil)
+</span><span class='line'>    localContext = context || defaultContext
+</span><span class='line'>    self.MR_findFirstOrderedByAttribute("created_at", ascending:false, inContext: localContext)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.count
+</span><span class='line'>    self.MR_numberOfEntities
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.find(id, context = nil)
+</span><span class='line'>    localContext = context || defaultContext
+</span><span class='line'>    self.MR_findFirstByAttribute("id", withValue:id, inContext: localContext)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.new(attributes)
+</span><span class='line'>    self.build(attributes)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.build(attributes = {}, context = nil)
+</span><span class='line'>    localContext = context || defaultContext
+</span><span class='line'>    model = self.MR_createInContext(localContext)
+</span><span class='line'>    model.setValuesForKeysWithDictionary(attributes)
+</span><span class='line'>    model.created_at = Time.now
+</span><span class='line'>    model
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def switch_context(localContext)
+</span><span class='line'>    self.MR_inContext(localContext)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def attributes
+</span><span class='line'>    self.entity.attributesByName.keys.each_with_object({}) do |attribute, attributes_hash|
+</span><span class='line'>      attributes_hash[attribute] = self.send(attribute)
+</span><span class='line'>    end
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Essentially this class gives me ActiveRecord like behaviour. Also, like my <code>Database</code> class,
+it ensures I contain some more <code>MagicalRecord</code> calls to a single place.</p>
+
+<p>This means I can do:</p>
+
+<pre><code>ToDoItem.build(
+  {
+    id: 1,
+    action: "Lorem ipsum dolor sit amet"
+  }
+)
+</code></pre>
+
+<p>My build method automatically inserts a <code>created_at</code> for every new record.</p>
+
+<h2>Data store</h2>
+
+<p>By default <code>MagicalRecord.setupAutoMigratingCoreDataStack</code> will use SQLite to
+persist your data.</p>
+
+<p>Note that I don&#8217;t include a <code>save</code> method in <code>CustomNSManagedObject</code>. Saving an individual
+record isn&#8217;t the most efficient way to persist changes in Core Data. Everything is held
+in memory until the relevant context is told to save. Hence why I&#8217;ve put the
+<code>save</code> method in the <code>Database</code> class.</p>
+
+<h2>Persisting data on the main thread</h2>
+
+<p>If you&#8217;ve used any of the CustomNSManagedObject methods like <code>find</code>, <code>all</code>, or <code>build</code>
+without passing in a context then using <code>Database.save_on_main_thread!</code> will persist any
+changes made. For example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>new_item = ToDoItem.build(
+</span><span class='line'>  {
+</span><span class='line'>    id: 2
+</span><span class='line'>    action: "Some other todo item"
+</span><span class='line'>  }
+</span><span class='line'>)
+</span><span class='line'>Database.save_on_main_thread!</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Persisting data on background threads</h2>
+
+<p>However, if updates are made on a background thread, then we need a new (temporary)
+context which is handled by <code>Database.save_on_background_thread!</code>.</p>
+
+<p>For example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Database.save_on_background_thread!(
+</span><span class='line'>  lambda { |localContext|
+</span><span class='line'>    new_item = ToDoItem.build(
+</span><span class='line'>      {
+</span><span class='line'>        id: 2
+</span><span class='line'>        action: "Some other todo item"
+</span><span class='line'>      },
+</span><span class='line'>      localContext
+</span><span class='line'>    )
+</span><span class='line'>  }
+</span><span class='line'>)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Alternatively if you don&#8217;t want to wrap everything in the block. Create a
+<code>localContext</code> and hold on to it. Make your changes and then save later down the line.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>localContext = Database.backgroundLocalContext
+</span><span class='line'>new_item = ToDoItem.build(
+</span><span class='line'>  {
+</span><span class='line'>    id: 2
+</span><span class='line'>    action: "Some other todo item"
+</span><span class='line'>  },
+</span><span class='line'>  localContext
+</span><span class='line'>)
+</span><span class='line'>Database.save_specific_context(localContext)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note most of the class methods in <code>CustomNSManagedObject</code> take an optional context so they
+can be used on background threads.</p>
+
+<h2>Testing</h2>
+
+<p>For tests I use the in memory data store and when saving it is synchronous. This ensures the data is there before the assertions!</p>
+
+<p>For example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>describe "SomeTest" do
+</span><span class='line'>
+</span><span class='line'>  before do
+</span><span class='line'>    Database.cleanUp
+</span><span class='line'>    Database.createTestDB
+</span><span class='line'>    @localContext = Database.defaultLocalContext
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  describe "some_method" do
+</span><span class='line'>
+</span><span class='line'>    context "when some scenario" do
+</span><span class='line'>
+</span><span class='line'>      it "should assign something is true" do
+</span><span class='line'>        # ...
+</span><span class='line'>      end
+</span><span class='line'>
+</span><span class='line'>    end
+</span><span class='line'>
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/29/logging-to-the-console-in-rubymotion/">Logging to the Console in RubyMotion</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-29T08:44:00+00:00" pubdate data-updated="true">Oct 29<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The simplest way to output to the console from your RubyMotion app is to use
+<code>puts</code>. This works fine when your app is running in the simulator. However,
+<code>puts</code> does not output to the console when your app is running on the device
+itself.</p>
+
+<p>You can view the live logs while your app is running on your usb connected device via:</p>
+
+<pre><code>$ motion device:console
+</code></pre>
+
+<p>You will see messages from your application alongside those from other apps or
+the system itself.</p>
+
+<p>Instead of using <code>puts</code>, you&#8217;ll need to make use of <code>NSLog</code>. For example</p>
+
+<pre><code>NSLog("My debug messge")
+</code></pre>
+
+<p>Note, however, that the first argument for <code>NSLog</code> is actually a <a href="https://developer.apple.com/library/ios/documentation/cocoa/conceptual/Strings/Articles/formatSpecifiers.html">String Format Specifier</a>.</p>
+
+<p>The following are equivalent:</p>
+
+<pre><code>puts "A #{variable} goes here"
+NSLog("A %@ goes here", variable)
+</code></pre>
+
+<p>Just remember that any <code>NSLog</code> messages you leave in your app will be visible
+to the curious, even after you&#8217;ve released to the App Store.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/16/using-lldb-to-debug-a-rubymotion-app/">Using LLDB to Debug a RubyMotion App</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-16T12:37:00+01:00" pubdate data-updated="true">Oct 16<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>RubyMotion now uses <a href="http://lldb.llvm.org/">LLDB</a> for debugging. Previously it
+used GDB.</p>
+
+<p>If you&#8217;re getting random crashes with little or no backtrace it may be down to
+a memory allocation issue.</p>
+
+<p>Launch your application with the debugger running via:</p>
+
+<pre><code>$ bundle exec rake debug=1 NSZombieEnabled=YES MallocStackLogging=1
+</code></pre>
+
+<p>Trigger your bug and you should get output in Terminal like this:</p>
+
+<pre><code>2013-10-16 10:17:19.594 YourAppName[68253:a0b] *** -[UIBarButtonItem isSystemItem]: message sent to deallocated instance 0x9fd56f0
+Process 68253 stopped
+* thread #1: tid = 0x3127cd, 0x03ac0811 CoreFoundation`___forwarding___ + 769, queue = 'com.apple.main-thread, stop reason = EXC_BREAKPOINT (code=EXC_I386_BPT, subcode=0x0)
+    frame #0: 0x03ac0811 CoreFoundation`___forwarding___ + 769
+CoreFoundation`___forwarding___ + 769:
+-&gt; 0x3ac0811:  jmp    0x3ac090c                 ; ___forwarding___ + 1020
+   0x3ac0816:  movl   %edi, (%esp)
+   0x3ac0819:  calll  0x3bb840e                 ; symbol stub for: class_getSuperclass
+   0x3ac081e:  movl   %eax, %edi
+(lldb)
+</code></pre>
+
+<p>Leave your application running and open a separate tab in Terminal. You can
+inspect the <code>malloc_history</code> of the object that has been deallocated via:</p>
+
+<pre><code>/usr/bin/malloc_history 68253 0x9fd56f0
+</code></pre>
+
+<p>Note the first argument is the Process ID as indicated where it says
+<code>Process 68253 stopped</code>. Note that the Ruby process that performs the build and
+launches your app (i.e. rake) is not the same as your app process.</p>
+
+<p>The last argument is the Object Reference as indicated by <code>message sent to deallocated instance 0x9fd56f0</code>.</p>
+
+<p>This (hex) number is the address of a piece of memory where the object we are
+interested in (was) located. The other traces in the malloc history are cases
+where that same memory location was used.</p>
+
+<p>Running the above command will give you a dump of information from the stack logs.
+I&#8217;ve truncated the following example, as the information is plentiful, but it
+shows the kind of output you can expect:</p>
+
+<pre><code>malloc_history Report Version:  2.0
+Process:         YourAppName [68253]
+Path:            /path/to/YourAppName
+Load Address:    0x1000
+Identifier:      YourAppName
+Version:         ??? (???)
+Code Type:       X86 (Native)
+Parent Process:  debugserver [68922]
+
+Date/Time:       2013-10-16 11:14:24.104 +0100
+OS Version:      Mac OS X 10.8.5 (12F45)
+Report Version:  7
+
+ALLOC 0x9fd56f0-0xa64da98 [size=425]: thread_4925a28 |start | main | UIApplicationMain | -[UIApplication _run] | CFRunLoopRunInMode | CFRunLoopRunSpecific | __CFRunLoopRun | __CFRunLoopDoSource1 | __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE1_PERFORM_FUNCTION__ | PurpleEventCallback | _PurpleEventCallback | _UIApplicationHandleEvent | -[UIApplication sendEvent:] | ...
+
+FREE  0x9fd56f0-0xa64da98 [size=425]: thread_4925a28 |start | main | UIApplicationMain | -[UIApplication _run] | CFRunLoopRunInMode | CFRunLoopRunSpecific | __CFRunLoopRun | __CFRunLoopDoSource1 | __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE1_PERFORM_FUNCTION__ | PurpleEventCallback | _PurpleEventCallback | _UIApplicationHandleEvent | -[UIApplication sendEvent:] | ...
+
+ALLOC 0x9fd56f0-0xa64dacf [size=112]: thread_4925a28 |start | main | UIApplicationMain | GSEventRun | GSEventRunModal | CFRunLoopRunInMode | CFRunLoopRunSpecific | ... | rb_scope__initWithFillColor:__ | vm_dispatch | rb_vm_dispatch | builtin_ostub1(objc_object* (*)(objc_object*, objc_selector*, ...), objc_selector*, objc_object*, unsigned char, int, unsigned long*) | _objc_rootAlloc | class_createInstance | calloc | malloc_zone_calloc
+</code></pre>
+
+<p>The output shows there had been two mallocs in the life span of the app and only
+one was freed.</p>
+
+<p>If I was not expecting the first ALLOC to be freed, then I would investigate the
+trace of the FREE to figure out why it was freed. Alternatively if I was expecting
+the second ALLOC to be FREEd as well, then I would know that did not happen.</p>
+
+<p>I knew I was expecting the memory to be freed and it was towards the end of the
+second ALLOC block I could see my own method <code>initWithFillColor</code> being called.</p>
+
+<p>I was subclassing <code>UIBarButtonItem</code> with my method <code>initWithFillColor</code> like so:</p>
+
+<pre><code>  class MenuButton &lt; UIBarButtonItem
+
+    def initWithFillColor(fillColor)
+      UIBarButtonItem.alloc.initWithCustomView(button(fillColor))
+    end
+
+    private
+
+    def showMenu
+      # ...
+    end
+
+    def button(fillColor)
+      UIMenuButtonIcon.alloc.initWithFrame(CGRectMake(0.0, 0.0, 25, 15), fillColor:fillColor).tap do |button|
+        button.addTarget(self, action:"showMenu", forControlEvents:UIControlEventTouchUpInside)
+      end
+    end
+
+  end
+</code></pre>
+
+<p>My <code>initWithFillColor</code> method obviously doesn&#8217;t need to create another instance
+of <code>UIBarButtonItem</code>. So I updated it to the following and my memory bug was gone:</p>
+
+<pre><code>def initWithFillColor(fillColor)
+  initWithCustomView(button(fillColor))
+end
+</code></pre>
+
+<p>Hopefully this is a good start for debugging any memory bugs in your RubyMotion
+apps.</p>
+
+<p>Thanks to the latest HipByte employee, <a href="http://blog.rubymotion.com/post/62652618638/eloy-duran-joins-the-rubymotion-team">Eloy Durán</a>, for the tips!</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/09/how-to-debug-core-data-output-to-the-console-in-rubymotion/">How to Debug Core Data Output to the Console in RubyMotion</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-09T08:18:00+01:00" pubdate data-updated="true">Oct 9<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Core Data can show you the underlying queries and execution times whilst you
+are running your app. Just fire it up with:</p>
+
+<pre><code>rake args="-com.apple.CoreData.SQLDebug 1"
+</code></pre>
+
+<p>Note you can bump the number up to 2 or 3 depending on how much information
+you want. 3 goes as far as to show you the result set Core Data has fetched.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -133,93 +1311,6 @@ end
 </code></pre>
 
 <p>Note that <code>UIStatusBarStyleLightContent</code> will turn your status bar text color to white.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/15/using-the-rubymotion-debugger/">Using the RubyMotion Debugger</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-15T13:47:00+01:00" pubdate data-updated="true">Jul 15<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>If you haven&#8217;t read <a href="http://www.rubymotion.com/developer-center/articles/debugging/">The Official RubyMotion Debugging guide</a> then I&#8217;d recommend starting there. However, this is a summary of useful commands I tend to use.</p>
-
-<p>Launch your application with the debugger running via:</p>
-
-<pre><code>$ rake debug=1
-</code></pre>
-
-<p>Your app will pause, take the oppportunity to setup the debugger or just continue with:</p>
-
-<pre><code>$ c
-</code></pre>
-
-<p>When your app crashes you can view the backtrace via:</p>
-
-<pre><code>$ bt
-</code></pre>
-
-<p>I had an error that recommended setting a breakpoint in <code>malloc_error_break</code>.</p>
-
-<p>This can be achieved either on the fly by:</p>
-
-<pre><code>$ break malloc_error_break
-</code></pre>
-
-<p>Enter <code>y</code> to &#8220;make breakpoint pending on future shared library load&#8221;</p>
-
-<p>Alternatively, a handy way of setting this up for all apps is to create a <code>.gdbinit</code> file:</p>
-
-<pre><code>$ vim ~/.gdbinit
-</code></pre>
-
-<p>With the line:</p>
-
-<pre><code>fb malloc_error_break
-</code></pre>
-
-<p>Now when you launch via <code>rake debug=1</code> the <code>malloc_error_break</code> breakpoint will
-automatically be setup and ready to use.</p>
-
-<h2>NSZombies</h2>
-
-<p>Running your app with NSZombies will reveal even more debugging info.</p>
-
-<p>Launch your app via:</p>
-
-<pre><code>rake debug=1 NSZombieEnabled=YES MallocStackLoggingNoCompact=1
-</code></pre>
-
-<p>If you get a problem with a specifc instance you can reveal more info via:</p>
-
-<pre><code>info malloc-history &lt;your-object-ref&gt;
-</code></pre>
 </div>
   
   
@@ -406,498 +1497,6 @@ notes in your favourite editor:</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/23/how-to-setup-testflight-for-a-rubymotion-app/">How to Setup TestFlight for a RubyMotion App</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-23T11:06:00+01:00" pubdate data-updated="true">May 23<span>rd</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>The official RubyMotion guide for <a href="http://www.rubymotion.com/developer-center/articles/testflight/">installing TestFlight</a>
-got me most of the way there, but there were a few additional steps I needed to
-get everything working.</p>
-
-<p>First and foremost <a href="http://paulsturgess.co.uk/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone/">I got my app running on my own device via usb</a>.</p>
-
-<p>However, for TestFlight, an Adhoc Provisioning Profile is required, as opposed
-to a Development Provisioning Profile. Essentially this is an Apple approved
-license to distribute your app to a limited number of devices without using the
-App Store.</p>
-
-<h2>Create a distribution certificate</h2>
-
-<p>Go to the Apple iOS developer website and create a Distribution certficate in a
-similar way to how you created your Developer certificate.</p>
-
-<h2>Create a fixed App ID</h2>
-
-<p>This is optional, but it felt right to me to use a fixed App ID instead of a
-wildcard.</p>
-
-<h2>Create an adhoc distribution profile</h2>
-
-<p>Finally, still on the Apple iOS Developer website, create an Adhoc distribution
-profile, download it and double click it to install it.</p>
-
-<h2>Setting up your Rakefile for multiple environments</h2>
-
-<p>I wanted to use both my Developer and Adhoc Provisioning Profiles at the same
-time. Without having to worry about switching them when required.</p>
-
-<p>My Rakefile looks like this:</p>
-
-<pre><code>Motion::Project::App.setup do |app|
-  env = if ENV['adhoc'] == '1'
-          'adhoc'
-        else
-          'dev'
-        end
-
-  app.name = 'MyApp'
-
-  # Provisioning profiles
-  if env == 'adhoc'
-    app.identifier = 'com.mydomain.myapp'
-    app.codesign_certificate = 'iPhone Distribution: Company (XXXXXXXXXX)'
-    app.provisioning_profile = '/path/to/adhoc/provisioing/profile/example.mobileprovision'
-    app.entitlements['get-task-allow'] = false
-  else
-    app.identifier = 'com.mydomain.myapp'
-    app.codesign_certificate = 'iPhone Developer: My Name (XXXXXXXXXX)'
-    app.provisioning_profile = '/path/to/development/provisioing/profile/example.mobileprovision'
-  end
-
-  # TestFlight config
-  app.testflight.sdk = 'vendor/TestFlight'
-  app.testflight.api_token = 'sometoken'
-  app.testflight.team_token = 'anothertoken'
-end
-
-desc "Set the env to 'adhoc'"
-task :set_adhoc do
-  ENV['adhoc'] = '1'
-end
-
-desc "Run Testflight with the adhoc provisioning profile"
-# e.g. rake tf notes="My release notes"
-task :tf =&gt; [
-  :set_adhoc,
-  :testflight
-]
-</code></pre>
-
-<p>Credit to Hwee-Boon Yar for writing up <a href="http://hboon.com/different-settings-for-development-and-adhoc-builds-in-rubymotion/">how to setup the Rakefile for multiple environments</a></p>
-
-<p>Your API token is under your account settings on TestFlight at: <a href="https://testflightapp.com/account/#api">https://testflightapp.com/account/#api</a>.</p>
-
-<p>You can find your team API token at the following url: <a href="https://testflightapp.com/dashboard/team/edit/">https://testflightapp.com/dashboard/team/edit/</a></p>
-
-<p>One key bit of information I was initially missing was setting <code>get-task-allow</code>
-to false. This is only required for the Adhoc Provisioning Profile.</p>
-
-<h2>Use a custom rake task to deploy to TestFlight</h2>
-
-<p>Notice the rake task at the bottom sets the adhoc variable to ensure the Adhoc
-provisioning profile is used before firing off the TestFlight task added by
-<code>motion-testflight</code>.</p>
-
-<p>So from now on I release to TestFlight via:</p>
-
-<pre><code>$ rake tf notes="My release notes"
-</code></pre>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/16/how-to-setup-a-test-only-group-in-bundler-for-rubymotion/">How to Setup a Test Only Group in Bundler for RubyMotion</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-16T14:30:00+01:00" pubdate data-updated="true">May 16<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Coming from a Ruby on Rails background, it&#8217;s common place to see the Gemfile
-declarations in logical groups. This ensures your gems only get required in the
-environment they are needed.</p>
-
-<p>A similar setup can be achieved in RubyMotion by tweaking your <code>Gemfile</code> and
-<code>Rakefile</code>.</p>
-
-<p>In your Gemfile:</p>
-
-<pre><code>source "https://rubygems.org"
-gem 'rake'
-gem 'motion-cocoapods'
-
-group :spec do
-  gem 'motion-redgreen'
-end
-</code></pre>
-
-<p>In your Rakefile:</p>
-
-<pre><code>if ARGV.join(' ') =~ /spec/
-  Bundler.require :default, :spec
-else
-  Bundler.require
-end
-</code></pre>
-
-<p>Thanks to the <a href="https://github.com/tkadauke/TinyMon">TinyMon</a> application where
-I first saw this setup.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/15/using-native-objective-c-cocoapod-libraries-in-rubymotion/">Using Native Objective-C Cocoapod Libraries in RubyMotion</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-15T13:40:00+01:00" pubdate data-updated="true">May 15<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Whilst RubyMotion is new, and the number of <a href="http://rubymotion-wrappers.com/">RubyMotion specific libraries</a>
-is growing fast, there are already loads of native Objective-C libraries out there.</p>
-
-<p>These instructions show you how to use <a href="http://cocoapods.org">Cocoapods</a> in
-combination with <a href="http://gembundler.com">Bundler</a>.</p>
-
-<p>Cocoapods is a dependency manager, like <a href="http://rubygems.org">RubyGems</a>, but for
-Objective-C projects.</p>
-
-<p>In this example, I&#8217;ve chosen to install <a href="https://github.com/Inferis/ViewDeck">ViewDeck</a>. ViewDeck
-makes it easy to implement the sliding panel user interface made popular by the
-Facebook iOS app.</p>
-
-<p>The <a href="http://cocoapods.org">CocoaPods website</a> is a great place to search for
-available &#8216;Pods&#8217;.</p>
-
-<h2>Summary of steps</h2>
-
-<ul>
-<li>Include the motion-cocoapods gem</li>
-<li>Setup Cocoapods</li>
-<li>Add ViewDeck to your application Rakefile</li>
-</ul>
-
-
-<h2>Bundler</h2>
-
-<p>If you haven&#8217;t got Bundler setup, I&#8217;ve written some
-<a href="http://paulsturgess.co.uk/blog/2013/05/13/setting-up-bundler-and-rvm-for-a-rubymotion-app/">instructions for using Bundler with RubyMotion</a>.</p>
-
-<h2>Cocoapods</h2>
-
-<p>Add cocoapods to your Gemfile:</p>
-
-<pre><code>gem 'motion-cocoapods'
-</code></pre>
-
-<p>Install the gem via bundler:</p>
-
-<pre><code>$ bundle
-</code></pre>
-
-<p>Setup Cocoapods via:</p>
-
-<pre><code>$ pod setup
-</code></pre>
-
-<h2>Add ViewDeck to your Rakefile</h2>
-
-<p>In your Rakefile you need to add the ViewDeck pod and QuartzCore Framework
-(required by ViewDeck):</p>
-
-<pre><code>Motion::Project::App.setup do |app|
-  # Frameworks
-  app.frameworks += [
-    'QuartzCore'
-  ]
-
-  # Cocoapods
-  app.pods do
-    pod 'ViewDeck'
-  end
-end
-</code></pre>
-
-<p>ViewDeck will be automatically downloaded, built and linked the next time you build your app.</p>
-
-<h2>Using ViewDeck</h2>
-
-<p>I&#8217;ve ported the Objective-C example ViewDeck application over to RubyMotion.</p>
-
-<p><a href="https://github.com/paulsturgess/ViewDeckExample-RubyMotion">Feel free to check it out</a>.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/13/setting-up-bundler-and-rvm-for-a-rubymotion-app/">Setting Up Bundler and RVM for a RubyMotion App</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-13T10:00:00+01:00" pubdate data-updated="true">May 13<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Create your rvm <code>.ruby-version</code> and <code>.ruby-gemset</code> files via:</p>
-
-<pre><code>$ rvm use 1.9.3@yourgemsetname --create --ruby-version
-</code></pre>
-
-<p>Add bundler to your <code>Rakefile</code></p>
-
-<pre><code>require 'bundler'
-Bundler.require
-</code></pre>
-
-<p>Create your <code>Gemfile</code> via:</p>
-
-<pre><code>$ bundle init
-</code></pre>
-
-<p>Update your <code>Gemfile</code></p>
-
-<pre><code>source "https://rubygems.org"
-gem "your-favourite-gem"
-</code></pre>
-
-<p>Install gems via:</p>
-
-<pre><code>$ bundle
-</code></pre>
-
-<p>You&#8217;re done.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone/">Using RubyMotion to Provision an App Onto Your iPhone</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-10T21:49:00+01:00" pubdate data-updated="true">May 10<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>So you&#8217;ve got your <a href="https://developer.apple.com/">Apple developer account</a> and
-now you want to get your RubyMotion app onto your iPhone.</p>
-
-<p>At the end of these instructions you will be able to deploy multiple apps using
-the same provisioning profile. Ideal for prototyping.</p>
-
-<h2>Summary of what you need to do</h2>
-
-<ul>
-<li>Generate an iOS certificate</li>
-<li>Create an App ID</li>
-<li>Register your iPhone with your Apple Developer account</li>
-<li>Create a Provisioning Profile</li>
-<li>Update your RubyMotion Rakefile to use the Certificate and the Provisioning Profile</li>
-</ul>
-
-
-<h2>Generate an iOS certificate</h2>
-
-<p>Open the Keychain Access program on your Mac and from the dropdown menu choose:</p>
-
-<p><code>Keychain Access &gt; Certificate Assistant &gt; Request a certificate from a certificate authority</code></p>
-
-<p>The &#8216;common name&#8217; is the name for your private key. You can choose whatever
-you like.</p>
-
-<p>Just make sure you select to <code>save to disk</code>.</p>
-
-<p>Now you need to sync this up with your Apple Developer account.</p>
-
-<p>Visit <a href="https://developer.apple.com">The Apple iOS Dev Centre</a> and go to the
-<code>Certificates, Identities &amp; Profiles</code> section.</p>
-
-<p>Go to <code>Certificates &gt; Development</code> and select to add a new certificate. Follow
-the step process, uploading the certificate you just created.</p>
-
-<p>At the end you need to download the <code>.cer</code> file that gets generated. Double
-click it to add to your Keychain.</p>
-
-<h2>Create an App ID</h2>
-
-<p>In that same section of the website you can create an App ID by going to
-<code>Identifiers &gt; App ID's</code>.</p>
-
-<p>I opted for the Wildcard App ID. The wildcard ID means I don&#8217;t need to create a
-new App ID &amp; Profile for each new app I want to try out on my iPhone.</p>
-
-<p>Obviously when it comes to App Store submission, then it will make sense to have
-a dedicated App ID. Also Apple recommend a dedicated App ID if you&#8217;re testing
-advanced features like Push Notifications.</p>
-
-<h2>Register your iPhone with your Apple Developer account</h2>
-
-<p>Again staying on the iOS Dev Center website, you need to register all the
-devices you want to deploy your app onto.</p>
-
-<p>You only need to do this once for each device, but you&#8217;ll need to know the UDID
-for each one.</p>
-
-<p>You can get your UDID by plugging your iPhone into your computer via a USB cable
-and firing up Xcode. It&#8217;s labelled as <code>Identifier</code> on the details screen that lists
-the model and serial number etc.</p>
-
-<h2>Create a Provisioning Profile</h2>
-
-<p>The last task on the iOS Dev Center website is to create a
-<code>Development Provisioning Profile</code>.</p>
-
-<p>All the instructions are self-explanatory so I won&#8217;t repeat them here. Essentially
-you are combining the certificate, the App ID and the Device ID(s) that you have
-setup.</p>
-
-<p>Just make sure you download and double click the <code>.mobileprovision</code> file at the end.</p>
-
-<h2>Update your RubyMotion Rakefile to use the Certificate &amp; Provisioning Profile</h2>
-
-<p>Update your <code>Rakefile</code> in your app:</p>
-
-<pre><code>Motion::Project::App.setup do |app|
-  app.name = 'ExampleApp'
-  app.identifier = 'com.yourdomain.exampleapp'
-  app.codesign_certificate = 'iPhone Developer: Your Name (XXXXXXXXXX)'
-  app.provisioning_profile = '/path/to/your/provisioning/profile/Example_App.mobileprovision'
-end
-</code></pre>
-
-<p>Note that Wildcard App Id means you can use any name for the third part of the
-identifier.</p>
-
-<p>Also for the <code>codesign_certificate</code>, you can view this in the Keychain Access
-program.</p>
-
-<p>Finally deploy to the device via:</p>
-
-<pre><code>$ rake device
-</code></pre>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -912,23 +1511,23 @@ program.</p>
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2013/10/01/setting-the-status-bar-colour-for-ios7-in-rubymotion/">Setting the status bar colour for iOS7 in RubyMotion</a>
+        <a href="/blog/2015/02/05/tweeting-a-screenshot-in-rubymotion-with-uiactivityviewcontroller/">Tweeting a screenshot in RubyMotion with UIActivityViewController</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2013/07/15/using-the-rubymotion-debugger/">Using the RubyMotion debugger</a>
+        <a href="/blog/2014/05/07/using-nsuserdefaults-in-rubymotion/">Using NSUserDefaults in RubyMotion</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2013/07/01/how-to-use-the-crittercism-cocoapod-in-a-rubymotion-app/">How to use the Crittercism Cocoapod in a RubyMotion app</a>
+        <a href="/blog/2014/02/20/using-magicalrecord-and-core-data-in-rubymotion/">Using MagicalRecord and Core Data in RubyMotion</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2013/06/28/how-to-memory-profile-a-rubymotion-application-using-instruments/">How to Memory Profile a RubyMotion application using Instruments</a>
+        <a href="/blog/2013/10/29/logging-to-the-console-in-rubymotion/">Logging to the console in RubyMotion</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2013/06/27/how-to-view-the-rubymotion-release-notes/">How to view the RubyMotion release notes</a>
+        <a href="/blog/2013/10/16/using-lldb-to-debug-a-rubymotion-app/">Using LLDB to debug a RubyMotion app</a>
       </li>
     
   </ul>
@@ -973,7 +1572,7 @@ program.</p>
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Paul Sturgess -
+  Copyright &copy; 2015 - Paul Sturgess -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

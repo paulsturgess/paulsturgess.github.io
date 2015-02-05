@@ -1,0 +1,787 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Using MagicalRecord and Core Data in RubyMotion - A blog about iOS dev with RubyMotion</title>
+  <meta name="author" content="Paul Sturgess">
+
+  
+  <meta name="description" content="MagicalRecord is a wrapper around Apple&#8217;s Core Data Framework. Written in Objective-C,
+it&#8217;s one of the most popular and mature libraries &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://paulsturgess.github.io/blog/2014/02/20/using-magicalrecord-and-core-data-in-rubymotion">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="A blog about iOS dev with RubyMotion" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-75197-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">A blog about iOS dev with RubyMotion</a></h1>
+  
+    <h2>Paul Sturgess</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/">Index</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="https://twitter.com/paulsturgess">@paulsturgess</a></li>
+  <li><a href="https://github.com/paulsturgess">Github</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Using MagicalRecord and Core Data in RubyMotion</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-20T13:36:00+00:00" pubdate data-updated="true">Feb 20<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><a href="https://github.com/magicalpanda/MagicalRecord">MagicalRecord</a> is a wrapper around Apple&#8217;s <a href="http://en.wikipedia.org/wiki/Core_Data">Core Data Framework</a>. Written in Objective-C,
+it&#8217;s one of the most popular and mature libraries for working with Core Data.</p>
+
+<p>I really like it as it simplifies a lot of the code, whilst
+it still allows you to &#8216;get your hands dirty&#8217; when necessary.</p>
+
+<p>This article details how I&#8217;m using it. This is by no means the &#8216;perfect&#8217; solution,
+as I am evolving it all the time, but it is working well for me. By all means
+get in touch if you think I&#8217;m missing any obvious tricks.</p>
+
+<p>One thing I have found is that it&#8217;s pretty much impossible to hide the fact you
+are using CoreData. Particularly with the requirement of a different context for each
+thread. But what I do want to do is make things as simple, consistent and maintainable
+as possible.</p>
+
+<h2>Installation</h2>
+
+<p>At the time of writing I&#8217;m using the <a href="https://github.com/magicalpanda/MagicalRecord/tree/release/3.0">MagicalRecord 3.0 branch</a>,
+installed via <a href="https://github.com/HipByte/motion-cocoapods">motion-cocoaopds</a>. My <code>Rakefile</code> includes:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>app.pods do
+</span><span class='line'>  pod 'MagicalRecord', :git =&gt; 'https://github.com/magicalpanda/MagicalRecord.git', :branch =&gt;'release/3.0'
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Wrapping MagicalRecord</h2>
+
+<p>First I have a <code>Database</code> class to wrap common MagicalRecord tasks.</p>
+
+<p>The main reason for this class is so that I do not sprinkle MagicalRecord calls
+all around my code. Having them all in one place will make it easy to update if/when
+the MagicalRecord api changes. It also encourages consistency in my usage of MagicalRecord
+as, for example, there are many ways to persist your data.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>class Database
+</span><span class='line'>
+</span><span class='line'>  def self.filename
+</span><span class='line'>    "YourApplicationName.sqlite"
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.path
+</span><span class='line'>    File.join(
+</span><span class='line'>      NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, true),
+</span><span class='line'>      "YourApplicationName",
+</span><span class='line'>      self.filename
+</span><span class='line'>    )
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.created?
+</span><span class='line'>    File.exist?(self.path)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.loadOrCreate
+</span><span class='line'>    MagicalRecord.setupAutoMigratingStack
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.createTestDB
+</span><span class='line'>    MagicalRecord.setupStackWithInMemoryStore
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.delete
+</span><span class='line'>    if self.created?
+</span><span class='line'>      self.cleanUp
+</span><span class='line'>      File.delete(self.path)
+</span><span class='line'>    end
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.reset
+</span><span class='line'>    Database.delete
+</span><span class='line'>    Database.loadOrCreate
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.cleanUp
+</span><span class='line'>    MagicalRecord.cleanUp
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.defaultLocalContext
+</span><span class='line'>    MagicalRecordStack.defaultStack.context
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.backgroundLocalContext
+</span><span class='line'>    NSManagedObjectContext.MR_confinementContextWithParent(defaultLocalContext)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.save_specific_context(localContext, callback = nil)
+</span><span class='line'>    localContext.MR_saveToPersistentStoreWithCompletion(
+</span><span class='line'>      lambda { |success, error|
+</span><span class='line'>        NSLog("success: %@", success)
+</span><span class='line'>        if success
+</span><span class='line'>          callback.call if callback
+</span><span class='line'>        else
+</span><span class='line'>          NSLog "Error saving Seed Data"
+</span><span class='line'>          NSLog("description: %@", error.description)
+</span><span class='line'>        end
+</span><span class='line'>      }
+</span><span class='line'>    )
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.save_test_db!
+</span><span class='line'>    defaultLocalContext.MR_saveToPersistentStoreAndWait
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.save_on_main_thread!(callback = nil)
+</span><span class='line'>    defaultLocalContext.MR_saveToPersistentStoreWithCompletion(
+</span><span class='line'>      lambda { |success, error|
+</span><span class='line'>        NSLog("success: %@", success)
+</span><span class='line'>        if success
+</span><span class='line'>          callback.call(defaultLocalContext) if callback
+</span><span class='line'>        else
+</span><span class='line'>          NSLog "Error saving Core Data"
+</span><span class='line'>          NSLog("description: %@", error.description)
+</span><span class='line'>        end
+</span><span class='line'>      }
+</span><span class='line'>    )
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.save_on_background_thread!(callback = nil, completion_callback = nil)
+</span><span class='line'>    MagicalRecord.saveWithBlock(
+</span><span class='line'>      lambda { |localContext|
+</span><span class='line'>        callback.call(localContext) if callback
+</span><span class='line'>      },
+</span><span class='line'>      completion: lambda { |success, error|
+</span><span class='line'>        NSLog("success: %@", success)
+</span><span class='line'>        if success
+</span><span class='line'>          completion_callback.call if completion_callback
+</span><span class='line'>        else
+</span><span class='line'>          NSLog "Error saving Core Data"
+</span><span class='line'>          NSLog("description: %@", error.description)
+</span><span class='line'>        end
+</span><span class='line'>      }
+</span><span class='line'>    )
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In <code>AppDelegate</code> <code>didFinishLaunchingWithOptions</code> I call <code>Database.loadOrCreate</code>. As the name implies, this
+will either load my existing Core Data stack or it will set up a new one.</p>
+
+<p>I also cleanup the database when my app closes via this method in the <code>AppDelegate</code>:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  def applicationWillTerminate application
+</span><span class='line'>    Database.cleanUp
+</span><span class='line'>  end</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Entities</h2>
+
+<p>I create my Core Data entities in Xcode (although I do intend to look at the <a href="https://github.com/infinitered/ruby-xcdm">ruby-xcdm gem</a> so I can stop using Xcode).</p>
+
+<p>For now, the <a href="https://github.com/yury/ib">ib gem</a> is great for allowing us to fire up Xcode just when we need it.
+The gem is mostly geared around using Interface Builder but I don&#8217;t use it for that.</p>
+
+<p>Once you&#8217;ve installed the gem run:</p>
+
+<pre><code>$ rake ib:open
+</code></pre>
+
+<p>This will open Xcode. Inside the Resources folder on the left hand side there
+will be a <code>.xcdatamodeld</code> file. Select this and you can create your entities.</p>
+
+<p>One thing to remember is to set the <code>Class</code> of each Entity to the corresponding <code>Class</code>
+in your app. Otherwise it will be a standard <code>NSManagedObject</code>.</p>
+
+<p>So for each Entiy I create a corresponding class like so. Note it inherits from my
+own <code>CustomNSManagedObject</code>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>class ToDoItem &lt; CustomNSManagedObject
+</span><span class='line'>  # more methods go here
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I give each Entity <code>created_at</code> and <code>id</code> attributes in order to help with querying.</p>
+
+<h2>ActiveRecord Style Behaviour</h2>
+
+<p>The subclass of NSManagedObject I use looks like this:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>class CustomNSManagedObject &lt; NSManagedObject
+</span><span class='line'>
+</span><span class='line'>  def self.defaultContext
+</span><span class='line'>    CurrentSaveGame.localContext
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.all(context = nil)
+</span><span class='line'>    localContext = context || defaultContext
+</span><span class='line'>    self.MR_findAllSortedBy("created_at", ascending:true, inContext: localContext)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.first(context = nil)
+</span><span class='line'>    localContext = context || defaultContext
+</span><span class='line'>    self.MR_findFirstOrderedByAttribute("created_at", ascending:true, inContext: localContext)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.last(context = nil)
+</span><span class='line'>    localContext = context || defaultContext
+</span><span class='line'>    self.MR_findFirstOrderedByAttribute("created_at", ascending:false, inContext: localContext)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.count
+</span><span class='line'>    self.MR_numberOfEntities
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.find(id, context = nil)
+</span><span class='line'>    localContext = context || defaultContext
+</span><span class='line'>    self.MR_findFirstByAttribute("id", withValue:id, inContext: localContext)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.new(attributes)
+</span><span class='line'>    self.build(attributes)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def self.build(attributes = {}, context = nil)
+</span><span class='line'>    localContext = context || defaultContext
+</span><span class='line'>    model = self.MR_createInContext(localContext)
+</span><span class='line'>    model.setValuesForKeysWithDictionary(attributes)
+</span><span class='line'>    model.created_at = Time.now
+</span><span class='line'>    model
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def switch_context(localContext)
+</span><span class='line'>    self.MR_inContext(localContext)
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def attributes
+</span><span class='line'>    self.entity.attributesByName.keys.each_with_object({}) do |attribute, attributes_hash|
+</span><span class='line'>      attributes_hash[attribute] = self.send(attribute)
+</span><span class='line'>    end
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Essentially this class gives me ActiveRecord like behaviour. Also, like my <code>Database</code> class,
+it ensures I contain some more <code>MagicalRecord</code> calls to a single place.</p>
+
+<p>This means I can do:</p>
+
+<pre><code>ToDoItem.build(
+  {
+    id: 1,
+    action: "Lorem ipsum dolor sit amet"
+  }
+)
+</code></pre>
+
+<p>My build method automatically inserts a <code>created_at</code> for every new record.</p>
+
+<h2>Data store</h2>
+
+<p>By default <code>MagicalRecord.setupAutoMigratingCoreDataStack</code> will use SQLite to
+persist your data.</p>
+
+<p>Note that I don&#8217;t include a <code>save</code> method in <code>CustomNSManagedObject</code>. Saving an individual
+record isn&#8217;t the most efficient way to persist changes in Core Data. Everything is held
+in memory until the relevant context is told to save. Hence why I&#8217;ve put the
+<code>save</code> method in the <code>Database</code> class.</p>
+
+<h2>Persisting data on the main thread</h2>
+
+<p>If you&#8217;ve used any of the CustomNSManagedObject methods like <code>find</code>, <code>all</code>, or <code>build</code>
+without passing in a context then using <code>Database.save_on_main_thread!</code> will persist any
+changes made. For example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>new_item = ToDoItem.build(
+</span><span class='line'>  {
+</span><span class='line'>    id: 2
+</span><span class='line'>    action: "Some other todo item"
+</span><span class='line'>  }
+</span><span class='line'>)
+</span><span class='line'>Database.save_on_main_thread!</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Persisting data on background threads</h2>
+
+<p>However, if updates are made on a background thread, then we need a new (temporary)
+context which is handled by <code>Database.save_on_background_thread!</code>.</p>
+
+<p>For example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Database.save_on_background_thread!(
+</span><span class='line'>  lambda { |localContext|
+</span><span class='line'>    new_item = ToDoItem.build(
+</span><span class='line'>      {
+</span><span class='line'>        id: 2
+</span><span class='line'>        action: "Some other todo item"
+</span><span class='line'>      },
+</span><span class='line'>      localContext
+</span><span class='line'>    )
+</span><span class='line'>  }
+</span><span class='line'>)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Alternatively if you don&#8217;t want to wrap everything in the block. Create a
+<code>localContext</code> and hold on to it. Make your changes and then save later down the line.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>localContext = Database.backgroundLocalContext
+</span><span class='line'>new_item = ToDoItem.build(
+</span><span class='line'>  {
+</span><span class='line'>    id: 2
+</span><span class='line'>    action: "Some other todo item"
+</span><span class='line'>  },
+</span><span class='line'>  localContext
+</span><span class='line'>)
+</span><span class='line'>Database.save_specific_context(localContext)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note most of the class methods in <code>CustomNSManagedObject</code> take an optional context so they
+can be used on background threads.</p>
+
+<h2>Testing</h2>
+
+<p>For tests I use the in memory data store and when saving it is synchronous. This ensures the data is there before the assertions!</p>
+
+<p>For example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>describe "SomeTest" do
+</span><span class='line'>
+</span><span class='line'>  before do
+</span><span class='line'>    Database.cleanUp
+</span><span class='line'>    Database.createTestDB
+</span><span class='line'>    @localContext = Database.defaultLocalContext
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  describe "some_method" do
+</span><span class='line'>
+</span><span class='line'>    context "when some scenario" do
+</span><span class='line'>
+</span><span class='line'>      it "should assign something is true" do
+</span><span class='line'>        # ...
+</span><span class='line'>      end
+</span><span class='line'>
+</span><span class='line'>    end
+</span><span class='line'>
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Paul Sturgess</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-20T13:36:00+00:00" pubdate data-updated="true">Feb 20<span>th</span>, 2014</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/10/29/logging-to-the-console-in-rubymotion/" title="Previous Post: Logging to the console in RubyMotion">&laquo; Logging to the console in RubyMotion</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/05/07/using-nsuserdefaults-in-rubymotion/" title="Next Post: Using NSUserDefaults in RubyMotion">Using NSUserDefaults in RubyMotion &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/02/05/tweeting-a-screenshot-in-rubymotion-with-uiactivityviewcontroller/">Tweeting a screenshot in RubyMotion with UIActivityViewController</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/07/using-nsuserdefaults-in-rubymotion/">Using NSUserDefaults in RubyMotion</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/20/using-magicalrecord-and-core-data-in-rubymotion/">Using MagicalRecord and Core Data in RubyMotion</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/29/logging-to-the-console-in-rubymotion/">Logging to the console in RubyMotion</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/16/using-lldb-to-debug-a-rubymotion-app/">Using LLDB to debug a RubyMotion app</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/paulsturgess">@paulsturgess</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'paulsturgess',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Paul Sturgess -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

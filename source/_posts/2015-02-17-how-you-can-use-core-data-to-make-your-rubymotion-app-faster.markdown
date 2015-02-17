@@ -28,7 +28,7 @@ While this is going on we show a loading screen. We decided to spend time making
 
 Combined with a random humourous/entertaining/interesting quote (of which there are hundreds in the game) it makes waiting as pleasant as possible. Here's an example:
 
-<a href="/images/loading.png" target="_blank">{% img left /images/loading.png 825 825 'Loading image' 'Loading image' %}</a>
+<a href="/images/loading.PNG" target="_blank">{% img left /images/loading.PNG 825 825 'Loading image' 'Loading image' %}</a>
 &nbsp;
 ## Measuring Performance with RubyMotion-Benchmark
 

@@ -6,7 +6,7 @@ comments: false
 categories: 
 ---
 
-This is my second post in a series explaining some of the technical decisions behind creating the [football management iPhone game Title Challenge](http://www.titlechallenge.com). The first post was a [short one about using Reveal App](http://localhost:4000/blog/2015/02/13/using-reveal-app-to-build-a-rubymotion-football-manager-game/) as a useful debugging tool for building layouts.
+This is my second post in a series explaining some of the technical decisions behind creating the [football management iPhone game Title Challenge](http://www.titlechallenge.com). The first post was a [short one about using Reveal App](http://paulsturgess.co.uk/blog/2015/02/13/using-reveal-app-to-build-a-rubymotion-football-manager-game/) as a useful debugging tool for building layouts.
 
 From the outside Title Challenge may appear pretty simple, but under the hood there is a lot more than you might realise going on. Before I talk about why I chose Core Data (or even what Core Data is), let me explain a little bit about the processing the game needs to perform.
 

@@ -156,7 +156,7 @@ I also cleanup the database when my app closes via this method in the `AppDelega
 
 ## Entities
 
-I create my Core Data entities in Xcode (although I do intend to look at the [ruby-xcdm gem](https://github.com/infinitered/ruby-xcdm) so I can stop using Xcode).
+~~I create my Core Data entities in Xcode (although I do intend to look at the [ruby-xcdm gem](https://github.com/infinitered/ruby-xcdm) so I can stop using Xcode).~~ I'm now using the [ruby-xcdm](https://github.com/infinitered/ruby-xcdm) gem to define my schema in code. Here's a [blog post about it](http://paulsturgess.co.uk/blog/2015/05/12/core-data-in-rubymotion-defining-your-schema-in-code/).
 
 For now, the [ib gem](https://github.com/yury/ib) is great for allowing us to fire up Xcode just when we need it.
 The gem is mostly geared around using Interface Builder but I don't use it for that.

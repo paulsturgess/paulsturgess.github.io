@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>How you can use Core Data to make your RubyMotion app faster - A blog about iOS dev with RubyMotion</title>
+  <meta name="author" content="Paul Sturgess">
+
+  
+  <meta name="description" content="This is my second post in a series explaining some of the technical decisions behind creating the football management iPhone game Title Challenge. &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://paulsturgess.github.io/blog/2015/02/17/how-you-can-use-core-data-to-make-your-rubymotion-app-faster">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="A blog about iOS dev with RubyMotion" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-75197-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">A blog about iOS dev with RubyMotion</a></h1>
+  
+    <h2>Paul Sturgess</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/">Index</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="https://twitter.com/paulsturgess">@paulsturgess</a></li>
+  <li><a href="https://github.com/paulsturgess">Github</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">How You Can Use Core Data to Make Your RubyMotion App Faster</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-17T09:05:00+00:00" pubdate data-updated="true">Feb 17<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>This is my second post in a series explaining some of the technical decisions behind creating the <a href="http://www.titlechallenge.com">football management iPhone game Title Challenge</a>. The first post was a <a href="http://paulsturgess.co.uk/blog/2015/02/13/using-reveal-app-to-build-a-rubymotion-football-manager-game/">short one about using Reveal App</a> as a useful debugging tool for building layouts.</p>
+
+<p>From the outside Title Challenge may appear pretty simple, but under the hood there is a lot more than you might realise going on. Before I talk about why I chose Core Data (or even what Core Data is), let me explain a little bit about the processing the game needs to perform.</p>
+
+<h2>Lots of processing means loading screens</h2>
+
+<p>Each ‘game week’ you progress, the following needs to be updated:</p>
+
+<ul>
+<li>Process player transfers (ensuring these are realistic to each club)</li>
+<li>Simulate player training (players improve their skill gradually over time)</li>
+<li>Update all injured players (each week they will be closer to full fitness)</li>
+<li>Update exhausted players (players get exhausted if they are not rested enough)</li>
+<li>Check player unhappiness (players can get unhappy at not being played enough)</li>
+<li>Run scout reports (your scouts will report back on your shortlisted players)</li>
+<li>Update the transfer list (again ensuring clubs are realistic in who they transfer list)</li>
+</ul>
+
+
+<p>The key thing is that there could be 6,000+ players to update, with thousands of other related records to update in the database. I wanted this to run as fast as possible to reduce waiting times between game weeks.</p>
+
+<p>While this is going on we show a loading screen. We decided to spend time making these look nice by including colourful player illustrations by <a href="http://davewilldesign.com/#/lfc-postcard-series-1314/">Liverpool FC illustrator Dave Will</a>.</p>
+
+<p>Combined with a random humourous/entertaining/interesting quote (of which there are hundreds in the game) it makes waiting as pleasant as possible. Here&#8217;s an example:</p>
+
+<p><a href="/images/loading.PNG" target="_blank"><img class="left" src="/images/loading.PNG" width="825" height="825" title="Loading image" alt="Loading image"></a>
+&nbsp;</p>
+
+<h2>Measuring Performance with RubyMotion-Benchmark</h2>
+
+<p>One way I made the code run faster was to run it, measure it, tweak it. Rinse and repeat. <a href="https://github.com/Watson1978/RubyMotion-Benchmark">Motion Benchmark</a> is a very, very simple gem but it is easy to use for this very task. It gives you precise control on what code is benchmarked, but this also makes it time consuming to identify what you should be benchmarking in the first place.</p>
+
+<h2>Find the bottlenecks in your code</h2>
+
+<p>This is where the Time Profiler in XCode’s Instruments tool is incredibly useful. It could be the subject of an entire blog post. In a nutshell it shows the exact time taken for each branch of code, even for each thread. It gives you a full stack trace to work so you can even see which line of code it is. This makes it easy to identify where the biggest bottlenecks are. I would always try and optimise those first to get some quick wins.</p>
+
+<h2>Optimise your code without even making it run faster</h2>
+
+<p>However, the main point of this blog post is to recommend thinking about how you can optimise your code without even making it run faster. This probably sounds like a an odd statement, but this is where Core Data comes in.</p>
+
+<p>Many developers think <a href="http://en.wikipedia.org/wiki/Core_Data">Core Data</a> is just another way to persist data and is comparable to using <a href="http://www.sqlite.org/">SQLite</a>. Indeed, Core Data can use SQLite to persist data and I use Core Data with SQLite in Title Challenge. However, the fact Core Data can use SQLite is not important and you won’t be writing any SQL to use it. Core Data is primarily a framework for object life-cycle and object graph management.</p>
+
+<p>Coming from a web development background it took me a while to get my head around this. I’ve seen (and written) my fair share of Rails apps tightly coupled to ActiveRecord and the database layer. Using Core Data forces you to understand that persistence is not the same thing as the object graph. So what is “object graph management”? The best way I can explain it, without loads of boring theory, is to tell you how I use it in Title Challenge.</p>
+
+<h2>Core Data and the Managed Object Context</h2>
+
+<p>I figured out the fastest way to perform the game week processing was to do it while the gamer was not even waiting for it to finish. I decided I wanted to perform the processing while the gamer was picking their team, analysing their squad, scouring the transfer list etc. I’m effectively doing all the processing for the next game week ahead of time.</p>
+
+<p>Core Data allows me to do this because I can take a copy of all the objects in the “Object Graph” ie. all the Clubs, Players etc. (in what is known as a Managed Object Context) and manipulate them as necessary on a background thread. I can perform all the tasks I mentioned earlier (e.g. processing transfers), without any of the changes showing up in the user interface as as the gamer is navigating around the app.</p>
+
+<p>In fact, none of these changes are persisted to disk until the gamer hits continue. This is one of the major differences of Core Data from how you use a database in a web app. With Core Data you make as many changes as you like and at some later date you tell it to save.</p>
+
+<p>Core Data is smart enough to handle the merging of all the changes from the background thread in with the changes made by the gamer on the main thread. The beauty of this technique is it doesn’t really matter how fast/slow my processing code runs, if the gamer is not even aware its running in the background.</p>
+
+<p>This approach has worked really well, especially on older devices where sometimes it doesn’t matter how much you optimise your code, it’s going to run slowly.</p>
+
+<h2>Some Complications</h2>
+
+<p>It becomes more complicated when the gamer interacts with players that have also changed in the context on the background thread. This is pretty rare in practice, but I’ve written code to handle any conflicts so it resolves them before continuing to the next game week.</p>
+
+<p>The other thing to watch out for is high memory usage. I found as I was processing nearly every player and every club, each game week, these were all getting pulled into memory and not released. Core Data will hold onto objects unless you tell it let go. This is great for performance, but not so great when memory is at a premium. I highly recommend reading up on <code>refreshObject</code> in the Core Data docs. Call this method on objects when you’re finished with them to release them and control memory spikes.</p>
+
+<h2>Shameless plug</h2>
+
+<p>If you got this far and you&#8217;re still wondering what Title Challenge is or you found this post useful and just feel like supporting me – Please do check out <a href="http://itunes.apple.com/app/id959982756">Title Challenge on the App Store</a>.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Paul Sturgess</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-17T09:05:00+00:00" pubdate data-updated="true">Feb 17<span>th</span>, 2015</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/02/13/using-reveal-app-to-build-a-rubymotion-football-manager-game/" title="Previous Post: Using Reveal App to build a RubyMotion football manager game">&laquo; Using Reveal App to build a RubyMotion football manager game</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/03/03/using-paintcode-to-dynamically-create-images-in-the-ios-football-manager-game-title-challenge/" title="Next Post: Using PaintCode to dynamically create images in the iOS football manager game Title Challenge">Using PaintCode to dynamically create images in the iOS football manager game Title Challenge &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/05/04/how-to-test-react-lifecycle-method-componentdidupdate-when-the-component-props-change/">How to test React lifecycle method componentDidUpdate when the component props change</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/07/09/rubymotion-inspect-paris-was-loads-of-fun/">RubyMotion #inspect Paris was loads of fun</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/12/core-data-in-rubymotion-defining-your-schema-in-code/">Core Data in RubyMotion – Defining your schema in code</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/03/using-paintcode-to-dynamically-create-images-in-the-ios-football-manager-game-title-challenge/">Using PaintCode to dynamically create images in the iOS football manager game Title Challenge</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/17/how-you-can-use-core-data-to-make-your-rubymotion-app-faster/">How you can use Core Data to make your RubyMotion app faster</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/paulsturgess">@paulsturgess</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'paulsturgess',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - Paul Sturgess -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

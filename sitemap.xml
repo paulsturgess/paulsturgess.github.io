@@ -84,7 +84,7 @@
         <loc>
             http://paulsturgess.github.io/blog/2014/02/20/using-magicalrecord-and-core-data-in-rubymotion/
         </loc>
-        <lastmod>2015-01-21T22:15:18+00:00</lastmod>
+        <lastmod>2016-05-04T22:58:54+01:00</lastmod>
     </url>
     <url>
         <loc>
@@ -99,12 +99,48 @@
         <lastmod>2015-02-05T20:00:21+00:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://paulsturgess.github.io/blog/2015/02/13/using-reveal-app-to-build-a-rubymotion-football-manager-game/
+        </loc>
+        <lastmod>2016-05-04T22:58:54+01:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://paulsturgess.github.io/blog/2015/02/17/how-you-can-use-core-data-to-make-your-rubymotion-app-faster/
+        </loc>
+        <lastmod>2016-05-04T22:58:54+01:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://paulsturgess.github.io/blog/2015/03/03/using-paintcode-to-dynamically-create-images-in-the-ios-football-manager-game-title-challenge/
+        </loc>
+        <lastmod>2016-05-04T22:58:54+01:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://paulsturgess.github.io/blog/2015/05/12/core-data-in-rubymotion-defining-your-schema-in-code/
+        </loc>
+        <lastmod>2016-05-04T22:58:54+01:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://paulsturgess.github.io/blog/2015/07/09/rubymotion-inspect-paris-was-loads-of-fun/
+        </loc>
+        <lastmod>2016-05-04T22:58:54+01:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://paulsturgess.github.io/blog/2016/05/04/how-to-test-react-lifecycle-method-componentdidupdate-when-the-component-props-change/
+        </loc>
+        <lastmod>2016-05-04T22:50:28+01:00</lastmod>
+    </url>
+    <url>
         <loc>http://paulsturgess.github.io/blog/archives/</loc>
-        <lastmod>2015-02-05T20:00:21+00:00</lastmod>
+        <lastmod>2016-05-04T22:58:54+01:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/</loc>
-        <lastmod>2015-02-05T20:00:21+00:00</lastmod>
+        <lastmod>2016-05-04T22:58:54+01:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/robots.txt</loc>

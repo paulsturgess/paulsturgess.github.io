@@ -1,0 +1,295 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Using PaintCode to dynamically create images in the iOS football manager game Title Challenge - A blog about iOS dev with RubyMotion</title>
+  <meta name="author" content="Paul Sturgess">
+
+  
+  <meta name="description" content="One of the important and distinctive visual aspects of Title Challenge is for each football club to have their own shirt and colour theme. The home &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://paulsturgess.github.io/blog/2015/03/03/using-paintcode-to-dynamically-create-images-in-the-ios-football-manager-game-title-challenge">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="A blog about iOS dev with RubyMotion" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-75197-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">A blog about iOS dev with RubyMotion</a></h1>
+  
+    <h2>Paul Sturgess</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/">Index</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="https://twitter.com/paulsturgess">@paulsturgess</a></li>
+  <li><a href="https://github.com/paulsturgess">Github</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Using PaintCode to Dynamically Create Images in the iOS Football Manager Game Title Challenge</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-03-03T15:26:00+00:00" pubdate data-updated="true">Mar 3<span>rd</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>One of the important and distinctive visual aspects of <a href="http://www.titlechallenge.com">Title Challenge</a> is for each football club to have their own shirt and colour theme. The home and away shirts are used on nearly all screens, with the front of the shirts representing a club and the rear of the shirts, with a number on the back, representing a player.</p>
+
+<p>There are over 250 clubs in the database that ships with the game. Each club has 2 shirts and we need several different sizes for different screens. We also had to consider that club shirts will potentially change in both colour and style each season going forward. On top of this, we wanted to support different device resolutions including both retina and non-retina resolutions.</p>
+
+<p>To create a fixed set of graphics of thousands of combinations in varying sizes, styles and colours would have been laborious to say the least and incredibly time consuming to maintain. It also would have enormously bloated the file size of our application.</p>
+
+<h2>Shirt Styles</h2>
+
+<p>We decided we wanted to be able to dynamically display, hide, colour and scale graphical components with code. This would allow us to display any club shirt on the fly.</p>
+
+<p>The first phase was to decide on some core shirt styles that covered the majority of shirts worn by football clubs. We came up with 6: Plain, Stripes, Hoops, Sleeves, Quarters and Halves. We also have a goalkeeper shirt and a substitute bib used for players on the bench.</p>
+
+<p><a href="/images/shirt_styles.png" target="_blank"><img class="left" src="/images/shirt_styles.png" width="825" height="825" title="Shirt Layers image" alt="Shirt Layers image"></a></p>
+
+<p>The image above shows the different shirt styles in Title Challenge</p>
+
+<h2>Vector Layers</h2>
+
+<p>After deciding on the styles, Thom, our designer, produced a set of modular vector graphics that could be layered over each other to create any kit style required without duplicating any of the kit elements.</p>
+
+<p>However, those vector graphics weren’t used directly in the game. The shirts you see are entirely generated from code. To achieve this, each individual shirt element was imported into a third party application called <a href="http://www.paintcodeapp.com/">PaintCode</a>.</p>
+
+<p><a href="/images/shirt_layers.png" target="_blank"><img class="left" src="/images/shirt_layers.png" width="825" height="825" title="Shirt Layers image" alt="Shirt Layers image"></a></p>
+
+<p>The image above shows the layers that make up a black and white striped shirt with a green substitute bib.</p>
+
+<h2>PaintCode</h2>
+
+<p><a href="http://www.paintcodeapp.com/">PaintCode</a> is genius, it automatically generates drawing code from vector graphics.</p>
+
+<p>The code to generate a shirt is actually composed of the same graphical modular layers composed on top of one another, but instead of vector graphics, they’re CALayers composed of UIBezierPath line segments with different fills and strokes.</p>
+
+<p>Even the shirt numbers have been generated using PaintCode. We could have used a font, and we did look for one, but we couldn’t quite find the right one. We wanted one loosely inspired by the <a href="http://goo.gl/nCCUqC">Mexico ‘86 world cup</a>, but with a modern feel.</p>
+
+<p>In the end it was easier to implement all elements of the shirt using the same code-based method. This was particularly true when we were dealing with scaling and animations on the tactics screen.</p>
+
+<p><a href="/images/paintcode.png" target="_blank"><img class="left" src="/images/paintcode.png" width="825" height="825" title="Paintcode screenshot" alt="Paintcode screenshot"></a></p>
+
+<p>Screenshot of <a href="http://www.paintcodeapp.com/">Paintcode</a> with the code in the panel below the shirt vector graphic.</p>
+
+<h2>Turn it off and on again</h2>
+
+<p>To generate the front or rear of a shirt, we simply show/hide a different collar style. We also show/hide the player number as appropriate. The goalkeeper shirt is just a plain shirt with some extra sleeves added on. For bibs, we simply add the bib layer straight over the top.</p>
+
+<p>Basically we just turn layers on and off and change the colours to produce the shirt combination we want. Taking this approach means that making tweaks are a joy to implement and not a chore to dread.</p>
+
+<p>Another benefit is we were able to include the shirts as part of data editor in the game. So any shirt style can be created completely on the fly using a color picker.</p>
+
+<p>We also changed the shirt style several times during the development of Title Challenge. I have no affiliation with <a href="http://www.paintcodeapp.com/">PaintCode</a>, but I&#8217;m so glad we used it!</p>
+
+<h2>Shameless plug</h2>
+
+<p>If you got this far and you&#8217;re still wondering what Title Challenge is or you found this post useful and just feel like supporting me – Please do check out <a href="http://itunes.apple.com/app/id959982756">Title Challenge on the App Store</a>.</p>
+
+<p>I&#8217;ve also written some other posts about developing Title Challenge: <a href="http://paulsturgess.co.uk/blog/2015/02/13/using-reveal-app-to-build-a-rubymotion-football-manager-game/">Debuging layout issues with RevealApp</a> and <a href="http://paulsturgess.co.uk/blog/2015/02/17/how-you-can-use-core-data-to-make-your-rubymotion-app-faster/">How to use Core Data to make your app faster</a>.</p>
+
+<p><a href="/images/tactics.png" target="_blank"><img class="left" src="/images/tactics.png" width="825" height="825" title="Tactics screenshot" alt="Tactics screenshot"></a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Paul Sturgess</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-03-03T15:26:00+00:00" pubdate data-updated="true">Mar 3<span>rd</span>, 2015</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/02/17/how-you-can-use-core-data-to-make-your-rubymotion-app-faster/" title="Previous Post: How you can use Core Data to make your RubyMotion app faster">&laquo; How you can use Core Data to make your RubyMotion app faster</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/05/12/core-data-in-rubymotion-defining-your-schema-in-code/" title="Next Post: Core Data in RubyMotion – Defining your schema in code">Core Data in RubyMotion – Defining your schema in code &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/05/04/how-to-test-react-lifecycle-method-componentdidupdate-when-the-component-props-change/">How to test React lifecycle method componentDidUpdate when the component props change</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/07/09/rubymotion-inspect-paris-was-loads-of-fun/">RubyMotion #inspect Paris was loads of fun</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/12/core-data-in-rubymotion-defining-your-schema-in-code/">Core Data in RubyMotion – Defining your schema in code</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/03/using-paintcode-to-dynamically-create-images-in-the-ios-football-manager-game-title-challenge/">Using PaintCode to dynamically create images in the iOS football manager game Title Challenge</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/17/how-you-can-use-core-data-to-make-your-rubymotion-app-faster/">How you can use Core Data to make your RubyMotion app faster</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/paulsturgess">@paulsturgess</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'paulsturgess',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - Paul Sturgess -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

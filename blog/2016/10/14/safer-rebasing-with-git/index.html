@@ -1,0 +1,371 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Safer rebasing with Git - A blog about iOS & web dev using RubyMotion, React, Ruby and Rails</title>
+  <meta name="author" content="Paul Sturgess">
+
+  
+  <meta name="description" content="Rebasing a git branch is great way to maintain a clean commit history and it&#8217;s my
+preferred way of getting changes into a feature branch ( &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://paulsturgess.github.io/blog/2016/10/14/safer-rebasing-with-git">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="A blog about iOS & web dev using RubyMotion, React, Ruby and Rails" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-75197-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">A blog about iOS & web dev using RubyMotion, React, Ruby and Rails</a></h1>
+  
+    <h2>Paul Sturgess</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/">Index</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="https://twitter.com/paulsturgess">@paulsturgess</a></li>
+  <li><a href="https://github.com/paulsturgess">Github</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Safer Rebasing With Git</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-10-14T18:32:00+01:00" pubdate data-updated="true">Oct 14<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Rebasing a <a href="https://git-scm.com/">git</a> branch is great way to maintain a clean commit history and it&#8217;s my
+preferred way of getting changes into a feature branch (instead of merging). This
+blog post will explain how I use it and how I make it safer to use.</p>
+
+<h2>Caveat!</h2>
+
+<p>Rebasing is dangerous because you are re-writing the branch history!</p>
+
+<p>Imagine someone else has pulled down your branch and then you re-write history –
+it will <em>really hurt</em> when it comes to combining both your changes.</p>
+
+<p>If your feature branch will be worked on by multiple people, I would strongly urge
+you do not rebase.</p>
+
+<p>The git book does a great job of <a href="https://git-scm.com/book/ch3-6.html">describing rebasing in detail</a>,
+including the pitfalls of rebasing public branches and what to do if you do if you
+get really stuck after rebasing.</p>
+
+<h2>My work flow</h2>
+
+<p>For most projects I work on, feature branches are typically only contributed to
+by one person – so rebasing is ok.</p>
+
+<p>My work-flow for creating a feature branch from <code>master</code> is something like:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git checkout -b feature/new_thing
+</span><span class='line'>... I make various commits for feature related changes
+</span><span class='line'>... Meanwhile, master is also updated
+</span><span class='line'>$ git fetch
+</span><span class='line'>$ git pull --rebase origin master</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This effectively re-writes the history of <code>feature/new_thing</code> to place my commits
+after those made in <code>master</code>. There&#8217;s no merge commit, so it&#8217;s really neat and tidy.</p>
+
+<p>I like the idea of opening a Pull Request as soon I start work on a feature.
+I&#8217;ll then make &#8216;work in progress&#8217; commits as I go and push them up to the remote.
+This gives people an early chance to review what I&#8217;m doing and lessens the chance
+that my work might get lost if my computer blows up and my backup fails :)</p>
+
+<p>But these commits can be messy and include changes I later revert, as I work on
+the feature. I think it&#8217;s good practice to try and keep commits as logical and
+concise as is reasonably possible. Ideally they will read like documentation for
+the feature so that <code>git log</code> is like a story.</p>
+
+<p>So during development, I won&#8217;t get too hung up on the commits. But eventually I
+will use <a href="https://git-scm.com/book/ch7-6.html">interactive rebase</a> to re-order or
+squash my commits into shape.</p>
+
+<p>My interactive rebase work-flow is typically:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git log
+</span><span class='line'>... Find the sha for the last commit I want to leave alone
+</span><span class='line'>$ git rebase -i sha-for-commit-to-leave-alone-goes-here</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It will then show something like this:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pick f7f3f6d Initial work on feature
+</span><span class='line'>pick 310154e Additional work on feature
+</span><span class='line'>pick a5f4a0d Finish feature
+</span><span class='line'>
+</span><span class='line'># Commands:
+</span><span class='line'>#  p, pick = use commit
+</span><span class='line'>#  r, reword = use commit, but edit the commit message
+</span><span class='line'>#  e, edit = use commit, but stop for amending
+</span><span class='line'>#  s, squash = use commit, but meld into previous commit
+</span><span class='line'>#  f, fixup = like "squash", but discard this commit's log message
+</span><span class='line'>#  x, exec = run command (the rest of the line) using shell
+</span><span class='line'>#
+</span><span class='line'># These lines can be re-ordered; they are executed from top to bottom.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Just edit <code>pick</code> to whatever action you want to perform and use <code>:wq</code> to save.</p>
+
+<p>Now the next step is to push <code>feature/new_thing</code> to the remote and (other than the
+first time I push) I&#8217;ll need to force push and this is where it gets dangerous!</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git push -f origin feature/new_thing</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will completely overwrite <code>feature/new_thing</code> whatever state it is in. Too bad if
+someone else updated it, there changes are gone.</p>
+
+<p>Accidentally type <code>feature/other_thing</code> and you&#8217;ve just blitzed the wrong branch!</p>
+
+<h2>The safer way to force push</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git push --force-with-lease feature/new_thing</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Force with lease essentially checks the remote branch to see if it&#8217;s been updated
+upstream and if so rejects the push and shows you a nice error message.</p>
+
+<p>Beware that if you fetch, but don&#8217;t actually pull in the changes, <code>force-with-lease</code>
+will not save you!</p>
+
+<p>I want to always use <code>force-with-lease</code> over the standard <code>force</code> but this is
+long to type so I have a git alias:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git config --global alias.pushf "push --force-with-lease"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now I can safely use:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git pushf origin feature/new_thing</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Got any git rebase tips? Feel free to contact me on Twitter <a href="https://twitter.com/paulsturgess">@paulsturgess</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Paul Sturgess</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-10-14T18:32:00+01:00" pubdate data-updated="true">Oct 14<span>th</span>, 2016</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/09/29/elixir-london-conference-2016/" title="Previous Post: Elixir London Conference 2016">&laquo; Elixir London Conference 2016</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/10/14/safer-rebasing-with-git/">Safer rebasing with Git</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/29/elixir-london-conference-2016/">Elixir London Conference 2016</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/05/04/how-to-test-react-lifecycle-method-componentdidupdate-when-the-component-props-change/">How to test React lifecycle method componentDidUpdate when the component props change</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/07/09/rubymotion-inspect-paris-was-loads-of-fun/">RubyMotion #inspect Paris was loads of fun</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/12/core-data-in-rubymotion-defining-your-schema-in-code/">Core Data in RubyMotion – Defining your schema in code</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/paulsturgess">@paulsturgess</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'paulsturgess',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - Paul Sturgess -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

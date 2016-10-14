@@ -9,7 +9,8 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="React has many lifecycle methods you can hook behaviour onto, one of which is componentDidUpdate. This blog will show you how to test this method &hellip;">
+  <meta name="description" content="Rebasing a git branch is great way to maintain a clean commit history and it&#8217;s my
+preferred way of getting changes into a feature branch ( &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -73,6 +74,252 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/10/14/safer-rebasing-with-git/">Safer Rebasing With Git</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-10-14T18:32:00+01:00" pubdate data-updated="true">Oct 14<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Rebasing a <a href="https://git-scm.com/">git</a> branch is great way to maintain a clean commit history and it&#8217;s my
+preferred way of getting changes into a feature branch (instead of merging). This
+blog post will explain how I use it and how I make it safer to use.</p>
+
+<h2>Caveat!</h2>
+
+<p>Rebasing is dangerous because you are re-writing the branch history!</p>
+
+<p>Imagine someone else has pulled down your branch and then you re-write history –
+it will <em>really hurt</em> when it comes to combining both your changes.</p>
+
+<p>If your feature branch will be worked on by multiple people, I would strongly urge
+you do not rebase.</p>
+
+<p>The git book does a great job of <a href="https://git-scm.com/book/ch3-6.html">describing rebasing in detail</a>,
+including the pitfalls of rebasing public branches and what to do if you do if you
+get really stuck after rebasing.</p>
+
+<h2>My work flow</h2>
+
+<p>For most projects I work on, feature branches are typically only contributed to
+by one person – so rebasing is ok.</p>
+
+<p>My work-flow for creating a feature branch from <code>master</code> is something like:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git checkout -b feature/new_thing
+</span><span class='line'>... I make various commits for feature related changes
+</span><span class='line'>... Meanwhile, master is also updated
+</span><span class='line'>$ git fetch
+</span><span class='line'>$ git pull --rebase origin master</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This effectively re-writes the history of <code>feature/new_thing</code> to place my commits
+after those made in <code>master</code>. There&#8217;s no merge commit, so it&#8217;s really neat and tidy.</p>
+
+<p>I like the idea of opening a Pull Request as soon I start work on a feature.
+I&#8217;ll then make &#8216;work in progress&#8217; commits as I go and push them up to the remote.
+This gives people an early chance to review what I&#8217;m doing and lessens the chance
+that my work might get lost if my computer blows up and my backup fails :)</p>
+
+<p>But these commits can be messy and include changes I later revert, as I work on
+the feature. I think it&#8217;s good practice to try and keep commits as logical and
+concise as is reasonably possible. Ideally they will read like documentation for
+the feature so that <code>git log</code> is like a story.</p>
+
+<p>So during development, I won&#8217;t get too hung up on the commits. But eventually I
+will use <a href="https://git-scm.com/book/ch7-6.html">interactive rebase</a> to re-order or
+squash my commits into shape.</p>
+
+<p>My interactive rebase work-flow is typically:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git log
+</span><span class='line'>... Find the sha for the last commit I want to leave alone
+</span><span class='line'>$ git rebase -i sha-for-commit-to-leave-alone-goes-here</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It will then show something like this:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pick f7f3f6d Initial work on feature
+</span><span class='line'>pick 310154e Additional work on feature
+</span><span class='line'>pick a5f4a0d Finish feature
+</span><span class='line'>
+</span><span class='line'># Commands:
+</span><span class='line'>#  p, pick = use commit
+</span><span class='line'>#  r, reword = use commit, but edit the commit message
+</span><span class='line'>#  e, edit = use commit, but stop for amending
+</span><span class='line'>#  s, squash = use commit, but meld into previous commit
+</span><span class='line'>#  f, fixup = like "squash", but discard this commit's log message
+</span><span class='line'>#  x, exec = run command (the rest of the line) using shell
+</span><span class='line'>#
+</span><span class='line'># These lines can be re-ordered; they are executed from top to bottom.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Just edit <code>pick</code> to whatever action you want to perform and use <code>:wq</code> to save.</p>
+
+<p>Now the next step is to push <code>feature/new_thing</code> to the remote and (other than the
+first time I push) I&#8217;ll need to force push and this is where it gets dangerous!</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git push -f origin feature/new_thing</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will completely overwrite <code>feature/new_thing</code> whatever state it is in. Too bad if
+someone else updated it, there changes are gone.</p>
+
+<p>Accidentally type <code>feature/other_thing</code> and you&#8217;ve just blitzed the wrong branch!</p>
+
+<h2>The safer way to force push</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git push --force-with-lease feature/new_thing</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Force with lease essentially checks the remote branch to see if it&#8217;s been updated
+upstream and if so rejects the push and shows you a nice error message.</p>
+
+<p>Beware that if you fetch, but don&#8217;t actually pull in the changes, <code>force-with-lease</code>
+will not save you!</p>
+
+<p>I want to always use <code>force-with-lease</code> over the standard <code>force</code> but this is
+long to type so I have a git alias:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git config --global alias.pushf "push --force-with-lease"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now I can safely use:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git pushf origin feature/new_thing</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Got any git rebase tips? Feel free to contact me on Twitter <a href="https://twitter.com/paulsturgess">@paulsturgess</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/09/29/elixir-london-conference-2016/">Elixir London Conference 2016</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-09-29T12:35:00+01:00" pubdate data-updated="true">Sep 29<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Last week the first ever <a href="http://www.elixir.london/">Elixir conference</a> was held in London and I was lucky enough to attend. It was brilliantly run with lots of great speakers and they&#8217;ve even got the <a href="http://www.elixir.london/#speakers">videos up online</a> already!</p>
+
+<h2>Elixir and Ruby</h2>
+
+<p><a href="http://elixir-lang.org/">Elixir</a> is a relatively new programming language that&#8217;s gaining in popularity fast, particularly amongst Ruby developers. During the conference they asked the audience to raise their hand if they had been, or are, a Ruby developer and over 75% did (myself included)!</p>
+
+<p>So what&#8217;s attracting the Ruby community? Aside from the fact developers love shiny new things, this shiny new thing is different. That&#8217;s because Elixir runs on the <a href="http://www.erlang.org/">Erlang</a> BEAM which has been around for decades and was originally developed by Ericsson.</p>
+
+<p>The key-note was from co-creator of Erlang,<a href="http://www.elixir.london/2016/robert-virding">Robert Virding</a>. It was fascinating to hear him talk about how Erlang was developed to solve the challenges Ericsson was facing building telecoms systems in the late 80&#8217;s, early 90&#8217;s. It&#8217;s amazing that the problems they solved are just as relevant in todays world of online software applications. One of the most high-profile recent adopters of Erlang is <a href="https://www.whatsapp.com/">WhatsApp</a>.</p>
+
+<p>So what does this have to do with Ruby? Well Elixir inherits all of the characteristics that Erlang is known for:</p>
+
+<ul>
+<li>Concurrent</li>
+<li>Fault tolerant</li>
+<li>Easy to scale</li>
+</ul>
+
+
+<p>Often these are the same criticisms levelled at Ruby and Elixir provides an appealing syntax that looks a lot like Ruby.</p>
+
+<h2>Phoenix</h2>
+
+<p>The icing on the cake for Rails developers looking to transition to Elixir is <a href="http://www.phoenixframework.org/">Phoenix</a>. Phoenix takes a lot of the good ideas in Rails and adds all the benefits of Elixir such as the concurrency and fault tolerance.</p>
+
+<p><a href="http://www.elixir.london/2016/gary-rennie">Gary Rennie</a> (core member of the Phoenix team) did a great job running through some best practices with controllers in Phoenix. He also explained why umbrella applications are a good idea to logically split your application where it makes sense.</p>
+
+<p>As an aside, I recently came across this article from the creator of phoenix Chris McCord <a href="https://dockyard.com/blog/2016/08/09/phoenix-channels-vs-rails-action-cable">comparing Phoenix channels and Rails action cable</a> which makes for eye-opening reading.</p>
+
+<h2>Nerves</h2>
+
+<p>However, it&#8217;s not all about web applications and there were a few great talks and demonstrations showcasing embedded systems with Elixir. One of the most interesting discoveries for me was the <a href="http://nerves-project.org/">Nerves Project</a>.</p>
+
+<p>The goal of Nerves is it make it simple for developers to write Elixir to interface with network and input/output devices, embed the code on a memory card, and run it on hardware like a <a href="https://www.raspberrypi.org/">Raspberry Pi</a>.</p>
+
+<p><a href="http://www.elixir.london/2016/tetiana-dushenkivska">Ju Liu&#8217;s live coding demo</a> involved lots of various sensors (including lasers) and was a particular highlight.</p>
+
+<h2>What&#8217;s next?</h2>
+
+<p>Elixir is very young and there&#8217;s clearly lots of enthusiasm in the community. I&#8217;m definitely going to be keeping a close eye on the ecosystem that is already growing very quickly. There seems to be a lot of benefits to using Elixir for modern application development.</p>
+
+<p>I definitely want to try writing an Elixir application and wrapping my head around functional programming (when I&#8217;m used to Object Oriented programming) is an interesting challenge I&#8217;ve been looking for an excuse to take on!</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -931,652 +1178,6 @@ takes a screenshot and allows the user to share it along with some text.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/02/20/using-magicalrecord-and-core-data-in-rubymotion/">Using MagicalRecord and Core Data in RubyMotion</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-02-20T13:36:00+00:00" pubdate data-updated="true">Feb 20<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="https://github.com/magicalpanda/MagicalRecord">MagicalRecord</a> is a wrapper around Apple&#8217;s <a href="http://en.wikipedia.org/wiki/Core_Data">Core Data Framework</a>. Written in Objective-C,
-it&#8217;s one of the most popular and mature libraries for working with Core Data.</p>
-
-<p>I really like it as it simplifies a lot of the code, whilst
-it still allows you to &#8216;get your hands dirty&#8217; when necessary.</p>
-
-<p>This article details how I&#8217;m using it. This is by no means the &#8216;perfect&#8217; solution,
-as I am evolving it all the time, but it is working well for me. By all means
-get in touch if you think I&#8217;m missing any obvious tricks.</p>
-
-<p>One thing I have found is that it&#8217;s pretty much impossible to hide the fact you
-are using CoreData. Particularly with the requirement of a different context for each
-thread. But what I do want to do is make things as simple, consistent and maintainable
-as possible.</p>
-
-<h2>Installation</h2>
-
-<p>At the time of writing I&#8217;m using the <a href="https://github.com/magicalpanda/MagicalRecord/tree/release/3.0">MagicalRecord 3.0 branch</a>,
-installed via <a href="https://github.com/HipByte/motion-cocoapods">motion-cocoaopds</a>. My <code>Rakefile</code> includes:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>app.pods do
-</span><span class='line'>  pod 'MagicalRecord', :git =&gt; 'https://github.com/magicalpanda/MagicalRecord.git', :branch =&gt;'release/3.0'
-</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Wrapping MagicalRecord</h2>
-
-<p>First I have a <code>Database</code> class to wrap common MagicalRecord tasks.</p>
-
-<p>The main reason for this class is so that I do not sprinkle MagicalRecord calls
-all around my code. Having them all in one place will make it easy to update if/when
-the MagicalRecord api changes. It also encourages consistency in my usage of MagicalRecord
-as, for example, there are many ways to persist your data.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-<span class='line-number'>69</span>
-<span class='line-number'>70</span>
-<span class='line-number'>71</span>
-<span class='line-number'>72</span>
-<span class='line-number'>73</span>
-<span class='line-number'>74</span>
-<span class='line-number'>75</span>
-<span class='line-number'>76</span>
-<span class='line-number'>77</span>
-<span class='line-number'>78</span>
-<span class='line-number'>79</span>
-<span class='line-number'>80</span>
-<span class='line-number'>81</span>
-<span class='line-number'>82</span>
-<span class='line-number'>83</span>
-<span class='line-number'>84</span>
-<span class='line-number'>85</span>
-<span class='line-number'>86</span>
-<span class='line-number'>87</span>
-<span class='line-number'>88</span>
-<span class='line-number'>89</span>
-<span class='line-number'>90</span>
-<span class='line-number'>91</span>
-<span class='line-number'>92</span>
-<span class='line-number'>93</span>
-<span class='line-number'>94</span>
-<span class='line-number'>95</span>
-<span class='line-number'>96</span>
-<span class='line-number'>97</span>
-<span class='line-number'>98</span>
-<span class='line-number'>99</span>
-<span class='line-number'>100</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>class Database
-</span><span class='line'>
-</span><span class='line'>  def self.filename
-</span><span class='line'>    "YourApplicationName.sqlite"
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.path
-</span><span class='line'>    File.join(
-</span><span class='line'>      NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, true),
-</span><span class='line'>      "YourApplicationName",
-</span><span class='line'>      self.filename
-</span><span class='line'>    )
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.created?
-</span><span class='line'>    File.exist?(self.path)
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.loadOrCreate
-</span><span class='line'>    MagicalRecord.setupAutoMigratingStack
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.createTestDB
-</span><span class='line'>    MagicalRecord.setupStackWithInMemoryStore
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.delete
-</span><span class='line'>    if self.created?
-</span><span class='line'>      self.cleanUp
-</span><span class='line'>      File.delete(self.path)
-</span><span class='line'>    end
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.reset
-</span><span class='line'>    Database.delete
-</span><span class='line'>    Database.loadOrCreate
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.cleanUp
-</span><span class='line'>    MagicalRecord.cleanUp
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.defaultLocalContext
-</span><span class='line'>    MagicalRecordStack.defaultStack.context
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.backgroundLocalContext
-</span><span class='line'>    NSManagedObjectContext.MR_confinementContextWithParent(defaultLocalContext)
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.save_specific_context(localContext, callback = nil)
-</span><span class='line'>    localContext.MR_saveToPersistentStoreWithCompletion(
-</span><span class='line'>      lambda { |success, error|
-</span><span class='line'>        NSLog("success: %@", success)
-</span><span class='line'>        if success
-</span><span class='line'>          callback.call if callback
-</span><span class='line'>        else
-</span><span class='line'>          NSLog "Error saving Seed Data"
-</span><span class='line'>          NSLog("description: %@", error.description)
-</span><span class='line'>        end
-</span><span class='line'>      }
-</span><span class='line'>    )
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.save_test_db!
-</span><span class='line'>    defaultLocalContext.MR_saveToPersistentStoreAndWait
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.save_on_main_thread!(callback = nil)
-</span><span class='line'>    defaultLocalContext.MR_saveToPersistentStoreWithCompletion(
-</span><span class='line'>      lambda { |success, error|
-</span><span class='line'>        NSLog("success: %@", success)
-</span><span class='line'>        if success
-</span><span class='line'>          callback.call(defaultLocalContext) if callback
-</span><span class='line'>        else
-</span><span class='line'>          NSLog "Error saving Core Data"
-</span><span class='line'>          NSLog("description: %@", error.description)
-</span><span class='line'>        end
-</span><span class='line'>      }
-</span><span class='line'>    )
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.save_on_background_thread!(callback = nil, completion_callback = nil)
-</span><span class='line'>    MagicalRecord.saveWithBlock(
-</span><span class='line'>      lambda { |localContext|
-</span><span class='line'>        callback.call(localContext) if callback
-</span><span class='line'>      },
-</span><span class='line'>      completion: lambda { |success, error|
-</span><span class='line'>        NSLog("success: %@", success)
-</span><span class='line'>        if success
-</span><span class='line'>          completion_callback.call if completion_callback
-</span><span class='line'>        else
-</span><span class='line'>          NSLog "Error saving Core Data"
-</span><span class='line'>          NSLog("description: %@", error.description)
-</span><span class='line'>        end
-</span><span class='line'>      }
-</span><span class='line'>    )
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
-
-
-<p>In <code>AppDelegate</code> <code>didFinishLaunchingWithOptions</code> I call <code>Database.loadOrCreate</code>. As the name implies, this
-will either load my existing Core Data stack or it will set up a new one.</p>
-
-<p>I also cleanup the database when my app closes via this method in the <code>AppDelegate</code>:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>  def applicationWillTerminate application
-</span><span class='line'>    Database.cleanUp
-</span><span class='line'>  end</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Entities</h2>
-
-<p><del>I create my Core Data entities in Xcode (although I do intend to look at the <a href="https://github.com/infinitered/ruby-xcdm">ruby-xcdm gem</a> so I can stop using Xcode).</del> I&#8217;m now using the <a href="https://github.com/infinitered/ruby-xcdm">ruby-xcdm</a> gem to define my schema in code. Here&#8217;s a <a href="http://paulsturgess.co.uk/blog/2015/05/12/core-data-in-rubymotion-defining-your-schema-in-code/">blog post about it</a>.</p>
-
-<p>For now, the <a href="https://github.com/yury/ib">ib gem</a> is great for allowing us to fire up Xcode just when we need it.
-The gem is mostly geared around using Interface Builder but I don&#8217;t use it for that.</p>
-
-<p>Once you&#8217;ve installed the gem run:</p>
-
-<pre><code>$ rake ib:open
-</code></pre>
-
-<p>This will open Xcode. Inside the Resources folder on the left hand side there
-will be a <code>.xcdatamodeld</code> file. Select this and you can create your entities.</p>
-
-<p>One thing to remember is to set the <code>Class</code> of each Entity to the corresponding <code>Class</code>
-in your app. Otherwise it will be a standard <code>NSManagedObject</code>.</p>
-
-<p>So for each Entiy I create a corresponding class like so. Note it inherits from my
-own <code>CustomNSManagedObject</code>.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>class ToDoItem &lt; CustomNSManagedObject
-</span><span class='line'>  # more methods go here
-</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
-
-
-<p>I give each Entity <code>created_at</code> and <code>id</code> attributes in order to help with querying.</p>
-
-<h2>ActiveRecord Style Behaviour</h2>
-
-<p>The subclass of NSManagedObject I use looks like this:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>class CustomNSManagedObject &lt; NSManagedObject
-</span><span class='line'>
-</span><span class='line'>  def self.defaultContext
-</span><span class='line'>    CurrentSaveGame.localContext
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.all(context = nil)
-</span><span class='line'>    localContext = context || defaultContext
-</span><span class='line'>    self.MR_findAllSortedBy("created_at", ascending:true, inContext: localContext)
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.first(context = nil)
-</span><span class='line'>    localContext = context || defaultContext
-</span><span class='line'>    self.MR_findFirstOrderedByAttribute("created_at", ascending:true, inContext: localContext)
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.last(context = nil)
-</span><span class='line'>    localContext = context || defaultContext
-</span><span class='line'>    self.MR_findFirstOrderedByAttribute("created_at", ascending:false, inContext: localContext)
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.count
-</span><span class='line'>    self.MR_numberOfEntities
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.find(id, context = nil)
-</span><span class='line'>    localContext = context || defaultContext
-</span><span class='line'>    self.MR_findFirstByAttribute("id", withValue:id, inContext: localContext)
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.new(attributes)
-</span><span class='line'>    self.build(attributes)
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def self.build(attributes = {}, context = nil)
-</span><span class='line'>    localContext = context || defaultContext
-</span><span class='line'>    model = self.MR_createInContext(localContext)
-</span><span class='line'>    model.setValuesForKeysWithDictionary(attributes)
-</span><span class='line'>    model.created_at = Time.now
-</span><span class='line'>    model
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def switch_context(localContext)
-</span><span class='line'>    self.MR_inContext(localContext)
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  def attributes
-</span><span class='line'>    self.entity.attributesByName.keys.each_with_object({}) do |attribute, attributes_hash|
-</span><span class='line'>      attributes_hash[attribute] = self.send(attribute)
-</span><span class='line'>    end
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Essentially this class gives me ActiveRecord like behaviour. Also, like my <code>Database</code> class,
-it ensures I contain some more <code>MagicalRecord</code> calls to a single place.</p>
-
-<p>This means I can do:</p>
-
-<pre><code>ToDoItem.build(
-  {
-    id: 1,
-    action: "Lorem ipsum dolor sit amet"
-  }
-)
-</code></pre>
-
-<p>My build method automatically inserts a <code>created_at</code> for every new record.</p>
-
-<h2>Data store</h2>
-
-<p>By default <code>MagicalRecord.setupAutoMigratingCoreDataStack</code> will use SQLite to
-persist your data.</p>
-
-<p>Note that I don&#8217;t include a <code>save</code> method in <code>CustomNSManagedObject</code>. Saving an individual
-record isn&#8217;t the most efficient way to persist changes in Core Data. Everything is held
-in memory until the relevant context is told to save. Hence why I&#8217;ve put the
-<code>save</code> method in the <code>Database</code> class.</p>
-
-<h2>Persisting data on the main thread</h2>
-
-<p>If you&#8217;ve used any of the CustomNSManagedObject methods like <code>find</code>, <code>all</code>, or <code>build</code>
-without passing in a context then using <code>Database.save_on_main_thread!</code> will persist any
-changes made. For example:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>new_item = ToDoItem.build(
-</span><span class='line'>  {
-</span><span class='line'>    id: 2
-</span><span class='line'>    action: "Some other todo item"
-</span><span class='line'>  }
-</span><span class='line'>)
-</span><span class='line'>Database.save_on_main_thread!</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Persisting data on background threads</h2>
-
-<p>However, if updates are made on a background thread, then we need a new (temporary)
-context which is handled by <code>Database.save_on_background_thread!</code>.</p>
-
-<p>For example:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>Database.save_on_background_thread!(
-</span><span class='line'>  lambda { |localContext|
-</span><span class='line'>    new_item = ToDoItem.build(
-</span><span class='line'>      {
-</span><span class='line'>        id: 2
-</span><span class='line'>        action: "Some other todo item"
-</span><span class='line'>      },
-</span><span class='line'>      localContext
-</span><span class='line'>    )
-</span><span class='line'>  }
-</span><span class='line'>)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Alternatively if you don&#8217;t want to wrap everything in the block. Create a
-<code>localContext</code> and hold on to it. Make your changes and then save later down the line.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>localContext = Database.backgroundLocalContext
-</span><span class='line'>new_item = ToDoItem.build(
-</span><span class='line'>  {
-</span><span class='line'>    id: 2
-</span><span class='line'>    action: "Some other todo item"
-</span><span class='line'>  },
-</span><span class='line'>  localContext
-</span><span class='line'>)
-</span><span class='line'>Database.save_specific_context(localContext)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Note most of the class methods in <code>CustomNSManagedObject</code> take an optional context so they
-can be used on background threads.</p>
-
-<h2>Testing</h2>
-
-<p>For tests I use the in memory data store and when saving it is synchronous. This ensures the data is there before the assertions!</p>
-
-<p>For example:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>describe "SomeTest" do
-</span><span class='line'>
-</span><span class='line'>  before do
-</span><span class='line'>    Database.cleanUp
-</span><span class='line'>    Database.createTestDB
-</span><span class='line'>    @localContext = Database.defaultLocalContext
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>  describe "some_method" do
-</span><span class='line'>
-</span><span class='line'>    context "when some scenario" do
-</span><span class='line'>
-</span><span class='line'>      it "should assign something is true" do
-</span><span class='line'>        # ...
-</span><span class='line'>      end
-</span><span class='line'>
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/10/29/logging-to-the-console-in-rubymotion/">Logging to the Console in RubyMotion</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-10-29T08:44:00+00:00" pubdate data-updated="true">Oct 29<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>The simplest way to output to the console from your RubyMotion app is to use
-<code>puts</code>. This works fine when your app is running in the simulator. However,
-<code>puts</code> does not output to the console when your app is running on the device
-itself.</p>
-
-<p>You can view the live logs while your app is running on your usb connected device via:</p>
-
-<pre><code>$ motion device:console
-</code></pre>
-
-<p>You will see messages from your application alongside those from other apps or
-the system itself.</p>
-
-<p>Instead of using <code>puts</code>, you&#8217;ll need to make use of <code>NSLog</code>. For example</p>
-
-<pre><code>NSLog("My debug messge")
-</code></pre>
-
-<p>Note, however, that the first argument for <code>NSLog</code> is actually a <a href="https://developer.apple.com/library/ios/documentation/cocoa/conceptual/Strings/Articles/formatSpecifiers.html">String Format Specifier</a>.</p>
-
-<p>The following are equivalent:</p>
-
-<pre><code>puts "A #{variable} goes here"
-NSLog("A %@ goes here", variable)
-</code></pre>
-
-<p>Just remember that any <code>NSLog</code> messages you leave in your app will be visible
-to the curious, even after you&#8217;ve released to the App Store.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1591,6 +1192,14 @@ to the curious, even after you&#8217;ve released to the App Store.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/10/14/safer-rebasing-with-git/">Safer rebasing with Git</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/29/elixir-london-conference-2016/">Elixir London Conference 2016</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/05/04/how-to-test-react-lifecycle-method-componentdidupdate-when-the-component-props-change/">How to test React lifecycle method componentDidUpdate when the component props change</a>
       </li>
     
@@ -1600,14 +1209,6 @@ to the curious, even after you&#8217;ve released to the App Store.</p>
     
       <li class="post">
         <a href="/blog/2015/05/12/core-data-in-rubymotion-defining-your-schema-in-code/">Core Data in RubyMotion – Defining your schema in code</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/03/03/using-paintcode-to-dynamically-create-images-in-the-ios-football-manager-game-title-challenge/">Using PaintCode to dynamically create images in the iOS football manager game Title Challenge</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/02/17/how-you-can-use-core-data-to-make-your-rubymotion-app-faster/">How you can use Core Data to make your RubyMotion app faster</a>
       </li>
     
   </ul>

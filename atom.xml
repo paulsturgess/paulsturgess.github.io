@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about iOS & web dev using RubyMotion, React, Ruby and Rails]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2016-05-04T23:11:02+01:00</updated>
+  <updated>2016-10-14T20:55:42+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,198 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Safer rebasing with Git]]></title>
+    <link href="http://paulsturgess.github.io/blog/2016/10/14/safer-rebasing-with-git/"/>
+    <updated>2016-10-14T18:32:00+01:00</updated>
+    <id>http://paulsturgess.github.io/blog/2016/10/14/safer-rebasing-with-git</id>
+    <content type="html"><![CDATA[<p>Rebasing a <a href="https://git-scm.com/">git</a> branch is great way to maintain a clean commit history and it&#8217;s my
+preferred way of getting changes into a feature branch (instead of merging). This
+blog post will explain how I use it and how I make it safer to use.</p>
+
+<h2>Caveat!</h2>
+
+<p>Rebasing is dangerous because you are re-writing the branch history!</p>
+
+<p>Imagine someone else has pulled down your branch and then you re-write history –
+it will <em>really hurt</em> when it comes to combining both your changes.</p>
+
+<p>If your feature branch will be worked on by multiple people, I would strongly urge
+you do not rebase.</p>
+
+<p>The git book does a great job of <a href="https://git-scm.com/book/ch3-6.html">describing rebasing in detail</a>,
+including the pitfalls of rebasing public branches and what to do if you do if you
+get really stuck after rebasing.</p>
+
+<h2>My work flow</h2>
+
+<p>For most projects I work on, feature branches are typically only contributed to
+by one person – so rebasing is ok.</p>
+
+<p>My work-flow for creating a feature branch from <code>master</code> is something like:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git checkout -b feature/new_thing
+</span><span class='line'>... I make various commits for feature related changes
+</span><span class='line'>... Meanwhile, master is also updated
+</span><span class='line'>$ git fetch
+</span><span class='line'>$ git pull --rebase origin master</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This effectively re-writes the history of <code>feature/new_thing</code> to place my commits
+after those made in <code>master</code>. There&#8217;s no merge commit, so it&#8217;s really neat and tidy.</p>
+
+<p>I like the idea of opening a Pull Request as soon I start work on a feature.
+I&#8217;ll then make &#8216;work in progress&#8217; commits as I go and push them up to the remote.
+This gives people an early chance to review what I&#8217;m doing and lessens the chance
+that my work might get lost if my computer blows up and my backup fails :)</p>
+
+<p>But these commits can be messy and include changes I later revert, as I work on
+the feature. I think it&#8217;s good practice to try and keep commits as logical and
+concise as is reasonably possible. Ideally they will read like documentation for
+the feature so that <code>git log</code> is like a story.</p>
+
+<p>So during development, I won&#8217;t get too hung up on the commits. But eventually I
+will use <a href="https://git-scm.com/book/ch7-6.html">interactive rebase</a> to re-order or
+squash my commits into shape.</p>
+
+<p>My interactive rebase work-flow is typically:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git log
+</span><span class='line'>... Find the sha for the last commit I want to leave alone
+</span><span class='line'>$ git rebase -i sha-for-commit-to-leave-alone-goes-here</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It will then show something like this:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pick f7f3f6d Initial work on feature
+</span><span class='line'>pick 310154e Additional work on feature
+</span><span class='line'>pick a5f4a0d Finish feature
+</span><span class='line'>
+</span><span class='line'># Commands:
+</span><span class='line'>#  p, pick = use commit
+</span><span class='line'>#  r, reword = use commit, but edit the commit message
+</span><span class='line'>#  e, edit = use commit, but stop for amending
+</span><span class='line'>#  s, squash = use commit, but meld into previous commit
+</span><span class='line'>#  f, fixup = like "squash", but discard this commit's log message
+</span><span class='line'>#  x, exec = run command (the rest of the line) using shell
+</span><span class='line'>#
+</span><span class='line'># These lines can be re-ordered; they are executed from top to bottom.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Just edit <code>pick</code> to whatever action you want to perform and use <code>:wq</code> to save.</p>
+
+<p>Now the next step is to push <code>feature/new_thing</code> to the remote and (other than the
+first time I push) I&#8217;ll need to force push and this is where it gets dangerous!</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git push -f origin feature/new_thing</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will completely overwrite <code>feature/new_thing</code> whatever state it is in. Too bad if
+someone else updated it, there changes are gone.</p>
+
+<p>Accidentally type <code>feature/other_thing</code> and you&#8217;ve just blitzed the wrong branch!</p>
+
+<h2>The safer way to force push</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git push --force-with-lease feature/new_thing</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Force with lease essentially checks the remote branch to see if it&#8217;s been updated
+upstream and if so rejects the push and shows you a nice error message.</p>
+
+<p>Beware that if you fetch, but don&#8217;t actually pull in the changes, <code>force-with-lease</code>
+will not save you!</p>
+
+<p>I want to always use <code>force-with-lease</code> over the standard <code>force</code> but this is
+long to type so I have a git alias:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git config --global alias.pushf "push --force-with-lease"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now I can safely use:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git pushf origin feature/new_thing</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Got any git rebase tips? Feel free to contact me on Twitter <a href="https://twitter.com/paulsturgess">@paulsturgess</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Elixir London Conference 2016]]></title>
+    <link href="http://paulsturgess.github.io/blog/2016/09/29/elixir-london-conference-2016/"/>
+    <updated>2016-09-29T12:35:00+01:00</updated>
+    <id>http://paulsturgess.github.io/blog/2016/09/29/elixir-london-conference-2016</id>
+    <content type="html"><![CDATA[<p>Last week the first ever <a href="http://www.elixir.london/">Elixir conference</a> was held in London and I was lucky enough to attend. It was brilliantly run with lots of great speakers and they&#8217;ve even got the <a href="http://www.elixir.london/#speakers">videos up online</a> already!</p>
+
+<h2>Elixir and Ruby</h2>
+
+<p><a href="http://elixir-lang.org/">Elixir</a> is a relatively new programming language that&#8217;s gaining in popularity fast, particularly amongst Ruby developers. During the conference they asked the audience to raise their hand if they had been, or are, a Ruby developer and over 75% did (myself included)!</p>
+
+<p>So what&#8217;s attracting the Ruby community? Aside from the fact developers love shiny new things, this shiny new thing is different. That&#8217;s because Elixir runs on the <a href="http://www.erlang.org/">Erlang</a> BEAM which has been around for decades and was originally developed by Ericsson.</p>
+
+<p>The key-note was from co-creator of Erlang,<a href="http://www.elixir.london/2016/robert-virding">Robert Virding</a>. It was fascinating to hear him talk about how Erlang was developed to solve the challenges Ericsson was facing building telecoms systems in the late 80&#8217;s, early 90&#8217;s. It&#8217;s amazing that the problems they solved are just as relevant in todays world of online software applications. One of the most high-profile recent adopters of Erlang is <a href="https://www.whatsapp.com/">WhatsApp</a>.</p>
+
+<p>So what does this have to do with Ruby? Well Elixir inherits all of the characteristics that Erlang is known for:</p>
+
+<ul>
+<li>Concurrent</li>
+<li>Fault tolerant</li>
+<li>Easy to scale</li>
+</ul>
+
+
+<p>Often these are the same criticisms levelled at Ruby and Elixir provides an appealing syntax that looks a lot like Ruby.</p>
+
+<h2>Phoenix</h2>
+
+<p>The icing on the cake for Rails developers looking to transition to Elixir is <a href="http://www.phoenixframework.org/">Phoenix</a>. Phoenix takes a lot of the good ideas in Rails and adds all the benefits of Elixir such as the concurrency and fault tolerance.</p>
+
+<p><a href="http://www.elixir.london/2016/gary-rennie">Gary Rennie</a> (core member of the Phoenix team) did a great job running through some best practices with controllers in Phoenix. He also explained why umbrella applications are a good idea to logically split your application where it makes sense.</p>
+
+<p>As an aside, I recently came across this article from the creator of phoenix Chris McCord <a href="https://dockyard.com/blog/2016/08/09/phoenix-channels-vs-rails-action-cable">comparing Phoenix channels and Rails action cable</a> which makes for eye-opening reading.</p>
+
+<h2>Nerves</h2>
+
+<p>However, it&#8217;s not all about web applications and there were a few great talks and demonstrations showcasing embedded systems with Elixir. One of the most interesting discoveries for me was the <a href="http://nerves-project.org/">Nerves Project</a>.</p>
+
+<p>The goal of Nerves is it make it simple for developers to write Elixir to interface with network and input/output devices, embed the code on a memory card, and run it on hardware like a <a href="https://www.raspberrypi.org/">Raspberry Pi</a>.</p>
+
+<p><a href="http://www.elixir.london/2016/tetiana-dushenkivska">Ju Liu&#8217;s live coding demo</a> involved lots of various sensors (including lasers) and was a particular highlight.</p>
+
+<h2>What&#8217;s next?</h2>
+
+<p>Elixir is very young and there&#8217;s clearly lots of enthusiasm in the community. I&#8217;m definitely going to be keeping a close eye on the ecosystem that is already growing very quickly. There seems to be a lot of benefits to using Elixir for modern application development.</p>
+
+<p>I definitely want to try writing an Elixir application and wrapping my head around functional programming (when I&#8217;m used to Object Oriented programming) is an interesting challenge I&#8217;ve been looking for an excuse to take on!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[How to test React lifecycle method componentDidUpdate when the component props change]]></title>
@@ -1651,132 +1843,6 @@ end
 
 <p>Thanks to the <a href="https://github.com/tkadauke/TinyMon">TinyMon</a> application where
 I first saw this setup.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Using native Objective-C Cocoapod libraries in RubyMotion]]></title>
-    <link href="http://paulsturgess.github.io/blog/2013/05/15/using-native-objective-c-cocoapod-libraries-in-rubymotion/"/>
-    <updated>2013-05-15T13:40:00+01:00</updated>
-    <id>http://paulsturgess.github.io/blog/2013/05/15/using-native-objective-c-cocoapod-libraries-in-rubymotion</id>
-    <content type="html"><![CDATA[<p>Whilst RubyMotion is new, and the number of <a href="http://rubymotion-wrappers.com/">RubyMotion specific libraries</a>
-is growing fast, there are already loads of native Objective-C libraries out there.</p>
-
-<p>These instructions show you how to use <a href="http://cocoapods.org">Cocoapods</a> in
-combination with <a href="http://gembundler.com">Bundler</a>.</p>
-
-<p>Cocoapods is a dependency manager, like <a href="http://rubygems.org">RubyGems</a>, but for
-Objective-C projects.</p>
-
-<p>In this example, I&#8217;ve chosen to install <a href="https://github.com/Inferis/ViewDeck">ViewDeck</a>. ViewDeck
-makes it easy to implement the sliding panel user interface made popular by the
-Facebook iOS app.</p>
-
-<p>The <a href="http://cocoapods.org">CocoaPods website</a> is a great place to search for
-available &#8216;Pods&#8217;.</p>
-
-<h2>Summary of steps</h2>
-
-<ul>
-<li>Include the motion-cocoapods gem</li>
-<li>Setup Cocoapods</li>
-<li>Add ViewDeck to your application Rakefile</li>
-</ul>
-
-
-<h2>Bundler</h2>
-
-<p>If you haven&#8217;t got Bundler setup, I&#8217;ve written some
-<a href="http://paulsturgess.co.uk/blog/2013/05/13/setting-up-bundler-and-rvm-for-a-rubymotion-app/">instructions for using Bundler with RubyMotion</a>.</p>
-
-<h2>Cocoapods</h2>
-
-<p>Add cocoapods to your Gemfile:</p>
-
-<pre><code>gem 'motion-cocoapods'
-</code></pre>
-
-<p>Install the gem via bundler:</p>
-
-<pre><code>$ bundle
-</code></pre>
-
-<p>Setup Cocoapods via:</p>
-
-<pre><code>$ pod setup
-</code></pre>
-
-<h2>Add ViewDeck to your Rakefile</h2>
-
-<p>In your Rakefile you need to add the ViewDeck pod and QuartzCore Framework
-(required by ViewDeck):</p>
-
-<pre><code>Motion::Project::App.setup do |app|
-  # Frameworks
-  app.frameworks += [
-    'QuartzCore'
-  ]
-
-  # Cocoapods
-  app.pods do
-    pod 'ViewDeck'
-  end
-end
-</code></pre>
-
-<p>Finally tell <code>motion-cocoapods</code> to download your dependencies by running:</p>
-
-<pre><code>$ rake pod:install
-</code></pre>
-
-<p>ViewDeck will be automatically built and linked the next time you build your app.</p>
-
-<p>In future you can grab updated versions by running:</p>
-
-<pre><code>$ rake pod:update
-</code></pre>
-
-<h2>Using ViewDeck</h2>
-
-<p>I&#8217;ve ported the Objective-C example ViewDeck application over to RubyMotion.</p>
-
-<p><a href="https://github.com/paulsturgess/ViewDeckExample-RubyMotion">Feel free to check it out</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Setting up Bundler and RVM for a RubyMotion app]]></title>
-    <link href="http://paulsturgess.github.io/blog/2013/05/13/setting-up-bundler-and-rvm-for-a-rubymotion-app/"/>
-    <updated>2013-05-13T10:00:00+01:00</updated>
-    <id>http://paulsturgess.github.io/blog/2013/05/13/setting-up-bundler-and-rvm-for-a-rubymotion-app</id>
-    <content type="html"><![CDATA[<p>Create your rvm <code>.ruby-version</code> and <code>.ruby-gemset</code> files via:</p>
-
-<pre><code>$ rvm use 1.9.3@yourgemsetname --create --ruby-version
-</code></pre>
-
-<p>Add bundler to your <code>Rakefile</code></p>
-
-<pre><code>require 'bundler'
-Bundler.require
-</code></pre>
-
-<p>Create your <code>Gemfile</code> via:</p>
-
-<pre><code>$ bundle init
-</code></pre>
-
-<p>Update your <code>Gemfile</code></p>
-
-<pre><code>source "https://rubygems.org"
-gem "your-favourite-gem"
-</code></pre>
-
-<p>Install gems via:</p>
-
-<pre><code>$ bundle
-</code></pre>
-
-<p>You&#8217;re done.</p>
 ]]></content>
   </entry>
   

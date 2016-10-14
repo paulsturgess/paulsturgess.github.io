@@ -90,7 +90,7 @@ $ git push -f origin feature/new_thing
 ```
 
 This will completely overwrite `feature/new_thing` whatever state it is in. Too bad if
-someone else updated it, there changes are gone.
+someone else updated it, their changes are gone.
 
 Accidentally type `feature/other_thing` and you've just blitzed the wrong branch!
 

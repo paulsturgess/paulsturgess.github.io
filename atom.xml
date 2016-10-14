@@ -4,7 +4,7 @@
   <title><![CDATA[Web & iOS dev – Ruby, Rails, RubyMotion & React]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2016-10-14T21:22:57+01:00</updated>
+  <updated>2016-10-14T21:36:04+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -122,7 +122,7 @@ first time I push) I&#8217;ll need to force push and this is where it gets dange
 
 
 <p>This will completely overwrite <code>feature/new_thing</code> whatever state it is in. Too bad if
-someone else updated it, there changes are gone.</p>
+someone else updated it, their changes are gone.</p>
 
 <p>Accidentally type <code>feature/other_thing</code> and you&#8217;ve just blitzed the wrong branch!</p>
 

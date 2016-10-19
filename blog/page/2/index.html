@@ -9,8 +9,7 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="MagicalRecord is a wrapper around Apple&#8217;s Core Data Framework. Written in Objective-C,
-it&#8217;s one of the most popular and mature libraries &hellip;">
+  <meta name="description" content="Apple describe NSUserDefaults as &#8220;a programmatic interface for interacting with the defaults system&#8221;. It also provides a convenient store &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -74,6 +73,171 @@ it&#8217;s one of the most popular and mature libraries &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/05/07/using-nsuserdefaults-in-rubymotion/">Using NSUserDefaults in RubyMotion</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-05-07T09:19:00+01:00" pubdate data-updated="true">May 7<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Apple describe <a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/nsuserdefaults_Class/Reference/Reference.html">NSUserDefaults</a> as &#8220;a programmatic interface for interacting with the defaults system&#8221;.</p>
+
+<p>It also provides a convenient store for persisting and retrieving user preferences for your application. You can think of it as a <code>key</code> <code>value</code> hash like structure, although it is a bit smarter than that.</p>
+
+<p>Here&#8217;s a really simple implementation I&#8217;ve been using:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>class Cache
+</span><span class='line'>
+</span><span class='line'>  class &lt;&lt; self
+</span><span class='line'>
+</span><span class='line'>    def set_default(key, data)
+</span><span class='line'>      return if read(key)
+</span><span class='line'>      write(key, data)
+</span><span class='line'>    end
+</span><span class='line'>
+</span><span class='line'>    def write(key, data)
+</span><span class='line'>      NSUserDefaults.standardUserDefaults[storage_key(key)] = data
+</span><span class='line'>      NSUserDefaults.standardUserDefaults.synchronize
+</span><span class='line'>    end
+</span><span class='line'>
+</span><span class='line'>    def read(key)
+</span><span class='line'>      NSUserDefaults.standardUserDefaults[storage_key(key)]
+</span><span class='line'>    end
+</span><span class='line'>
+</span><span class='line'>    private
+</span><span class='line'>
+</span><span class='line'>    def storage_key_prefix
+</span><span class='line'>      "#{cache_namespace}_"
+</span><span class='line'>    end
+</span><span class='line'>
+</span><span class='line'>    def storage_key key
+</span><span class='line'>      "#{storage_key_prefix}#{key}"
+</span><span class='line'>    end
+</span><span class='line'>
+</span><span class='line'>    def cache_namespace
+</span><span class='line'>      raise NotImplementedError
+</span><span class='line'>    end
+</span><span class='line'>
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>class UserSearchSettings &lt; Cache
+</span><span class='line'>
+</span><span class='line'>  class &lt;&lt; self
+</span><span class='line'>
+</span><span class='line'>    private
+</span><span class='line'>
+</span><span class='line'>    def cache_namespace
+</span><span class='line'>      "user_search"
+</span><span class='line'>    end
+</span><span class='line'>
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>end
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I use it like this:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>UserSearchSettings.write("sort_by", "name")
+</span><span class='line'>=&gt; true
+</span><span class='line'>NSUserDefaults.standardUserDefaults.dictionaryRepresentation
+</span><span class='line'>=&gt; {"user_search_sort_by" =&gt; "name"} # note there will be a lot of other key values in the hash
+</span><span class='line'>UserSearchSettings.read("sort_by")
+</span><span class='line'>=&gt; "name"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>My intention is not to call the <code>Cache</code> class directly and to only use the subclass <code>UserSearchSettings</code>. This forces me to group settings with a prefix defined by the <code>cache_namespace</code> method. This will help avoid accidentally defining the same key name for different values. It also nicely groups related settings.</p>
+
+<p>Each application has its&#8217; own <code>NSUserDefaults.standardUserDefaults</code> so there is no need to prefix the keys with the application name.</p>
+
+<p>This store will persist until the user removes your application from their device.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1281,70 +1445,6 @@ provisioning profile is used before firing off the TestFlight task added by
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/16/how-to-setup-a-test-only-group-in-bundler-for-rubymotion/">How to Setup a Test Only Group in Bundler for RubyMotion</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-16T14:30:00+01:00" pubdate data-updated="true">May 16<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Coming from a Ruby on Rails background, it&#8217;s common place to see the Gemfile
-declarations in logical groups. This ensures your gems only get required in the
-environment they are needed.</p>
-
-<p>A similar setup can be achieved in RubyMotion by tweaking your <code>Gemfile</code> and
-<code>Rakefile</code>.</p>
-
-<p>In your Gemfile:</p>
-
-<pre><code>source "https://rubygems.org"
-gem 'rake'
-gem 'motion-cocoapods'
-
-group :spec do
-  gem 'motion-redgreen'
-end
-</code></pre>
-
-<p>In your Rakefile:</p>
-
-<pre><code>if ARGV.join(' ') =~ /spec/
-  Bundler.require :default, :spec
-else
-  Bundler.require
-end
-</code></pre>
-
-<p>Thanks to the <a href="https://github.com/tkadauke/TinyMon">TinyMon</a> application where
-I first saw this setup.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1361,6 +1461,10 @@ I first saw this setup.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/10/19/how-to-write-and-test-a-stateless-react-component/">How to write and test a stateless React component</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/10/14/safer-rebasing-with-git/">Safer rebasing with Git</a>
       </li>
     
@@ -1374,10 +1478,6 @@ I first saw this setup.</p>
     
       <li class="post">
         <a href="/blog/2015/07/09/rubymotion-inspect-paris-was-loads-of-fun/">RubyMotion #inspect Paris was loads of fun</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/05/12/core-data-in-rubymotion-defining-your-schema-in-code/">Core Data in RubyMotion – Defining your schema in code</a>
       </li>
     
   </ul>

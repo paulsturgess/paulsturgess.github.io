@@ -9,8 +9,8 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="Rebasing a git branch is great way to maintain a clean commit history and it&#8217;s my
-preferred way of getting changes into a feature branch ( &hellip;">
+  <meta name="description" content="Recently I&#8217;ve been learning Redux state container for React apps and it actively encourages
+&#8216;stateless&#8217; components. This blog post &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -74,6 +74,86 @@ preferred way of getting changes into a feature branch ( &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/10/19/how-to-write-and-test-a-stateless-react-component/">How to Write and Test a Stateless React Component</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-10-19T19:25:00+01:00" pubdate data-updated="true">Oct 19<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Recently I&#8217;ve been learning <a href="http://redux.js.org/">Redux</a> state container for <a href="https://facebook.github.io/react/">React</a> apps and it actively encourages
+&#8216;stateless&#8217; components.  This blog post will describe how these can be written
+and tested.</p>
+
+<p>Note that you can write stateless components whether you&#8217;re using Redux or not!</p>
+
+<h2>What is a stateless component?</h2>
+
+<p>Redux introduces the concept of <a href="http://redux.js.org/docs/basics/UsageWithReact.html#presentational-and-container-components">&#8216;presentational&#8217; and &#8216;container&#8217; components</a> and the major difference between the two is that your presentational components
+should not be aware of Redux.</p>
+
+<p>Without getting into the details of exactly how Redux works, the consequence of
+this separation of responsibilities means your presentational components can be
+fairly simple.</p>
+
+<p>Certainly if they don&#8217;t make use of any React lifecycle methods (like <a href="" title="http://paulsturgess.co.uk/blog/2016/05/04/how-to-test-react-lifecycle-method-componentdidupdate-when-the-component-props-change/">componentDidUpdate</a>) they can start life as a
+simple function that just returns the required output.</p>
+
+<h2>What does a stateless component look like?</h2>
+
+<p>Below is an example taken from a Todo app, what it does isn&#8217;t important. The
+key thing to notice is that it&#8217;s just a function that returns a list item.</p>
+
+<p>Three props are defined <code>onClick</code>, <code>completed</code> and <code>text</code>. There&#8217;s no state
+manipulation.</p>
+
+<script src="https://gist.github.com/paulsturgess/db388c5f981775e96d8cb33d9fdcf073.js">
+</script>
+
+
+<h2>So how is stateless component tested?</h2>
+
+<p>When using <code>ReactTestUtils.renderIntoDocument</code> it will not work with a stateless
+component – you&#8217;ll get an error &#8216;instance must be a composite component&#8217;.</p>
+
+<p>The way around this is to use a component created by extending <code>React.Component</code>
+to wrap the stateless component. You&#8217;ll see in the test below a
+<code>Wrapper</code> component is created.</p>
+
+<p>Once you&#8217;ve done that you can reach into the component to grab out specific DOM
+elements or other components.</p>
+
+<script src="https://gist.github.com/paulsturgess/1cc50c28c6a0b622f9fddceb4d268c41.js">
+</script>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1013,171 +1093,6 @@ takes a screenshot and allows the user to share it along with some text.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/05/07/using-nsuserdefaults-in-rubymotion/">Using NSUserDefaults in RubyMotion</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-05-07T09:19:00+01:00" pubdate data-updated="true">May 7<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Apple describe <a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/nsuserdefaults_Class/Reference/Reference.html">NSUserDefaults</a> as &#8220;a programmatic interface for interacting with the defaults system&#8221;.</p>
-
-<p>It also provides a convenient store for persisting and retrieving user preferences for your application. You can think of it as a <code>key</code> <code>value</code> hash like structure, although it is a bit smarter than that.</p>
-
-<p>Here&#8217;s a really simple implementation I&#8217;ve been using:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>class Cache
-</span><span class='line'>
-</span><span class='line'>  class &lt;&lt; self
-</span><span class='line'>
-</span><span class='line'>    def set_default(key, data)
-</span><span class='line'>      return if read(key)
-</span><span class='line'>      write(key, data)
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>    def write(key, data)
-</span><span class='line'>      NSUserDefaults.standardUserDefaults[storage_key(key)] = data
-</span><span class='line'>      NSUserDefaults.standardUserDefaults.synchronize
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>    def read(key)
-</span><span class='line'>      NSUserDefaults.standardUserDefaults[storage_key(key)]
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>    private
-</span><span class='line'>
-</span><span class='line'>    def storage_key_prefix
-</span><span class='line'>      "#{cache_namespace}_"
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>    def storage_key key
-</span><span class='line'>      "#{storage_key_prefix}#{key}"
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>    def cache_namespace
-</span><span class='line'>      raise NotImplementedError
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>class UserSearchSettings &lt; Cache
-</span><span class='line'>
-</span><span class='line'>  class &lt;&lt; self
-</span><span class='line'>
-</span><span class='line'>    private
-</span><span class='line'>
-</span><span class='line'>    def cache_namespace
-</span><span class='line'>      "user_search"
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>end
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>I use it like this:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>UserSearchSettings.write("sort_by", "name")
-</span><span class='line'>=&gt; true
-</span><span class='line'>NSUserDefaults.standardUserDefaults.dictionaryRepresentation
-</span><span class='line'>=&gt; {"user_search_sort_by" =&gt; "name"} # note there will be a lot of other key values in the hash
-</span><span class='line'>UserSearchSettings.read("sort_by")
-</span><span class='line'>=&gt; "name"</span></code></pre></td></tr></table></div></figure>
-
-
-<p>My intention is not to call the <code>Cache</code> class directly and to only use the subclass <code>UserSearchSettings</code>. This forces me to group settings with a prefix defined by the <code>cache_namespace</code> method. This will help avoid accidentally defining the same key name for different values. It also nicely groups related settings.</p>
-
-<p>Each application has its&#8217; own <code>NSUserDefaults.standardUserDefaults</code> so there is no need to prefix the keys with the application name.</p>
-
-<p>This store will persist until the user removes your application from their device.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1190,6 +1105,10 @@ takes a screenshot and allows the user to share it along with some text.</p>
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/10/19/how-to-write-and-test-a-stateless-react-component/">How to write and test a stateless React component</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/10/14/safer-rebasing-with-git/">Safer rebasing with Git</a>
@@ -1205,10 +1124,6 @@ takes a screenshot and allows the user to share it along with some text.</p>
     
       <li class="post">
         <a href="/blog/2015/07/09/rubymotion-inspect-paris-was-loads-of-fun/">RubyMotion #inspect Paris was loads of fun</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/05/12/core-data-in-rubymotion-defining-your-schema-in-code/">Core Data in RubyMotion – Defining your schema in code</a>
       </li>
     
   </ul>

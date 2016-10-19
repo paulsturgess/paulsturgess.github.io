@@ -5,12 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Logging to the console in RubyMotion - Web & iOS dev – Ruby, Rails, RubyMotion & React</title>
+  <title>How to write and test a stateless React component - Web & iOS dev – Ruby, Rails, RubyMotion & React</title>
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="The simplest way to output to the console from your RubyMotion app is to use
-puts. This works fine when your app is running in the simulator. However &hellip;">
+  <meta name="description" content="Recently I&#8217;ve been learning Redux state container for React apps and it actively encourages
+&#8216;stateless&#8217; components. This blog post &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +19,7 @@ puts. This works fine when your app is running in the simulator. However &hellip
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://paulsturgess.github.io/blog/2013/10/29/logging-to-the-console-in-rubymotion">
+  <link rel="canonical" href="http://paulsturgess.github.io/blog/2016/10/19/how-to-write-and-test-a-stateless-react-component">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -77,7 +77,7 @@ puts. This works fine when your app is running in the simulator. However &hellip
   
   <header>
     
-      <h1 class="entry-title">Logging to the Console in RubyMotion</h1>
+      <h1 class="entry-title">How to Write and Test a Stateless React Component</h1>
     
     
       <p class="meta">
@@ -93,41 +93,58 @@ puts. This works fine when your app is running in the simulator. However &hellip
   
 
 
-<time datetime="2013-10-29T08:44:00+00:00" pubdate data-updated="true">Oct 29<span>th</span>, 2013</time>
+<time datetime="2016-10-19T19:25:00+01:00" pubdate data-updated="true">Oct 19<span>th</span>, 2016</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>The simplest way to output to the console from your RubyMotion app is to use
-<code>puts</code>. This works fine when your app is running in the simulator. However,
-<code>puts</code> does not output to the console when your app is running on the device
-itself.</p>
+<div class="entry-content"><p>Recently I&#8217;ve been learning <a href="http://redux.js.org/">Redux</a> state container for <a href="https://facebook.github.io/react/">React</a> apps and it actively encourages
+&#8216;stateless&#8217; components.  This blog post will describe how these can be written
+and tested.</p>
 
-<p>You can view the live logs while your app is running on your usb connected device via:</p>
+<p>Note that you can write stateless components whether you&#8217;re using Redux or not!</p>
 
-<pre><code>$ motion device:console
-</code></pre>
+<h2>What is a stateless component?</h2>
 
-<p>You will see messages from your application alongside those from other apps or
-the system itself.</p>
+<p>Redux introduces the concept of <a href="http://redux.js.org/docs/basics/UsageWithReact.html#presentational-and-container-components">&#8216;presentational&#8217; and &#8216;container&#8217; components</a> and the major difference between the two is that your presentational components
+should not be aware of Redux.</p>
 
-<p>Instead of using <code>puts</code>, you&#8217;ll need to make use of <code>NSLog</code>. For example</p>
+<p>Without getting into the details of exactly how Redux works, the consequence of
+this separation of responsibilities means your presentational components can be
+fairly simple.</p>
 
-<pre><code>NSLog("My debug messge")
-</code></pre>
+<p>Certainly if they don&#8217;t make use of any React lifecycle methods (like <a href="" title="http://paulsturgess.co.uk/blog/2016/05/04/how-to-test-react-lifecycle-method-componentdidupdate-when-the-component-props-change/">componentDidUpdate</a>) they can start life as a
+simple function that just returns the required output.</p>
 
-<p>Note, however, that the first argument for <code>NSLog</code> is actually a <a href="https://developer.apple.com/library/ios/documentation/cocoa/conceptual/Strings/Articles/formatSpecifiers.html">String Format Specifier</a>.</p>
+<h2>What does a stateless component look like?</h2>
 
-<p>The following are equivalent:</p>
+<p>Below is an example taken from a Todo app, what it does isn&#8217;t important. The
+key thing to notice is that it&#8217;s just a function that returns a list item.</p>
 
-<pre><code>puts "A #{variable} goes here"
-NSLog("A %@ goes here", variable)
-</code></pre>
+<p>Three props are defined <code>onClick</code>, <code>completed</code> and <code>text</code>. There&#8217;s no state
+manipulation.</p>
 
-<p>Just remember that any <code>NSLog</code> messages you leave in your app will be visible
-to the curious, even after you&#8217;ve released to the App Store.</p>
+<script src="https://gist.github.com/paulsturgess/db388c5f981775e96d8cb33d9fdcf073.js">
+</script>
+
+
+<h2>So how is stateless component tested?</h2>
+
+<p>When using <code>ReactTestUtils.renderIntoDocument</code> it will not work with a stateless
+component – you&#8217;ll get an error &#8216;instance must be a composite component&#8217;.</p>
+
+<p>The way around this is to use a component created by extending <code>React.Component</code>
+to wrap the stateless component. You&#8217;ll see in the test below a
+<code>Wrapper</code> component is created.</p>
+
+<p>Once you&#8217;ve done that you can reach into the component to grab out specific DOM
+elements or other components.</p>
+
+<script src="https://gist.github.com/paulsturgess/1cc50c28c6a0b622f9fddceb4d268c41.js">
+</script>
+
 </div>
 
 
@@ -150,7 +167,7 @@ to the curious, even after you&#8217;ve released to the App Store.</p>
   
 
 
-<time datetime="2013-10-29T08:44:00+00:00" pubdate data-updated="true">Oct 29<span>th</span>, 2013</time>
+<time datetime="2016-10-19T19:25:00+01:00" pubdate data-updated="true">Oct 19<span>th</span>, 2016</time>
       
 
 
@@ -165,10 +182,8 @@ to the curious, even after you&#8217;ve released to the App Store.</p>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/10/16/using-lldb-to-debug-a-rubymotion-app/" title="Previous Post: Using LLDB to debug a RubyMotion app">&laquo; Using LLDB to debug a RubyMotion app</a>
+        <a class="basic-alignment left" href="/blog/2016/10/14/safer-rebasing-with-git/" title="Previous Post: Safer rebasing with Git">&laquo; Safer rebasing with Git</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2014/02/20/using-magicalrecord-and-core-data-in-rubymotion/" title="Next Post: Using MagicalRecord and Core Data in RubyMotion">Using MagicalRecord and Core Data in RubyMotion &raquo;</a>
       
     </p>
   </footer>

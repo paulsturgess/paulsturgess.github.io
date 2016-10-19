@@ -143,12 +143,18 @@
         <lastmod>2016-10-14T21:34:52+01:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://paulsturgess.github.io/blog/2016/10/19/how-to-write-and-test-a-stateless-react-component/
+        </loc>
+        <lastmod>2016-10-19T20:55:48+01:00</lastmod>
+    </url>
+    <url>
         <loc>http://paulsturgess.github.io/blog/archives/</loc>
-        <lastmod>2016-10-14T21:34:52+01:00</lastmod>
+        <lastmod>2016-10-19T20:55:48+01:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/</loc>
-        <lastmod>2016-10-14T21:34:52+01:00</lastmod>
+        <lastmod>2016-10-19T20:55:48+01:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/robots.txt</loc>

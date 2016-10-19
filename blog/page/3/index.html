@@ -9,8 +9,8 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="Whilst RubyMotion is new, and the number of RubyMotion specific libraries
-is growing fast, there are already loads of native Objective-C libraries &hellip;">
+  <meta name="description" content="Coming from a Ruby on Rails background, it&#8217;s common place to see the Gemfile
+declarations in logical groups. This ensures your gems only get &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -74,6 +74,70 @@ is growing fast, there are already loads of native Objective-C libraries &hellip
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/16/how-to-setup-a-test-only-group-in-bundler-for-rubymotion/">How to Setup a Test Only Group in Bundler for RubyMotion</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-16T14:30:00+01:00" pubdate data-updated="true">May 16<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Coming from a Ruby on Rails background, it&#8217;s common place to see the Gemfile
+declarations in logical groups. This ensures your gems only get required in the
+environment they are needed.</p>
+
+<p>A similar setup can be achieved in RubyMotion by tweaking your <code>Gemfile</code> and
+<code>Rakefile</code>.</p>
+
+<p>In your Gemfile:</p>
+
+<pre><code>source "https://rubygems.org"
+gem 'rake'
+gem 'motion-cocoapods'
+
+group :spec do
+  gem 'motion-redgreen'
+end
+</code></pre>
+
+<p>In your Rakefile:</p>
+
+<pre><code>if ARGV.join(' ') =~ /spec/
+  Bundler.require :default, :spec
+else
+  Bundler.require
+end
+</code></pre>
+
+<p>Thanks to the <a href="https://github.com/tkadauke/TinyMon">TinyMon</a> application where
+I first saw this setup.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -753,6 +817,10 @@ $ cd ..
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/10/19/how-to-write-and-test-a-stateless-react-component/">How to write and test a stateless React component</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/10/14/safer-rebasing-with-git/">Safer rebasing with Git</a>
       </li>
     
@@ -766,10 +834,6 @@ $ cd ..
     
       <li class="post">
         <a href="/blog/2015/07/09/rubymotion-inspect-paris-was-loads-of-fun/">RubyMotion #inspect Paris was loads of fun</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/05/12/core-data-in-rubymotion-defining-your-schema-in-code/">Core Data in RubyMotion – Defining your schema in code</a>
       </li>
     
   </ul>

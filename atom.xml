@@ -4,7 +4,7 @@
   <title><![CDATA[Web & iOS dev – Ruby, Rails, RubyMotion & React]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2016-10-14T21:36:04+01:00</updated>
+  <updated>2016-10-19T20:57:17+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,59 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[How to write and test a stateless React component]]></title>
+    <link href="http://paulsturgess.github.io/blog/2016/10/19/how-to-write-and-test-a-stateless-react-component/"/>
+    <updated>2016-10-19T19:25:00+01:00</updated>
+    <id>http://paulsturgess.github.io/blog/2016/10/19/how-to-write-and-test-a-stateless-react-component</id>
+    <content type="html"><![CDATA[<p>Recently I&#8217;ve been learning <a href="http://redux.js.org/">Redux</a> state container for <a href="https://facebook.github.io/react/">React</a> apps and it actively encourages
+&#8216;stateless&#8217; components.  This blog post will describe how these can be written
+and tested.</p>
+
+<p>Note that you can write stateless components whether you&#8217;re using Redux or not!</p>
+
+<h2>What is a stateless component?</h2>
+
+<p>Redux introduces the concept of <a href="http://redux.js.org/docs/basics/UsageWithReact.html#presentational-and-container-components">&#8216;presentational&#8217; and &#8216;container&#8217; components</a> and the major difference between the two is that your presentational components
+should not be aware of Redux.</p>
+
+<p>Without getting into the details of exactly how Redux works, the consequence of
+this separation of responsibilities means your presentational components can be
+fairly simple.</p>
+
+<p>Certainly if they don&#8217;t make use of any React lifecycle methods (like <a href="" title="http://paulsturgess.co.uk/blog/2016/05/04/how-to-test-react-lifecycle-method-componentdidupdate-when-the-component-props-change/">componentDidUpdate</a>) they can start life as a
+simple function that just returns the required output.</p>
+
+<h2>What does a stateless component look like?</h2>
+
+<p>Below is an example taken from a Todo app, what it does isn&#8217;t important. The
+key thing to notice is that it&#8217;s just a function that returns a list item.</p>
+
+<p>Three props are defined <code>onClick</code>, <code>completed</code> and <code>text</code>. There&#8217;s no state
+manipulation.</p>
+
+<script src="https://gist.github.com/paulsturgess/db388c5f981775e96d8cb33d9fdcf073.js">
+</script>
+
+
+<h2>So how is stateless component tested?</h2>
+
+<p>When using <code>ReactTestUtils.renderIntoDocument</code> it will not work with a stateless
+component – you&#8217;ll get an error &#8216;instance must be a composite component&#8217;.</p>
+
+<p>The way around this is to use a component created by extending <code>React.Component</code>
+to wrap the stateless component. You&#8217;ll see in the test below a
+<code>Wrapper</code> component is created.</p>
+
+<p>Once you&#8217;ve done that you can reach into the component to grab out specific DOM
+elements or other components.</p>
+
+<script src="https://gist.github.com/paulsturgess/1cc50c28c6a0b622f9fddceb4d268c41.js">
+</script>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Safer rebasing with Git]]></title>
@@ -1806,43 +1859,6 @@ provisioning profile is used before firing off the TestFlight task added by
 
 <pre><code>$ rake tf notes="My release notes"
 </code></pre>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[How to setup a test only group in Bundler for RubyMotion]]></title>
-    <link href="http://paulsturgess.github.io/blog/2013/05/16/how-to-setup-a-test-only-group-in-bundler-for-rubymotion/"/>
-    <updated>2013-05-16T14:30:00+01:00</updated>
-    <id>http://paulsturgess.github.io/blog/2013/05/16/how-to-setup-a-test-only-group-in-bundler-for-rubymotion</id>
-    <content type="html"><![CDATA[<p>Coming from a Ruby on Rails background, it&#8217;s common place to see the Gemfile
-declarations in logical groups. This ensures your gems only get required in the
-environment they are needed.</p>
-
-<p>A similar setup can be achieved in RubyMotion by tweaking your <code>Gemfile</code> and
-<code>Rakefile</code>.</p>
-
-<p>In your Gemfile:</p>
-
-<pre><code>source "https://rubygems.org"
-gem 'rake'
-gem 'motion-cocoapods'
-
-group :spec do
-  gem 'motion-redgreen'
-end
-</code></pre>
-
-<p>In your Rakefile:</p>
-
-<pre><code>if ARGV.join(' ') =~ /spec/
-  Bundler.require :default, :spec
-else
-  Bundler.require
-end
-</code></pre>
-
-<p>Thanks to the <a href="https://github.com/tkadauke/TinyMon">TinyMon</a> application where
-I first saw this setup.</p>
 ]]></content>
   </entry>
   

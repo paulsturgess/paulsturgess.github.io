@@ -4,7 +4,7 @@
   <title><![CDATA[Web & iOS dev – Ruby, Rails, RubyMotion & React]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2016-10-19T20:57:17+01:00</updated>
+  <updated>2016-11-06T22:47:58+00:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,64 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[How to write and test a Redux Container Component for React]]></title>
+    <link href="http://paulsturgess.github.io/blog/2016/11/06/how-to-write-and-test-a-redux-container-component-for-react/"/>
+    <updated>2016-11-06T20:25:00+00:00</updated>
+    <id>http://paulsturgess.github.io/blog/2016/11/06/how-to-write-and-test-a-redux-container-component-for-react</id>
+    <content type="html"><![CDATA[<p>As a follow on from my last article about <a href="http://paulsturgess.co.uk/blog/2016/10/19/how-to-write-and-test-a-stateless-react-component/">building and testing stateless presentational components</a>, I&#8217;m going to explain Redux Container Components.</p>
+
+<h2>What is a container component?</h2>
+
+<p>A container component is concerned with how things work. This typically involves
+fetching data, watching the store for updates and updating the store itself by
+dispatching actions.</p>
+
+<p>Essentially a container component will wrap a presentational component to add
+behaviour to it.</p>
+
+<h2>What does a container component look like?</h2>
+
+<script src="https://gist.github.com/paulsturgess/7089b2386e8b86335fa7b681e3935c7a.js"></script>
+
+
+<p>The container component is created on Line 16 via the <code>connect()</code> function provided
+by Redux.</p>
+
+<p>You can pass in additional functions to control how you want the state and the
+actions mapped to the props. These are <code>mapStateToProps()</code> and <code>mapDispatchToProps()</code>.</p>
+
+<p>In the example above, I&#8217;m using <code>mapDispatchToProps()</code> to setup the <code>addTodo</code> prop
+that will dispatch the <code>addTodo</code> action we&#8217;ve imported. How this is used is entirely
+down to the <code>AddToForm</code> presentational component and is outside the responsibility
+of this component.</p>
+
+<p>Note the first argument to <code>connect()</code> is null because I&#8217;m not using <code>mapStateToProps()</code>, but
+the principle is the same as for <code>mapDispatchToProps()</code>.</p>
+
+<h2>So how is a container component tested?</h2>
+
+<p>Container components should be fairly lightweight. There seems little point testing
+the <code>connect()</code> function, as this is not our code. But we do care that the props are
+going into our wrapped <code>AddTodoForm</code> component correctly.</p>
+
+<p>So to test this component, all I&#8217;m interested in is that the <code>addTodo</code> prop has
+been setup to dispatch the required action to the store.</p>
+
+<script src="https://gist.github.com/paulsturgess/e0f06a12821343d7854718c34394b60e.js"></script>
+
+
+<p>The mock store and the <code>Provider</code> are required to render the connected component.</p>
+
+<p>After that I&#8217;m just reaching into the component to grab the <code>addTodo</code> prop and calling
+the function. I&#8217;m spying on the dispatch method in the store, that means I can check it&#8217;s
+called with the action that&#8217;s formed correctly.</p>
+
+<p>My test for the presentational component <code>AddTodoForm</code> will take care of checking
+that the prop is actually triggered when it&#8217;s supposed to.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[How to write and test a stateless React component]]></title>
@@ -1758,106 +1816,6 @@ and open the organiser via:</p>
 notes in your favourite editor:</p>
 
 <pre><code>$ open /Library/RubyMotion/NEWS
-</code></pre>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[How to setup TestFlight for a RubyMotion app]]></title>
-    <link href="http://paulsturgess.github.io/blog/2013/05/23/how-to-setup-testflight-for-a-rubymotion-app/"/>
-    <updated>2013-05-23T11:06:00+01:00</updated>
-    <id>http://paulsturgess.github.io/blog/2013/05/23/how-to-setup-testflight-for-a-rubymotion-app</id>
-    <content type="html"><![CDATA[<p>The official RubyMotion guide for <a href="http://www.rubymotion.com/developer-center/articles/testflight/">installing TestFlight</a>
-got me most of the way there, but there were a few additional steps I needed to
-get everything working.</p>
-
-<p>First and foremost <a href="http://paulsturgess.co.uk/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone/">I got my app running on my own device via usb</a>.</p>
-
-<p>However, for TestFlight, an Adhoc Provisioning Profile is required, as opposed
-to a Development Provisioning Profile. Essentially this is an Apple approved
-license to distribute your app to a limited number of devices without using the
-App Store.</p>
-
-<h2>Create a distribution certificate</h2>
-
-<p>Go to the Apple iOS developer website and create a Distribution certficate in a
-similar way to how you created your Developer certificate.</p>
-
-<h2>Create a fixed App ID</h2>
-
-<p>This is optional, but it felt right to me to use a fixed App ID instead of a
-wildcard.</p>
-
-<h2>Create an adhoc distribution profile</h2>
-
-<p>Finally, still on the Apple iOS Developer website, create an Adhoc distribution
-profile, download it and double click it to install it.</p>
-
-<h2>Setting up your Rakefile for multiple environments</h2>
-
-<p>I wanted to use both my Developer and Adhoc Provisioning Profiles at the same
-time. Without having to worry about switching them when required.</p>
-
-<p>My Rakefile looks like this:</p>
-
-<pre><code>Motion::Project::App.setup do |app|
-  env = if ENV['adhoc'] == '1'
-          'adhoc'
-        else
-          'dev'
-        end
-
-  app.name = 'MyApp'
-
-  # Provisioning profiles
-  if env == 'adhoc'
-    app.identifier = 'com.mydomain.myapp'
-    app.codesign_certificate = 'iPhone Distribution: Company (XXXXXXXXXX)'
-    app.provisioning_profile = '/path/to/adhoc/provisioing/profile/example.mobileprovision'
-    app.entitlements['get-task-allow'] = false
-  else
-    app.identifier = 'com.mydomain.myapp'
-    app.codesign_certificate = 'iPhone Developer: My Name (XXXXXXXXXX)'
-    app.provisioning_profile = '/path/to/development/provisioing/profile/example.mobileprovision'
-  end
-
-  # TestFlight config
-  app.testflight.sdk = 'vendor/TestFlight'
-  app.testflight.api_token = 'sometoken'
-  app.testflight.team_token = 'anothertoken'
-end
-
-desc "Set the env to 'adhoc'"
-task :set_adhoc do
-  ENV['adhoc'] = '1'
-end
-
-desc "Run Testflight with the adhoc provisioning profile"
-# e.g. rake tf notes="My release notes"
-task :tf =&gt; [
-  :set_adhoc,
-  :testflight
-]
-</code></pre>
-
-<p>Credit to Hwee-Boon Yar for writing up <a href="http://hboon.com/different-settings-for-development-and-adhoc-builds-in-rubymotion/">how to setup the Rakefile for multiple environments</a></p>
-
-<p>Your API token is under your account settings on TestFlight at: <a href="https://testflightapp.com/account/#api">https://testflightapp.com/account/#api</a>.</p>
-
-<p>You can find your team API token at the following url: <a href="https://testflightapp.com/dashboard/team/edit/">https://testflightapp.com/dashboard/team/edit/</a></p>
-
-<p>One key bit of information I was initially missing was setting <code>get-task-allow</code>
-to false. This is only required for the Adhoc Provisioning Profile.</p>
-
-<h2>Use a custom rake task to deploy to TestFlight</h2>
-
-<p>Notice the rake task at the bottom sets the adhoc variable to ensure the Adhoc
-provisioning profile is used before firing off the TestFlight task added by
-<code>motion-testflight</code>.</p>
-
-<p>So from now on I release to TestFlight via:</p>
-
-<pre><code>$ rake tf notes="My release notes"
 </code></pre>
 ]]></content>
   </entry>

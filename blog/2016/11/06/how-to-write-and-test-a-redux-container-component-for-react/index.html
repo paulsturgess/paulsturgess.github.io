@@ -5,13 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>RubyMotion #inspect Paris was loads of fun - Web & iOS dev – Ruby, Rails, RubyMotion & React</title>
+  <title>How to write and test a Redux Container Component for React - Web & iOS dev – Ruby, Rails, RubyMotion & React</title>
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="Last week was the RubyMotion #inspect 2015 conference
-in Paris and not only was I lucky enough to attend, but I was also invited to speak about
-the &hellip;">
+  <meta name="description" content="As a follow on from my last article about building and testing stateless presentational components, I&#8217;m going to explain Redux Container &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +18,7 @@ the &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://paulsturgess.github.io/blog/2015/07/09/rubymotion-inspect-paris-was-loads-of-fun">
+  <link rel="canonical" href="http://paulsturgess.github.io/blog/2016/11/06/how-to-write-and-test-a-redux-container-component-for-react">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -78,7 +76,7 @@ the &hellip;">
   
   <header>
     
-      <h1 class="entry-title">RubyMotion #inspect Paris Was Loads of Fun</h1>
+      <h1 class="entry-title">How to Write and Test a Redux Container Component for React</h1>
     
     
       <p class="meta">
@@ -94,79 +92,63 @@ the &hellip;">
   
 
 
-<time datetime="2015-07-09T09:52:00+01:00" pubdate data-updated="true">Jul 9<span>th</span>, 2015</time>
+<time datetime="2016-11-06T20:25:00+00:00" pubdate data-updated="true">Nov 6<span>th</span>, 2016</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Last week was the <a href="http://conference.rubymotion.com/">RubyMotion #inspect 2015</a> conference
-in Paris and not only was I lucky enough to attend, but I was also invited to speak about
-the RubyMotion football manager game I built: <a href="http://www.titlchallenge.com">Title Challenge</a>.</p>
+<div class="entry-content"><p>As a follow on from my last article about <a href="http://paulsturgess.co.uk/blog/2016/10/19/how-to-write-and-test-a-stateless-react-component/">building and testing stateless presentational components</a>, I&#8217;m going to explain Redux Container Components.</p>
 
-<p><a href="/images/rubymotion_paris.JPG" target="_blank"><img class="center" src="/images/rubymotion_paris.JPG" width="500" height="500" title="Paul at RubyMotion Paris" alt="Paul at RubyMotion Paris"></a></p>
+<h2>What is a container component?</h2>
 
-<p>RubyMotion #inspect is a two-day conference and my talk was scheduled for the second day,
-which is lucky for me as I missed day one due to protestors spontaneously deciding to
-prevent the Eurostar from running the day I was due to travel. Fortunately the talks
-were recorded, so hopefully these will be made available soon!</p>
+<p>A container component is concerned with how things work. This typically involves
+fetching data, watching the store for updates and updating the store itself by
+dispatching actions.</p>
 
-<h2>RubyMotion 4</h2>
+<p>Essentially a container component will wrap a presentational component to add
+behaviour to it.</p>
 
-<p><a href="https://twitter.com/lrz">Laurent Sansonetti</a> announced what is planned for RubyMotion 4 and it sounds awesome:</p>
+<h2>What does a container component look like?</h2>
 
-<ul>
-<li>A new REPL to work on the device</li>
-<li>Cross-platform game framework</li>
-<li>WatchKit</li>
-<li>iOS 9 support</li>
-<li>More work on live code reloading</li>
-</ul>
+<script src="https://gist.github.com/paulsturgess/7089b2386e8b86335fa7b681e3935c7a.js"></script>
 
 
-<h2>Inspiration</h2>
+<p>The container component is created on Line 16 via the <code>connect()</code> function provided
+by Redux.</p>
 
-<p>It was great meeting the RubyMotion community and it definitely feels like an
-extension of all of the good things from the Ruby and Ruby On Rails communities.
-Lots of enthusiasm, smart and friendly people doing some really cool things.</p>
+<p>You can pass in additional functions to control how you want the state and the
+actions mapped to the props. These are <code>mapStateToProps()</code> and <code>mapDispatchToProps()</code>.</p>
 
-<p>For me conferences are all about being inspired and the two talks that stood out
-were from <a href="https://twitter.com/amirrajan">Amir Rajan</a> and <a href="https://twitter.com/markrickert">Mark Rickert</a>.</p>
+<p>In the example above, I&#8217;m using <code>mapDispatchToProps()</code> to setup the <code>addTodo</code> prop
+that will dispatch the <code>addTodo</code> action we&#8217;ve imported. How this is used is entirely
+down to the <code>AddToForm</code> presentational component and is outside the responsibility
+of this component.</p>
 
-<p>Amir is the genius behind the game A Dark Room which reached #1 in the US App Store.
-I thoroughly recommend <a href="http://amirrajan.net/a-dark-room/">reading his blog</a> which
-tells the story as he lived it.</p>
+<p>Note the first argument to <code>connect()</code> is null because I&#8217;m not using <code>mapStateToProps()</code>, but
+the principle is the same as for <code>mapDispatchToProps()</code>.</p>
 
-<p>Mark told us about his experience quitting his full-time job, selling pretty much
-everything he owned and living on the road. He now consults on RubyMotion projects
-remotely, works half as much, makes more money and most importantly is far more happy!</p>
+<h2>So how is a container component tested?</h2>
 
-<p>If you get the chance to hear either of these guys speak then make sure you do.</p>
+<p>Container components should be fairly lightweight. There seems little point testing
+the <code>connect()</code> function, as this is not our code. But we do care that the props are
+going into our wrapped <code>AddTodoForm</code> component correctly.</p>
 
-<h2>Life begins at the end of your comfort zone</h2>
+<p>So to test this component, all I&#8217;m interested in is that the <code>addTodo</code> prop has
+been setup to dispatch the required action to the store.</p>
 
-<p>For my talk I discussed the major challenges that were faced in building the game.
-Highlighting, where I could, lessons learned and things I would have done differently
-having now gone through the experience.</p>
+<script src="https://gist.github.com/paulsturgess/e0f06a12821343d7854718c34394b60e.js"></script>
 
-<p>What I had to say seemed to go down well. The team working on RedPotion have already
-<a href="https://github.com/clearsightstudio/ProMotion/issues/712">made changes to the framework</a>
-inspired by some simple ideas I had for debugging memory issues.</p>
 
-<p>If there&#8217;s one point to take-away from my talk though it&#8217;s &#8220;Life begins at the end of your comfort zone&#8221;.
-If you have an idea, just go for it and don&#8217;t be afraid to figure out things as
-you go along!</p>
+<p>The mock store and the <code>Provider</code> are required to render the connected component.</p>
 
-<p>Feel free to take a look at <a href="/downloads/rubymotion_inspect_2015_paul_sturgess.pdf">the slides for my presentation</a>.</p>
+<p>After that I&#8217;m just reaching into the component to grab the <code>addTodo</code> prop and calling
+the function. I&#8217;m spying on the dispatch method in the store, that means I can check it&#8217;s
+called with the action that&#8217;s formed correctly.</p>
 
-<p>If you have questions get in touch on twitter: <a href="https://twitter.com/paulsturgess">@paulsturgess</a>.</p>
-
-<h2>WXG Conference – 25th Sept, Guildford, UK</h2>
-
-<p>I will also be talking about Title Challenge at the <a href="http://wxg.co.uk/">WXG Conference</a>.</p>
-
-<p>It&#8217;s a one day conference about web &amp; digital experiences.</p>
+<p>My test for the presentational component <code>AddTodoForm</code> will take care of checking
+that the prop is actually triggered when it&#8217;s supposed to.</p>
 </div>
 
 
@@ -189,7 +171,7 @@ you go along!</p>
   
 
 
-<time datetime="2015-07-09T09:52:00+01:00" pubdate data-updated="true">Jul 9<span>th</span>, 2015</time>
+<time datetime="2016-11-06T20:25:00+00:00" pubdate data-updated="true">Nov 6<span>th</span>, 2016</time>
       
 
 
@@ -204,10 +186,8 @@ you go along!</p>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2015/05/12/core-data-in-rubymotion-defining-your-schema-in-code/" title="Previous Post: Core Data in RubyMotion – Defining your schema in code">&laquo; Core Data in RubyMotion – Defining your schema in code</a>
+        <a class="basic-alignment left" href="/blog/2016/10/19/how-to-write-and-test-a-stateless-react-component/" title="Previous Post: How to write and test a stateless React component">&laquo; How to write and test a stateless React component</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2016/05/04/how-to-test-react-lifecycle-method-componentdidupdate-when-the-component-props-change/" title="Next Post: How to test React lifecycle method componentDidUpdate when the component props change">How to test React lifecycle method componentDidUpdate when the component props change &raquo;</a>
       
     </p>
   </footer>

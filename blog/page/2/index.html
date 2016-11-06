@@ -9,7 +9,7 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="Apple describe NSUserDefaults as &#8220;a programmatic interface for interacting with the defaults system&#8221;. It also provides a convenient store &hellip;">
+  <meta name="description" content="The easiest way to allow users to share content from inside your app is to use UIActivityViewController. Use it when you want to allow the user to: &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -73,6 +73,185 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/02/05/tweeting-a-screenshot-in-rubymotion-with-uiactivityviewcontroller/">Tweeting a Screenshot in RubyMotion With UIActivityViewController</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-05T18:47:00+00:00" pubdate data-updated="true">Feb 5<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The easiest way to allow users to share content from inside your app is to use <code>UIActivityViewController</code>.</p>
+
+<p>Use it when you want to allow the user to:</p>
+
+<ul>
+<li>Send a Tweet</li>
+<li>Share on Facebook</li>
+<li>Save an image to photos</li>
+<li>Send an SMS message / iMessage</li>
+<li>Send an email</li>
+</ul>
+
+
+<p>In iOS 8 it slides up a panel at the bottom of the screen. The user chooses
+how they want to share the content. The options are based on the applications
+they have installed. You can also specify which ones to include/exclude.</p>
+
+<p>Here&#8217;s enough code to create an app with a button that brings up the <code>UIActivityViewController</code>,
+takes a screenshot and allows the user to share it along with some text.</p>
+
+<p>Hopefully the code and my comments are self-documenting enough to make sense.</p>
+
+<p>I figured this out through a combination of the Apple docs and this <a href="http://nshipster.com/uiactivityviewcontroller/">NSHipster article</a>.</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">AppDelegate</span>
+
+  <span class="kp">attr_reader</span> <span class="ss">:window</span>
+
+  <span class="k">def</span> <span class="nf">application</span><span class="p">(</span><span class="n">application</span><span class="p">,</span> <span class="ss">didFinishLaunchingWithOptions</span><span class="p">:</span><span class="n">launchOptions</span><span class="p">)</span>
+    <span class="n">rootViewController</span> <span class="o">=</span> <span class="no">MyController</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">init</span>
+    <span class="n">rootViewController</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;ActivityViewController Demo&#39;</span>
+    <span class="n">rootViewController</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">backgroundColor</span> <span class="o">=</span> <span class="no">UIColor</span><span class="o">.</span><span class="n">whiteColor</span>
+
+    <span class="n">navigationController</span> <span class="o">=</span> <span class="no">UINavigationController</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">initWithRootViewController</span><span class="p">(</span>
+      <span class="n">rootViewController</span>
+    <span class="p">)</span>
+
+    <span class="vi">@window</span> <span class="o">=</span> <span class="no">UIWindow</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">initWithFrame</span><span class="p">(</span><span class="no">UIScreen</span><span class="o">.</span><span class="n">mainScreen</span><span class="o">.</span><span class="n">bounds</span><span class="p">)</span>
+    <span class="vi">@window</span><span class="o">.</span><span class="n">rootViewController</span> <span class="o">=</span> <span class="n">navigationController</span>
+    <span class="vi">@window</span><span class="o">.</span><span class="n">makeKeyAndVisible</span>
+
+    <span class="kp">true</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1"># This subclass is not technically required</span>
+<span class="c1"># It allows you to switch the text based on the type of service it will be shared on</span>
+<span class="k">class</span> <span class="nc">ShareText</span> <span class="o">&lt;</span> <span class="no">UIActivityItemProvider</span>
+
+  <span class="kp">attr_accessor</span> <span class="ss">:text</span>
+
+  <span class="c1"># The placeholder text</span>
+  <span class="k">def</span> <span class="nf">activityViewControllerPlaceholderItem</span><span class="p">(</span><span class="n">controller</span><span class="p">)</span>
+    <span class="s2">&quot;&quot;</span>
+  <span class="k">end</span>
+
+  <span class="c1"># The text that will be inserted into the Tweet / Email / SMS etc.</span>
+  <span class="c1"># You could easily respond to more activity types if you wanted</span>
+  <span class="k">def</span> <span class="nf">activityViewController</span><span class="p">(</span><span class="n">controller</span><span class="p">,</span> <span class="ss">itemForActivityType</span><span class="p">:</span> <span class="n">activityType</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">activityType</span> <span class="o">==</span> <span class="no">UIActivityTypePostToTwitter</span>
+      <span class="s2">&quot;</span><span class="si">#{</span><span class="n">text</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">twitter_handle</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">hashtag</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">else</span>
+      <span class="s2">&quot;</span><span class="si">#{</span><span class="n">text</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">website</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">hashtag</span>
+    <span class="s2">&quot;#yourhashtag&quot;</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">website</span>
+    <span class="s2">&quot;http://yourwebsite.com&quot;</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">twitter_handle</span>
+    <span class="s2">&quot;@YourTwitterHandle&quot;</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+<span class="c1"># This is a simple controller with one button</span>
+<span class="k">class</span> <span class="nc">MyController</span> <span class="o">&lt;</span> <span class="no">UIViewController</span>
+
+  <span class="k">def</span> <span class="nf">viewDidLoad</span>
+    <span class="n">button</span> <span class="o">=</span> <span class="no">UIButton</span><span class="o">.</span><span class="n">buttonWithType</span><span class="p">(</span><span class="no">UIButtonTypeRoundedRect</span><span class="p">)</span>
+    <span class="n">button</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s1">&#39;Start&#39;</span><span class="p">,</span> <span class="ss">forState</span><span class="p">:</span><span class="no">UIControlStateNormal</span><span class="p">)</span>
+    <span class="n">button</span><span class="o">.</span><span class="n">addTarget</span><span class="p">(</span>
+      <span class="nb">self</span><span class="p">,</span>
+      <span class="ss">action</span><span class="p">:</span> <span class="s1">&#39;button_tapped&#39;</span><span class="p">,</span>
+      <span class="ss">forControlEvents</span><span class="p">:</span> <span class="no">UIControlEventTouchUpInside</span>
+    <span class="p">)</span>
+    <span class="n">button</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="o">[[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">260</span><span class="o">]</span><span class="p">,</span> <span class="o">[</span><span class="n">view</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">40</span><span class="o">]]</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">addSubview</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="c1"># This method generates the image of the entire screen</span>
+  <span class="c1"># Note it will not include the status bar</span>
+  <span class="k">def</span> <span class="nf">screenshot</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="no">UIApplication</span><span class="o">.</span><span class="n">sharedApplication</span><span class="o">.</span><span class="n">keyWindow</span>
+    <span class="no">UIGraphicsBeginImageContextWithOptions</span><span class="p">(</span>
+      <span class="n">window</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+      <span class="kp">false</span><span class="p">,</span>
+      <span class="no">UIScreen</span><span class="o">.</span><span class="n">mainScreen</span><span class="o">.</span><span class="n">scale</span>
+    <span class="p">)</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">drawViewHierarchyInRect</span><span class="p">(</span>
+      <span class="n">window</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span>
+      <span class="ss">afterScreenUpdates</span><span class="p">:</span><span class="kp">true</span>
+    <span class="p">)</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="no">UIGraphicsGetImageFromCurrentImageContext</span><span class="p">()</span>
+    <span class="no">UIGraphicsEndImageContext</span><span class="p">()</span>
+    <span class="n">image</span>
+  <span class="k">end</span>
+
+  <span class="c1"># We create an instance of our ShareText subclass</span>
+  <span class="c1"># Pass it into the UIActivityViewController along with the screenshot</span>
+  <span class="c1"># The UIActivityViewController handles everything else, all you have to do is present the controller.</span>
+  <span class="k">def</span> <span class="nf">button_tapped</span>
+    <span class="n">tc_share_text</span> <span class="o">=</span> <span class="no">ShareText</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">init</span>
+    <span class="n">tc_share_text</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Check out this screengrab!&quot;</span>
+    <span class="n">controller</span> <span class="o">=</span> <span class="no">UIActivityViewController</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">initWithActivityItems</span><span class="p">(</span>
+      <span class="o">[</span><span class="n">tc_share_text</span><span class="p">,</span> <span class="n">screenshot</span><span class="o">]</span><span class="p">,</span>
+      <span class="ss">applicationActivities</span><span class="p">:</span> <span class="kp">nil</span>
+    <span class="p">)</span>
+
+    <span class="n">controller</span><span class="o">.</span><span class="n">excludedActivityTypes</span> <span class="o">=</span> <span class="o">[</span>
+      <span class="no">UIActivityTypePrint</span><span class="p">,</span>
+      <span class="no">UIActivityTypeAssignToContact</span><span class="p">,</span>
+      <span class="no">UIActivityTypeAddToReadingList</span><span class="p">,</span>
+      <span class="no">UIActivityTypePostToFlickr</span><span class="p">,</span>
+      <span class="no">UIActivityTypeAirDrop</span>
+    <span class="o">]</span>
+
+    <span class="nb">self</span><span class="o">.</span><span class="n">presentViewController</span><span class="p">(</span>
+      <span class="n">controller</span><span class="p">,</span>
+      <span class="ss">animated</span><span class="p">:</span><span class="kp">true</span><span class="p">,</span>
+      <span class="ss">completion</span><span class="p">:</span><span class="kp">nil</span>
+    <span class="p">)</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div>
+
+
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1318,133 +1497,6 @@ notes in your favourite editor:</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/23/how-to-setup-testflight-for-a-rubymotion-app/">How to Setup TestFlight for a RubyMotion App</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-23T11:06:00+01:00" pubdate data-updated="true">May 23<span>rd</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>The official RubyMotion guide for <a href="http://www.rubymotion.com/developer-center/articles/testflight/">installing TestFlight</a>
-got me most of the way there, but there were a few additional steps I needed to
-get everything working.</p>
-
-<p>First and foremost <a href="http://paulsturgess.co.uk/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone/">I got my app running on my own device via usb</a>.</p>
-
-<p>However, for TestFlight, an Adhoc Provisioning Profile is required, as opposed
-to a Development Provisioning Profile. Essentially this is an Apple approved
-license to distribute your app to a limited number of devices without using the
-App Store.</p>
-
-<h2>Create a distribution certificate</h2>
-
-<p>Go to the Apple iOS developer website and create a Distribution certficate in a
-similar way to how you created your Developer certificate.</p>
-
-<h2>Create a fixed App ID</h2>
-
-<p>This is optional, but it felt right to me to use a fixed App ID instead of a
-wildcard.</p>
-
-<h2>Create an adhoc distribution profile</h2>
-
-<p>Finally, still on the Apple iOS Developer website, create an Adhoc distribution
-profile, download it and double click it to install it.</p>
-
-<h2>Setting up your Rakefile for multiple environments</h2>
-
-<p>I wanted to use both my Developer and Adhoc Provisioning Profiles at the same
-time. Without having to worry about switching them when required.</p>
-
-<p>My Rakefile looks like this:</p>
-
-<pre><code>Motion::Project::App.setup do |app|
-  env = if ENV['adhoc'] == '1'
-          'adhoc'
-        else
-          'dev'
-        end
-
-  app.name = 'MyApp'
-
-  # Provisioning profiles
-  if env == 'adhoc'
-    app.identifier = 'com.mydomain.myapp'
-    app.codesign_certificate = 'iPhone Distribution: Company (XXXXXXXXXX)'
-    app.provisioning_profile = '/path/to/adhoc/provisioing/profile/example.mobileprovision'
-    app.entitlements['get-task-allow'] = false
-  else
-    app.identifier = 'com.mydomain.myapp'
-    app.codesign_certificate = 'iPhone Developer: My Name (XXXXXXXXXX)'
-    app.provisioning_profile = '/path/to/development/provisioing/profile/example.mobileprovision'
-  end
-
-  # TestFlight config
-  app.testflight.sdk = 'vendor/TestFlight'
-  app.testflight.api_token = 'sometoken'
-  app.testflight.team_token = 'anothertoken'
-end
-
-desc "Set the env to 'adhoc'"
-task :set_adhoc do
-  ENV['adhoc'] = '1'
-end
-
-desc "Run Testflight with the adhoc provisioning profile"
-# e.g. rake tf notes="My release notes"
-task :tf =&gt; [
-  :set_adhoc,
-  :testflight
-]
-</code></pre>
-
-<p>Credit to Hwee-Boon Yar for writing up <a href="http://hboon.com/different-settings-for-development-and-adhoc-builds-in-rubymotion/">how to setup the Rakefile for multiple environments</a></p>
-
-<p>Your API token is under your account settings on TestFlight at: <a href="https://testflightapp.com/account/#api">https://testflightapp.com/account/#api</a>.</p>
-
-<p>You can find your team API token at the following url: <a href="https://testflightapp.com/dashboard/team/edit/">https://testflightapp.com/dashboard/team/edit/</a></p>
-
-<p>One key bit of information I was initially missing was setting <code>get-task-allow</code>
-to false. This is only required for the Adhoc Provisioning Profile.</p>
-
-<h2>Use a custom rake task to deploy to TestFlight</h2>
-
-<p>Notice the rake task at the bottom sets the adhoc variable to ensure the Adhoc
-provisioning profile is used before firing off the TestFlight task added by
-<code>motion-testflight</code>.</p>
-
-<p>So from now on I release to TestFlight via:</p>
-
-<pre><code>$ rake tf notes="My release notes"
-</code></pre>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1461,6 +1513,10 @@ provisioning profile is used before firing off the TestFlight task added by
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/11/06/how-to-write-and-test-a-redux-container-component-for-react/">How to write and test a Redux Container Component for React</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/10/19/how-to-write-and-test-a-stateless-react-component/">How to write and test a stateless React component</a>
       </li>
     
@@ -1474,10 +1530,6 @@ provisioning profile is used before firing off the TestFlight task added by
     
       <li class="post">
         <a href="/blog/2016/05/04/how-to-test-react-lifecycle-method-componentdidupdate-when-the-component-props-change/">How to test React lifecycle method componentDidUpdate when the component props change</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/07/09/rubymotion-inspect-paris-was-loads-of-fun/">RubyMotion #inspect Paris was loads of fun</a>
       </li>
     
   </ul>

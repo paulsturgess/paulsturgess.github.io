@@ -9,8 +9,9 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="Coming from a Ruby on Rails background, it&#8217;s common place to see the Gemfile
-declarations in logical groups. This ensures your gems only get &hellip;">
+  <meta name="description" content="The official RubyMotion guide for installing TestFlight
+got me most of the way there, but there were a few additional steps I needed to
+get &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -74,6 +75,133 @@ declarations in logical groups. This ensures your gems only get &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/23/how-to-setup-testflight-for-a-rubymotion-app/">How to Setup TestFlight for a RubyMotion App</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-23T11:06:00+01:00" pubdate data-updated="true">May 23<span>rd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The official RubyMotion guide for <a href="http://www.rubymotion.com/developer-center/articles/testflight/">installing TestFlight</a>
+got me most of the way there, but there were a few additional steps I needed to
+get everything working.</p>
+
+<p>First and foremost <a href="http://paulsturgess.co.uk/blog/2013/05/10/using-rubymotion-to-provision-an-app-onto-your-iphone/">I got my app running on my own device via usb</a>.</p>
+
+<p>However, for TestFlight, an Adhoc Provisioning Profile is required, as opposed
+to a Development Provisioning Profile. Essentially this is an Apple approved
+license to distribute your app to a limited number of devices without using the
+App Store.</p>
+
+<h2>Create a distribution certificate</h2>
+
+<p>Go to the Apple iOS developer website and create a Distribution certficate in a
+similar way to how you created your Developer certificate.</p>
+
+<h2>Create a fixed App ID</h2>
+
+<p>This is optional, but it felt right to me to use a fixed App ID instead of a
+wildcard.</p>
+
+<h2>Create an adhoc distribution profile</h2>
+
+<p>Finally, still on the Apple iOS Developer website, create an Adhoc distribution
+profile, download it and double click it to install it.</p>
+
+<h2>Setting up your Rakefile for multiple environments</h2>
+
+<p>I wanted to use both my Developer and Adhoc Provisioning Profiles at the same
+time. Without having to worry about switching them when required.</p>
+
+<p>My Rakefile looks like this:</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+  env = if ENV['adhoc'] == '1'
+          'adhoc'
+        else
+          'dev'
+        end
+
+  app.name = 'MyApp'
+
+  # Provisioning profiles
+  if env == 'adhoc'
+    app.identifier = 'com.mydomain.myapp'
+    app.codesign_certificate = 'iPhone Distribution: Company (XXXXXXXXXX)'
+    app.provisioning_profile = '/path/to/adhoc/provisioing/profile/example.mobileprovision'
+    app.entitlements['get-task-allow'] = false
+  else
+    app.identifier = 'com.mydomain.myapp'
+    app.codesign_certificate = 'iPhone Developer: My Name (XXXXXXXXXX)'
+    app.provisioning_profile = '/path/to/development/provisioing/profile/example.mobileprovision'
+  end
+
+  # TestFlight config
+  app.testflight.sdk = 'vendor/TestFlight'
+  app.testflight.api_token = 'sometoken'
+  app.testflight.team_token = 'anothertoken'
+end
+
+desc "Set the env to 'adhoc'"
+task :set_adhoc do
+  ENV['adhoc'] = '1'
+end
+
+desc "Run Testflight with the adhoc provisioning profile"
+# e.g. rake tf notes="My release notes"
+task :tf =&gt; [
+  :set_adhoc,
+  :testflight
+]
+</code></pre>
+
+<p>Credit to Hwee-Boon Yar for writing up <a href="http://hboon.com/different-settings-for-development-and-adhoc-builds-in-rubymotion/">how to setup the Rakefile for multiple environments</a></p>
+
+<p>Your API token is under your account settings on TestFlight at: <a href="https://testflightapp.com/account/#api">https://testflightapp.com/account/#api</a>.</p>
+
+<p>You can find your team API token at the following url: <a href="https://testflightapp.com/dashboard/team/edit/">https://testflightapp.com/dashboard/team/edit/</a></p>
+
+<p>One key bit of information I was initially missing was setting <code>get-task-allow</code>
+to false. This is only required for the Adhoc Provisioning Profile.</p>
+
+<h2>Use a custom rake task to deploy to TestFlight</h2>
+
+<p>Notice the rake task at the bottom sets the adhoc variable to ensure the Adhoc
+provisioning profile is used before firing off the TestFlight task added by
+<code>motion-testflight</code>.</p>
+
+<p>So from now on I release to TestFlight via:</p>
+
+<pre><code>$ rake tf notes="My release notes"
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -817,6 +945,10 @@ $ cd ..
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/11/06/how-to-write-and-test-a-redux-container-component-for-react/">How to write and test a Redux Container Component for React</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/10/19/how-to-write-and-test-a-stateless-react-component/">How to write and test a stateless React component</a>
       </li>
     
@@ -830,10 +962,6 @@ $ cd ..
     
       <li class="post">
         <a href="/blog/2016/05/04/how-to-test-react-lifecycle-method-componentdidupdate-when-the-component-props-change/">How to test React lifecycle method componentDidUpdate when the component props change</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/07/09/rubymotion-inspect-paris-was-loads-of-fun/">RubyMotion #inspect Paris was loads of fun</a>
       </li>
     
   </ul>

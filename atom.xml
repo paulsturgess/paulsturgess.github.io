@@ -4,7 +4,7 @@
   <title><![CDATA[Web & iOS dev – Ruby, Rails, RubyMotion & React]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2016-11-06T22:47:58+00:00</updated>
+  <updated>2016-11-20T15:14:57+00:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,82 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Functional Programming for a Rubyist]]></title>
+    <link href="http://paulsturgess.github.io/blog/2016/11/20/functional-programming-for-a-rubyist/"/>
+    <updated>2016-11-20T12:22:00+00:00</updated>
+    <id>http://paulsturgess.github.io/blog/2016/11/20/functional-programming-for-a-rubyist</id>
+    <content type="html"><![CDATA[<p>Functional programming has piqued my interest for a while – it appears to be reaching
+a tipping point with the rise of <a href="https://facebook.github.io/react/">ReactJS</a>, <a href="http://redux.js.org/">Redux</a>, <a href="http://elm-lang.org/">Elm</a> and <a href="https://facebook.github.io/immutable-js/">ImmutableJS</a>
+bringing Functional Programming to a whole new set of developers through Javascript.</p>
+
+<p><a href="http://elixir-lang.org/">Elixir</a> is also a functional programming language that&#8217;s
+attracting a lot of the Ruby community.</p>
+
+<p>As an object-orientated Rubyist, I&#8217;ve been exposed to some functional programming
+ideas through Blocks, Procs and Lambdas but when programming in Ruby you&#8217;re typically
+mutating state all over the place.</p>
+
+<p>Pure functional programming works with immutable state.</p>
+
+<h2>Coursera</h2>
+
+<p>To learn more about functional programming, I&#8217;ve just successfully completed the
+Coursera course <a href="https://www.coursera.org/learn/progfun1">Functional Programming Principles in Scala</a>
+taught by the creator of <a href="http://www.scala-lang.org/">Scala</a>, Martin Odersky.</p>
+
+<p>Although I didn&#8217;t set out to specifically learn Scala, I decided to take the
+course because the <a href="https://www.coursera.org/learn/progfun1#ratings">reviews from fellow programmers</a>
+highly recommended it for learning Functional Programming. I think they were right – it&#8217;s
+a very well put together course and it&#8217;s also really tough.</p>
+
+<p>It completely challenges the way you think when you are used to writing imperative code.
+The course is definitely less about learning Scala and more focussed on the fundamentals
+of functional programming. Interestingly Scala actually allows both the worlds of
+functional and object-orientated to co-exist.</p>
+
+<p>Each week you have an assignment to complete that you can upload your program directly
+from your IDE – there&#8217;s an automated test suite that will grade your submission.</p>
+
+<h2>Side effect free</h2>
+
+<p>So one of the reasons functional programming is gaining popularity is because one of
+the main cited benefits is that the code is easier to reason about due to being
+&#8216;side-effect free&#8217;.</p>
+
+<p>It&#8217;s this immutability that is at the core of React &amp; Redux, especially for performance.</p>
+
+<p>When a component&#8217;s props or state change, React decides whether an actual DOM update
+is necessary. By using immutable state, it&#8217;s very easy to track if an object
+has changed. The React documentation has a really good detailed explanation on <a href="https://facebook.github.io/react/docs/optimizing-performance.html">Optimizing Performance</a>.</p>
+
+<h2>Scalable</h2>
+
+<p>Functional programming languages are often talked about as being highly performant, but
+what does this mean?</p>
+
+<p>The future trend for computing appears to be more cores and one the way to make best
+use of the hardware is to run code in parallel. This is where that &#8216;side-effect free&#8217;
+code comes into play as makes it a lot easier to run in parallel.</p>
+
+<h2>The Future</h2>
+
+<p>Functional programming is certainly a completely different mindset for those of
+us used to object-oriented programs. It will be really interesting to see if it
+does become the mainstream approach to building web applications. I think I might
+start trying to apply some functional programming in Ruby and see how I get on.</p>
+
+<p>Further Reading&#8230;</p>
+
+<ul>
+<li><a href="http://www.rubypigeon.com/posts/avoid-mutation-functional-style-in-ruby/">Avoid mutation in Ruby</a></li>
+<li><a href="http://www.rubypigeon.com/posts/isolate-side-effects-functional-style-in-ruby/">Isolate side-effects in Ruby</a></li>
+<li><a href="http://blog.carbonfive.com/2014/01/26/applying-functional-programming-principles-to-your-rails-codebase/">Applying functional programming in Rails</a></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[How to write and test a Redux Container Component for React]]></title>
@@ -1804,19 +1880,6 @@ and open the organiser via:</p>
 <code>Choose Target</code> you should get a list of your apps to choose from.</p>
 
 <p>Note that your application must have been provisioned using a development profile.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[How to view the RubyMotion release notes]]></title>
-    <link href="http://paulsturgess.github.io/blog/2013/06/27/how-to-view-the-rubymotion-release-notes/"/>
-    <updated>2013-06-27T09:28:00+01:00</updated>
-    <id>http://paulsturgess.github.io/blog/2013/06/27/how-to-view-the-rubymotion-release-notes</id>
-    <content type="html"><![CDATA[<p>Presuming you have RubyMotion installed. This one-liner should open the release
-notes in your favourite editor:</p>
-
-<pre><code>$ open /Library/RubyMotion/NEWS
-</code></pre>
 ]]></content>
   </entry>
   

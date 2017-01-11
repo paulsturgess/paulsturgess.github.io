@@ -158,15 +158,21 @@
         <loc>
             http://paulsturgess.github.io/blog/2016/11/20/functional-programming-for-a-rubyist/
         </loc>
-        <lastmod>2016-11-20T15:12:14+00:00</lastmod>
+        <lastmod>2017-01-11T19:09:23+00:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://paulsturgess.github.io/blog/2017/01/11/simple-method-for-checking-the-mime-type-for-a-file-in-ruby-on-rails/
+        </loc>
+        <lastmod>2017-01-11T20:02:53+00:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/blog/archives/</loc>
-        <lastmod>2016-11-20T15:12:14+00:00</lastmod>
+        <lastmod>2017-01-11T20:02:53+00:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/</loc>
-        <lastmod>2016-11-20T15:12:14+00:00</lastmod>
+        <lastmod>2017-01-11T20:02:53+00:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/robots.txt</loc>

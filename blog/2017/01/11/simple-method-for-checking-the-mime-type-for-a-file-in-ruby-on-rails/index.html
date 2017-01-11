@@ -5,12 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Logging to the console in RubyMotion - Web & iOS dev – Ruby, Rails, RubyMotion & React</title>
+  <title>Simple method for checking a file mime type in Ruby on Rails - Web & iOS dev – Ruby, Rails, RubyMotion & React</title>
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="The simplest way to output to the console from your RubyMotion app is to use
-puts. This works fine when your app is running in the simulator. However &hellip;">
+  <meta name="description" content="When accepting file uploads from users of your application, you should always
+check the file to ensure malicious content isn&#8217;t permitted. If &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +19,7 @@ puts. This works fine when your app is running in the simulator. However &hellip
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://paulsturgess.github.io/blog/2013/10/29/logging-to-the-console-in-rubymotion">
+  <link rel="canonical" href="http://paulsturgess.github.io/blog/2017/01/11/simple-method-for-checking-the-mime-type-for-a-file-in-ruby-on-rails">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -77,7 +77,7 @@ puts. This works fine when your app is running in the simulator. However &hellip
   
   <header>
     
-      <h1 class="entry-title">Logging to the Console in RubyMotion</h1>
+      <h1 class="entry-title">Simple Method for Checking a File Mime Type in Ruby on Rails</h1>
     
     
       <p class="meta">
@@ -93,41 +93,36 @@ puts. This works fine when your app is running in the simulator. However &hellip
   
 
 
-<time datetime="2013-10-29T08:44:00+00:00" pubdate data-updated="true">Oct 29<span>th</span>, 2013</time>
+<time datetime="2017-01-11T19:16:00+00:00" pubdate data-updated="true">Jan 11<span>th</span>, 2017</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>The simplest way to output to the console from your RubyMotion app is to use
-<code>puts</code>. This works fine when your app is running in the simulator. However,
-<code>puts</code> does not output to the console when your app is running on the device
-itself.</p>
+<div class="entry-content"><p>When accepting file uploads from users of your application, you should always
+check the file to ensure malicious content isn&#8217;t permitted.</p>
 
-<p>You can view the live logs while your app is running on your usb connected device via:</p>
+<p>If you have a simple Rails <code>file_field</code> in a multipart form, you&#8217;ll get a <a href="http://api.rubyonrails.org/classes/ActionDispatch/Http/UploadedFile.html">ActionDispatch::Http::UploadedFile</a>. This object wraps up the temporary uploaded file and has methods
+like <code>content_type</code> and <code>original_filename</code>.</p>
 
-<pre><code>$ motion device:console
-</code></pre>
+<p>At first glance it sounds sensible to check the extension (determined from <code>original_filename</code>) along with the <code>content_type</code>, against a whitelist of allowed
+values. However, if the pesky user has renamed the file extension before uploading
+the file, your whitelist will not help you as even <code>content_type</code> will return the
+incorrect value.</p>
 
-<p>You will see messages from your application alongside those from other apps or
-the system itself.</p>
+<p>This is why checking the mime type of the file is important, but this is not
+something Ruby does natively. There are a few Ruby gems around which specifically
+handle this problem but the simplest solution I found, without requiring any third
+party dependencies, was to use the underlying Operating System and execute the
+<a href="http://man7.org/linux/man-pages/man1/file.1.html">file command</a> via back ticks:</p>
 
-<p>Instead of using <code>puts</code>, you&#8217;ll need to make use of <code>NSLog</code>. For example</p>
+<div class="highlight"><pre><code class="ruby">  <span class="sb">`file --b --mime-type &#39;/path/to/file.txt&#39;`</span><span class="o">.</span><span class="n">strip</span>
+</code></pre></div>
 
-<pre><code>NSLog("My debug messge")
-</code></pre>
 
-<p>Note, however, that the first argument for <code>NSLog</code> is actually a <a href="https://developer.apple.com/library/ios/documentation/cocoa/conceptual/Strings/Articles/formatSpecifiers.html">String Format Specifier</a>.</p>
-
-<p>The following are equivalent:</p>
-
-<pre><code>puts "A #{variable} goes here"
-NSLog("A %@ goes here", variable)
-</code></pre>
-
-<p>Just remember that any <code>NSLog</code> messages you leave in your app will be visible
-to the curious, even after you&#8217;ve released to the App Store.</p>
+<p>This works on both Linux and OS X and will return the mime type such as
+&#8216;text/plain&#8217;, which can then be used as part of your validation.</p>
 </div>
 
 
@@ -150,7 +145,7 @@ to the curious, even after you&#8217;ve released to the App Store.</p>
   
 
 
-<time datetime="2013-10-29T08:44:00+00:00" pubdate data-updated="true">Oct 29<span>th</span>, 2013</time>
+<time datetime="2017-01-11T19:16:00+00:00" pubdate data-updated="true">Jan 11<span>th</span>, 2017</time>
       
 
 
@@ -165,10 +160,8 @@ to the curious, even after you&#8217;ve released to the App Store.</p>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/10/16/using-lldb-to-debug-a-rubymotion-app/" title="Previous Post: Using LLDB to debug a RubyMotion app">&laquo; Using LLDB to debug a RubyMotion app</a>
+        <a class="basic-alignment left" href="/blog/2016/11/20/functional-programming-for-a-rubyist/" title="Previous Post: Functional Programming for a Rubyist">&laquo; Functional Programming for a Rubyist</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2014/02/20/using-magicalrecord-and-core-data-in-rubymotion/" title="Next Post: Using MagicalRecord and Core Data in RubyMotion">Using MagicalRecord and Core Data in RubyMotion &raquo;</a>
       
     </p>
   </footer>

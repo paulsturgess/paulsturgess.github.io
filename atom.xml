@@ -4,7 +4,7 @@
   <title><![CDATA[Web & iOS dev – Ruby, Rails, RubyMotion & React]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2017-01-11T20:04:38+00:00</updated>
+  <updated>2017-02-01T19:30:15+00:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,103 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Using Capybara and PhantomJS to test an external website]]></title>
+    <link href="http://paulsturgess.github.io/blog/2017/02/01/using-capybara-and-phantomjs-to-test-an-external-website/"/>
+    <updated>2017-02-01T19:14:00+00:00</updated>
+    <id>http://paulsturgess.github.io/blog/2017/02/01/using-capybara-and-phantomjs-to-test-an-external-website</id>
+    <content type="html"><![CDATA[<p><a href="https://github.com/teamcapybara/capybara">Capybara</a> is a great way for performing
+integration testing of web applications. Typically it is used in development with
+the default Rack Test Driver. However, the Rack Test driver does not support JavaScript
+and is unable to access HTTP resources outside of your Rack application.</p>
+
+<p>Enter <a href="http://phantomjs.org/">PhantomJS</a> – a headless implementation of Webkit
+that can execute JavaScript, external urls and works with Capybara. The easiest
+way to get the two to talk together is via the <a href="https://github.com/teampoltergeist/poltergeist">Poltergeist gem</a>.</p>
+
+<p>I created an example repo with all the required config and setup via Docker: <a href="https://github.com/paulsturgess/capybara_phantomjs">https://github.com/paulsturgess/capybara_phantomjs</a></p>
+
+<p>But essentially it boils down to:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s1">&#39;capybara&#39;</span>
+</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;capybara/dsl&#39;</span>
+</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;capybara/poltergeist&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="vg">$stdout</span><span class="o">.</span><span class="n">sync</span> <span class="o">=</span> <span class="kp">true</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Demo</span>
+</span><span class='line'>  <span class="kp">include</span> <span class="ss">Capybara</span><span class="p">:</span><span class="ss">:DSL</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">run</span>
+</span><span class='line'>    <span class="kp">new</span><span class="o">.</span><span class="n">run</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>    <span class="n">setup_poltergeist</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">run</span>
+</span><span class='line'>    <span class="n">visit</span><span class="p">(</span><span class="s1">&#39;https://google.com&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">save_page</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kp">private</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">setup_poltergeist</span>
+</span><span class='line'>    <span class="no">Capybara</span><span class="o">.</span><span class="n">register_driver</span> <span class="ss">:poltergeist</span> <span class="k">do</span> <span class="o">|</span><span class="n">app</span><span class="o">|</span>
+</span><span class='line'>      <span class="ss">Capybara</span><span class="p">:</span><span class="ss">:Poltergeist</span><span class="o">::</span><span class="no">Driver</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">polyergeist_options</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>    <span class="no">Capybara</span><span class="o">.</span><span class="n">default_driver</span> <span class="o">=</span> <span class="ss">:poltergeist</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">polyergeist_options</span>
+</span><span class='line'>    <span class="p">{</span> <span class="n">js_errors</span><span class="p">:</span> <span class="kp">false</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">Demo</span><span class="o">.</span><span class="n">run</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Simple method for checking a file mime type in Ruby on Rails]]></title>
@@ -1826,46 +1923,6 @@ end
 </code></pre>
 
 <p>Note that <code>UIStatusBarStyleLightContent</code> will turn your status bar text color to white.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[How to use the Crittercism Cocoapod in a RubyMotion app]]></title>
-    <link href="http://paulsturgess.github.io/blog/2013/07/01/how-to-use-the-crittercism-cocoapod-in-a-rubymotion-app/"/>
-    <updated>2013-07-01T10:24:00+01:00</updated>
-    <id>http://paulsturgess.github.io/blog/2013/07/01/how-to-use-the-crittercism-cocoapod-in-a-rubymotion-app</id>
-    <content type="html"><![CDATA[<p><a href="http://www.crittercism.com">Crittercism</a> is a great way of collecting data and
-crash reports from your iOS application whilst it&#8217;s being used in realtime.</p>
-
-<p>The easiest way to get it up and running in your RubyMotion app is to <a href="http://cocoapods.org/?q=crittercism">use the Coacoapod</a>.</p>
-
-<p>If you haven&#8217;t setup Coacoapods in your app yet then check out my article
-where I <a href="http://paulsturgess.co.uk/blog/2013/05/15/using-native-objective-c-cocoapod-libraries-in-rubymotion/">install the ViewDeck Cocoapod</a>.</p>
-
-<p>Update your <code>Rakefile</code> with:</p>
-
-<pre><code>Motion::Project::App.setup do |app|
-  # ...
-
-  app.frameworks += [
-    'SystemConfiguration'
-  ]
-
-  app.pods do
-    pod 'CrittercismSDK'
-  end
-end
-</code></pre>
-
-<p>Locate your Crittercism App id under Settings on the Crittercism website. Update
-your <code>app_delegate.rb</code> with the following just before you call <code>makeKeyAndVisible</code>:</p>
-
-<pre><code>crittercism_app_id = "51d1421f97c8f273e0000007"
-Crittercism.enableWithAppID(crittercism_app_id)
-</code></pre>
-
-<p>Now when you build your app and errors get raised, you&#8217;ll start receiving crash
-reports.</p>
 ]]></content>
   </entry>
   

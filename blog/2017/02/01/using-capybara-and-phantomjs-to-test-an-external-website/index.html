@@ -5,11 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Using NSUserDefaults in RubyMotion - Web & iOS dev – Ruby, Rails, RubyMotion & React</title>
+  <title>Using Capybara and PhantomJS to test an external website - Web & iOS dev – Ruby, Rails, RubyMotion & React</title>
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="Apple describe NSUserDefaults as &#8220;a programmatic interface for interacting with the defaults system&#8221;. It also provides a convenient store &hellip;">
+  <meta name="description" content="Capybara is a great way for performing
+integration testing of web applications. Typically it is used in development with
+the default Rack Test Driver &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://paulsturgess.github.io/blog/2014/05/07/using-nsuserdefaults-in-rubymotion">
+  <link rel="canonical" href="http://paulsturgess.github.io/blog/2017/02/01/using-capybara-and-phantomjs-to-test-an-external-website">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -76,7 +78,7 @@
   
   <header>
     
-      <h1 class="entry-title">Using NSUserDefaults in RubyMotion</h1>
+      <h1 class="entry-title">Using Capybara and PhantomJS to Test an External Website</h1>
     
     
       <p class="meta">
@@ -92,20 +94,27 @@
   
 
 
-<time datetime="2014-05-07T09:19:00+01:00" pubdate data-updated="true">May 7<span>th</span>, 2014</time>
+<time datetime="2017-02-01T19:14:00+00:00" pubdate data-updated="true">Feb 1<span>st</span>, 2017</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Apple describe <a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/nsuserdefaults_Class/Reference/Reference.html">NSUserDefaults</a> as &#8220;a programmatic interface for interacting with the defaults system&#8221;.</p>
+<div class="entry-content"><p><a href="https://github.com/teamcapybara/capybara">Capybara</a> is a great way for performing
+integration testing of web applications. Typically it is used in development with
+the default Rack Test Driver. However, the Rack Test driver does not support JavaScript
+and is unable to access HTTP resources outside of your Rack application.</p>
 
-<p>It also provides a convenient store for persisting and retrieving user preferences for your application. You can think of it as a <code>key</code> <code>value</code> hash like structure, although it is a bit smarter than that.</p>
+<p>Enter <a href="http://phantomjs.org/">PhantomJS</a> – a headless implementation of Webkit
+that can execute JavaScript, external urls and works with Capybara. The easiest
+way to get the two to talk together is via the <a href="https://github.com/teampoltergeist/poltergeist">Poltergeist gem</a>.</p>
 
-<p>Here&#8217;s a really simple implementation I&#8217;ve been using:</p>
+<p>I created an example repo with all the required config and setup via Docker: <a href="https://github.com/paulsturgess/capybara_phantomjs">https://github.com/paulsturgess/capybara_phantomjs</a></p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p>But essentially it boils down to:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -140,95 +149,47 @@
 <span class='line-number'>33</span>
 <span class='line-number'>34</span>
 <span class='line-number'>35</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>class Cache
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s1">&#39;capybara&#39;</span>
+</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;capybara/dsl&#39;</span>
+</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;capybara/poltergeist&#39;</span>
 </span><span class='line'>
-</span><span class='line'>  class &lt;&lt; self
+</span><span class='line'><span class="vg">$stdout</span><span class="o">.</span><span class="n">sync</span> <span class="o">=</span> <span class="kp">true</span>
 </span><span class='line'>
-</span><span class='line'>    def set_default(key, data)
-</span><span class='line'>      return if read(key)
-</span><span class='line'>      write(key, data)
-</span><span class='line'>    end
+</span><span class='line'><span class="k">class</span> <span class="nc">Demo</span>
+</span><span class='line'>  <span class="kp">include</span> <span class="ss">Capybara</span><span class="p">:</span><span class="ss">:DSL</span>
 </span><span class='line'>
-</span><span class='line'>    def write(key, data)
-</span><span class='line'>      NSUserDefaults.standardUserDefaults[storage_key(key)] = data
-</span><span class='line'>      NSUserDefaults.standardUserDefaults.synchronize
-</span><span class='line'>    end
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">run</span>
+</span><span class='line'>    <span class="kp">new</span><span class="o">.</span><span class="n">run</span>
+</span><span class='line'>  <span class="k">end</span>
 </span><span class='line'>
-</span><span class='line'>    def read(key)
-</span><span class='line'>      NSUserDefaults.standardUserDefaults[storage_key(key)]
-</span><span class='line'>    end
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>    <span class="n">setup_poltergeist</span>
+</span><span class='line'>  <span class="k">end</span>
 </span><span class='line'>
-</span><span class='line'>    private
+</span><span class='line'>  <span class="k">def</span> <span class="nf">run</span>
+</span><span class='line'>    <span class="n">visit</span><span class="p">(</span><span class="s1">&#39;https://google.com&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">save_page</span>
+</span><span class='line'>  <span class="k">end</span>
 </span><span class='line'>
-</span><span class='line'>    def storage_key_prefix
-</span><span class='line'>      "#{cache_namespace}_"
-</span><span class='line'>    end
+</span><span class='line'>  <span class="kp">private</span>
 </span><span class='line'>
-</span><span class='line'>    def storage_key key
-</span><span class='line'>      "#{storage_key_prefix}#{key}"
-</span><span class='line'>    end
+</span><span class='line'>  <span class="k">def</span> <span class="nf">setup_poltergeist</span>
+</span><span class='line'>    <span class="no">Capybara</span><span class="o">.</span><span class="n">register_driver</span> <span class="ss">:poltergeist</span> <span class="k">do</span> <span class="o">|</span><span class="n">app</span><span class="o">|</span>
+</span><span class='line'>      <span class="ss">Capybara</span><span class="p">:</span><span class="ss">:Poltergeist</span><span class="o">::</span><span class="no">Driver</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">polyergeist_options</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>    <span class="no">Capybara</span><span class="o">.</span><span class="n">default_driver</span> <span class="o">=</span> <span class="ss">:poltergeist</span>
+</span><span class='line'>  <span class="k">end</span>
 </span><span class='line'>
-</span><span class='line'>    def cache_namespace
-</span><span class='line'>      raise NotImplementedError
-</span><span class='line'>    end
+</span><span class='line'>  <span class="k">def</span> <span class="nf">polyergeist_options</span>
+</span><span class='line'>    <span class="p">{</span> <span class="n">js_errors</span><span class="p">:</span> <span class="kp">false</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
 </span><span class='line'>
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>class UserSearchSettings &lt; Cache
-</span><span class='line'>
-</span><span class='line'>  class &lt;&lt; self
-</span><span class='line'>
-</span><span class='line'>    private
-</span><span class='line'>
-</span><span class='line'>    def cache_namespace
-</span><span class='line'>      "user_search"
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>end
+</span><span class='line'><span class="no">Demo</span><span class="o">.</span><span class="n">run</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
-<p>I use it like this:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>UserSearchSettings.write("sort_by", "name")
-</span><span class='line'>=&gt; true
-</span><span class='line'>NSUserDefaults.standardUserDefaults.dictionaryRepresentation
-</span><span class='line'>=&gt; {"user_search_sort_by" =&gt; "name"} # note there will be a lot of other key values in the hash
-</span><span class='line'>UserSearchSettings.read("sort_by")
-</span><span class='line'>=&gt; "name"</span></code></pre></td></tr></table></div></figure>
-
-
-<p>My intention is not to call the <code>Cache</code> class directly and to only use the subclass <code>UserSearchSettings</code>. This forces me to group settings with a prefix defined by the <code>cache_namespace</code> method. This will help avoid accidentally defining the same key name for different values. It also nicely groups related settings.</p>
-
-<p>Each application has its&#8217; own <code>NSUserDefaults.standardUserDefaults</code> so there is no need to prefix the keys with the application name.</p>
-
-<p>This store will persist until the user removes your application from their device.</p>
 </div>
 
 
@@ -251,7 +212,7 @@
   
 
 
-<time datetime="2014-05-07T09:19:00+01:00" pubdate data-updated="true">May 7<span>th</span>, 2014</time>
+<time datetime="2017-02-01T19:14:00+00:00" pubdate data-updated="true">Feb 1<span>st</span>, 2017</time>
       
 
 
@@ -266,10 +227,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2014/02/20/using-magicalrecord-and-core-data-in-rubymotion/" title="Previous Post: Using MagicalRecord and Core Data in RubyMotion">&laquo; Using MagicalRecord and Core Data in RubyMotion</a>
+        <a class="basic-alignment left" href="/blog/2017/01/11/simple-method-for-checking-the-mime-type-for-a-file-in-ruby-on-rails/" title="Previous Post: Simple method for checking a file mime type in Ruby on Rails">&laquo; Simple method for checking a file mime type in Ruby on Rails</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2015/02/05/tweeting-a-screenshot-in-rubymotion-with-uiactivityviewcontroller/" title="Next Post: Tweeting a screenshot in RubyMotion with UIActivityViewController">Tweeting a screenshot in RubyMotion with UIActivityViewController &raquo;</a>
       
     </p>
   </footer>

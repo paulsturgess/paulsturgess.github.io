@@ -4,7 +4,7 @@
   <title><![CDATA[Web & iOS dev – Ruby, Rails, RubyMotion & React]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2017-02-01T19:30:15+00:00</updated>
+  <updated>2017-02-08T21:09:55+00:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,78 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Making and testing Ajax requests with Axios in a Redux app]]></title>
+    <link href="http://paulsturgess.github.io/blog/2017/02/08/making-and-testing-ajax-requests-with-axios-in-a-redux-app/"/>
+    <updated>2017-02-08T19:08:00+00:00</updated>
+    <id>http://paulsturgess.github.io/blog/2017/02/08/making-and-testing-ajax-requests-with-axios-in-a-redux-app</id>
+    <content type="html"><![CDATA[<p>This article is going to explain how to perform and test Ajax requests in a React
+application using Redux and <a href="https://github.com/mzabriskie/axios">Axios</a> which
+is a promise based HTTP client.</p>
+
+<p>I like Axios because of the way you can centrally configure the common behaviour
+for the requests your front-end needs to make and the responses it receives.
+To take one example, it has the concept of <a href="https://github.com/mzabriskie/axios#interceptors">interceptors</a>
+that allow you to write a single function that can the handle responses such
+as a 401 unauthorized or 500 exception.</p>
+
+<p>When using Axios I like to create a utility &#8216;Service&#8217; class to setup the centralised
+config and ensure all Ajax requests get handled consistently.</p>
+
+<p>It also means calls to Axios are not sprinkled all over the codebase, so I could
+swap out Axios for an alternative library and I should only need to update this
+one wrapper class.</p>
+
+<script src="https://gist.github.com/paulsturgess/ebfae1d1ac1779f18487d3dee80d1258.js"></script>
+
+
+<p>In a Redux application, actions are purely functional and thus &#8216;side-effect free&#8217;. So in order to perform Ajax requests you will need middleware such as <a href="https://github.com/gaearon/redux-thunk">&#8216;redux-thunk&#8217;</a>. An alternative, that I&#8217;ve not used but heard good things of, is <a href="https://github.com/redux-loop/redux-loop">redux-loop</a>.</p>
+
+<p>Redux Thunk means you can return a function from your action to delay the dispatch
+of it, or only dispatch if a condition is met (like the response status is 200).</p>
+
+<p>Once Redux Thunk is installed, you can return a function in your Action as shown by
+<code>saveResource</code> in the example below:</p>
+
+<script src="https://gist.github.com/paulsturgess/2335a83355a22a6d06bf72d2f462a776.js"></script>
+
+
+<p>Then for any containers that you want to use the action, you need to pass through the dispatch to the function in the <code>mapDispatchToProps</code>. See <code>saveResource</code> below:</p>
+
+<script src="https://gist.github.com/paulsturgess/dc495342470f006a6c60a97d29584456.js"></script>
+
+
+<p>To test the action you can use standard jasmine spy functions:</p>
+
+<script src="https://gist.github.com/paulsturgess/adcc72f752fa5381bc0ca22c0be91c32.js"></script>
+
+
+<p>Then finally to test the Service class:</p>
+
+<script src="https://gist.github.com/paulsturgess/f1813e0cee2d39ea3b57ca155ec7fee7.js"></script>
+
+
+<p>There are a few bits here to go through here. Firstly I found that when running the specs
+I needed to add the <a href="https://www.npmjs.com/package/babel-polyfill">babel-polyfill</a> for Promises. I&#8217;m using <a href="https://karma-runner.github.io/1.0/index.html">Karma test runner</a> so I needed to add <code>'node_modules/babel-polyfill/dist/polyfill.js'</code> to the files array in the karma.config.js
+file.</p>
+
+<p>Secondly at the top of the spec you&#8217;ll notice that <a href="https://github.com/jasmine/jasmine-ajax">jasmine-ajax</a> is imported. This is the official plugin for faking Ajax requests in your Jasmine specs. What I like about this
+is that it has no knowledge of Axios. In the <code>beforeEach</code> it is turned on and
+then all Ajax requests triggered in the specs are captured and can be inspected.</p>
+
+<p>Due to the asynchronous nature of the promise, I use <code>setTimeout</code> to grab the
+most recent request and check it was formed correctly. To test the callback
+I use the <code>then</code> function on the promise under test.</p>
+
+<p>A small, but important, detail is the call to <code>done()</code> – this ensures the test
+does not exit early and waits until the asynchronous part of the test is complete
+before exiting.</p>
+
+<p>And that&#8217;s it! There&#8217;s a lot of code there, but once the Service class is setup it
+should remain pretty much unchanged. Adding additional Ajax requests to your React application actions should be fairly straight forward.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Using Capybara and PhantomJS to test an external website]]></title>
@@ -1884,45 +1956,6 @@ are running your app. Just fire it up with:</p>
 
 <p>Note you can bump the number up to 2 or 3 depending on how much information
 you want. 3 goes as far as to show you the result set Core Data has fetched.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Setting the status bar colour for iOS7 in RubyMotion]]></title>
-    <link href="http://paulsturgess.github.io/blog/2013/10/01/setting-the-status-bar-colour-for-ios7-in-rubymotion/"/>
-    <updated>2013-10-01T10:44:00+01:00</updated>
-    <id>http://paulsturgess.github.io/blog/2013/10/01/setting-the-status-bar-colour-for-ios7-in-rubymotion</id>
-    <content type="html"><![CDATA[<p>First things first you need to set <code>UIViewControllerBasedStatusBarAppearance</code> in
-your <code>info.plist</code>.</p>
-
-<p>This is done by updating your <code>Rakefile</code> like so:</p>
-
-<pre><code>app.info_plist['UIViewControllerBasedStatusBarAppearance'] = true
-</code></pre>
-
-<p>Now you need to implement the method <code>preferredStatusBarStyle</code> in your subclassed
-<code>UINavigationController</code>:</p>
-
-<pre><code>class MyCustomNavigationController &lt; UINavigationController
-
-  def preferredStatusBarStyle
-    UIStatusBarStyleLightContent
-  end
-
-end
-
-class AppDelegate
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
-    @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
-    @window.makeKeyAndVisible
-    controller = YourFirstController.alloc.init
-    @window.rootViewController = MyCustomNavigationController.alloc.initWithRootController(controller)
-    return true
-  end
-end
-</code></pre>
-
-<p>Note that <code>UIStatusBarStyleLightContent</code> will turn your status bar text color to white.</p>
 ]]></content>
   </entry>
   

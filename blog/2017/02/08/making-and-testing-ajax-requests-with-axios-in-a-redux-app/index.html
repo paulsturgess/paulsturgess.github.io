@@ -5,12 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>How to use the Crittercism Cocoapod in a RubyMotion app - Web & iOS dev – Ruby, Rails, RubyMotion & React</title>
+  <title>Making and testing Ajax requests with Axios in a Redux app - Web & iOS dev – Ruby, Rails, RubyMotion & React</title>
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="Crittercism is a great way of collecting data and
-crash reports from your iOS application whilst it&#8217;s being used in realtime. The easiest way &hellip;">
+  <meta name="description" content="This article is going to explain how to perform and test Ajax requests in a React
+application using Redux and Axios which
+is a promise based HTTP &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +20,7 @@ crash reports from your iOS application whilst it&#8217;s being used in realtime
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://paulsturgess.github.io/blog/2013/07/01/how-to-use-the-crittercism-cocoapod-in-a-rubymotion-app">
+  <link rel="canonical" href="http://paulsturgess.github.io/blog/2017/02/08/making-and-testing-ajax-requests-with-axios-in-a-redux-app">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -77,7 +78,7 @@ crash reports from your iOS application whilst it&#8217;s being used in realtime
   
   <header>
     
-      <h1 class="entry-title">How to Use the Crittercism Cocoapod in a RubyMotion App</h1>
+      <h1 class="entry-title">Making and Testing Ajax Requests With Axios in a Redux App</h1>
     
     
       <p class="meta">
@@ -93,45 +94,77 @@ crash reports from your iOS application whilst it&#8217;s being used in realtime
   
 
 
-<time datetime="2013-07-01T10:24:00+01:00" pubdate data-updated="true">Jul 1<span>st</span>, 2013</time>
+<time datetime="2017-02-08T19:08:00+00:00" pubdate data-updated="true">Feb 8<span>th</span>, 2017</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p><a href="http://www.crittercism.com">Crittercism</a> is a great way of collecting data and
-crash reports from your iOS application whilst it&#8217;s being used in realtime.</p>
+<div class="entry-content"><p>This article is going to explain how to perform and test Ajax requests in a React
+application using Redux and <a href="https://github.com/mzabriskie/axios">Axios</a> which
+is a promise based HTTP client.</p>
 
-<p>The easiest way to get it up and running in your RubyMotion app is to <a href="http://cocoapods.org/?q=crittercism">use the Coacoapod</a>.</p>
+<p>I like Axios because of the way you can centrally configure the common behaviour
+for the requests your front-end needs to make and the responses it receives.
+To take one example, it has the concept of <a href="https://github.com/mzabriskie/axios#interceptors">interceptors</a>
+that allow you to write a single function that can the handle responses such
+as a 401 unauthorized or 500 exception.</p>
 
-<p>If you haven&#8217;t setup Coacoapods in your app yet then check out my article
-where I <a href="http://paulsturgess.co.uk/blog/2013/05/15/using-native-objective-c-cocoapod-libraries-in-rubymotion/">install the ViewDeck Cocoapod</a>.</p>
+<p>When using Axios I like to create a utility &#8216;Service&#8217; class to setup the centralised
+config and ensure all Ajax requests get handled consistently.</p>
 
-<p>Update your <code>Rakefile</code> with:</p>
+<p>It also means calls to Axios are not sprinkled all over the codebase, so I could
+swap out Axios for an alternative library and I should only need to update this
+one wrapper class.</p>
 
-<pre><code>Motion::Project::App.setup do |app|
-  # ...
+<script src="https://gist.github.com/paulsturgess/ebfae1d1ac1779f18487d3dee80d1258.js"></script>
 
-  app.frameworks += [
-    'SystemConfiguration'
-  ]
 
-  app.pods do
-    pod 'CrittercismSDK'
-  end
-end
-</code></pre>
+<p>In a Redux application, actions are purely functional and thus &#8216;side-effect free&#8217;. So in order to perform Ajax requests you will need middleware such as <a href="https://github.com/gaearon/redux-thunk">&#8216;redux-thunk&#8217;</a>. An alternative, that I&#8217;ve not used but heard good things of, is <a href="https://github.com/redux-loop/redux-loop">redux-loop</a>.</p>
 
-<p>Locate your Crittercism App id under Settings on the Crittercism website. Update
-your <code>app_delegate.rb</code> with the following just before you call <code>makeKeyAndVisible</code>:</p>
+<p>Redux Thunk means you can return a function from your action to delay the dispatch
+of it, or only dispatch if a condition is met (like the response status is 200).</p>
 
-<pre><code>crittercism_app_id = "51d1421f97c8f273e0000007"
-Crittercism.enableWithAppID(crittercism_app_id)
-</code></pre>
+<p>Once Redux Thunk is installed, you can return a function in your Action as shown by
+<code>saveResource</code> in the example below:</p>
 
-<p>Now when you build your app and errors get raised, you&#8217;ll start receiving crash
-reports.</p>
+<script src="https://gist.github.com/paulsturgess/2335a83355a22a6d06bf72d2f462a776.js"></script>
+
+
+<p>Then for any containers that you want to use the action, you need to pass through the dispatch to the function in the <code>mapDispatchToProps</code>. See <code>saveResource</code> below:</p>
+
+<script src="https://gist.github.com/paulsturgess/dc495342470f006a6c60a97d29584456.js"></script>
+
+
+<p>To test the action you can use standard jasmine spy functions:</p>
+
+<script src="https://gist.github.com/paulsturgess/adcc72f752fa5381bc0ca22c0be91c32.js"></script>
+
+
+<p>Then finally to test the Service class:</p>
+
+<script src="https://gist.github.com/paulsturgess/f1813e0cee2d39ea3b57ca155ec7fee7.js"></script>
+
+
+<p>There are a few bits here to go through here. Firstly I found that when running the specs
+I needed to add the <a href="https://www.npmjs.com/package/babel-polyfill">babel-polyfill</a> for Promises. I&#8217;m using <a href="https://karma-runner.github.io/1.0/index.html">Karma test runner</a> so I needed to add <code>'node_modules/babel-polyfill/dist/polyfill.js'</code> to the files array in the karma.config.js
+file.</p>
+
+<p>Secondly at the top of the spec you&#8217;ll notice that <a href="https://github.com/jasmine/jasmine-ajax">jasmine-ajax</a> is imported. This is the official plugin for faking Ajax requests in your Jasmine specs. What I like about this
+is that it has no knowledge of Axios. In the <code>beforeEach</code> it is turned on and
+then all Ajax requests triggered in the specs are captured and can be inspected.</p>
+
+<p>Due to the asynchronous nature of the promise, I use <code>setTimeout</code> to grab the
+most recent request and check it was formed correctly. To test the callback
+I use the <code>then</code> function on the promise under test.</p>
+
+<p>A small, but important, detail is the call to <code>done()</code> – this ensures the test
+does not exit early and waits until the asynchronous part of the test is complete
+before exiting.</p>
+
+<p>And that&#8217;s it! There&#8217;s a lot of code there, but once the Service class is setup it
+should remain pretty much unchanged. Adding additional Ajax requests to your React application actions should be fairly straight forward.</p>
 </div>
 
 
@@ -154,7 +187,7 @@ reports.</p>
   
 
 
-<time datetime="2013-07-01T10:24:00+01:00" pubdate data-updated="true">Jul 1<span>st</span>, 2013</time>
+<time datetime="2017-02-08T19:08:00+00:00" pubdate data-updated="true">Feb 8<span>th</span>, 2017</time>
       
 
 
@@ -169,10 +202,8 @@ reports.</p>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/06/28/how-to-memory-profile-a-rubymotion-application-using-instruments/" title="Previous Post: How to Memory Profile a RubyMotion application using Instruments">&laquo; How to Memory Profile a RubyMotion application using Instruments</a>
+        <a class="basic-alignment left" href="/blog/2017/02/01/using-capybara-and-phantomjs-to-test-an-external-website/" title="Previous Post: Using Capybara and PhantomJS to test an external website">&laquo; Using Capybara and PhantomJS to test an external website</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/10/01/setting-the-status-bar-colour-for-ios7-in-rubymotion/" title="Next Post: Setting the status bar colour for iOS7 in RubyMotion">Setting the status bar colour for iOS7 in RubyMotion &raquo;</a>
       
     </p>
   </footer>

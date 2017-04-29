@@ -9,8 +9,8 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="First things first you need to set UIViewControllerBasedStatusBarAppearance in
-your info.plist. This is done by updating your Rakefile like so: app. &hellip;">
+  <meta name="description" content="Core Data can show you the underlying queries and execution times whilst you
+are running your app. Just fire it up with: rake args="-com.apple. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -74,6 +74,49 @@ your info.plist. This is done by updating your Rakefile like so: app. &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/09/how-to-debug-core-data-output-to-the-console-in-rubymotion/">How to Debug Core Data Output to the Console in RubyMotion</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-09T08:18:00+01:00" pubdate data-updated="true">Oct 9<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Core Data can show you the underlying queries and execution times whilst you
+are running your app. Just fire it up with:</p>
+
+<pre><code>rake args="-com.apple.CoreData.SQLDebug 1"
+</code></pre>
+
+<p>Note you can bump the number up to 2 or 3 depending on how much information
+you want. 3 goes as far as to show you the result set Core Data has fetched.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -822,159 +865,6 @@ program.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/25/objective-c-for-a-rubyist/">Objective-C for a Rubyist</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-25T21:04:00+01:00" pubdate data-updated="true">Apr 25<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="http://www.rubymotion.com/">RubyMotion</a> does a great job of allowing iOS apps to be written in Ruby. However,
-whilst I want to avoid writing Objective-C, I do want to learn how to read it.</p>
-
-<ul>
-<li>It&#8217;ll make it easier to learn Apple&#8217;s SDK</li>
-<li>I want to be able to read existing iOS books/articles/stackoverflow solutions</li>
-<li>It just seems like a good idea</li>
-</ul>
-
-
-<p>Fortunately both languages stem from Smalltalk, so they&#8217;re not a million miles
-apart.</p>
-
-<h2>Instance variables</h2>
-
-<pre><code>- (void)instanceVariable;
-</code></pre>
-
-<ul>
-<li><code>-</code> means instance.</li>
-<li>next is the return type: <code>void</code> which means it returns nothing.</li>
-<li>Finally we have the method name, in this case <code>instanceVariable</code>.</li>
-</ul>
-
-
-<p>Everything in Objective-C is camelCase. The common idiom in
- RubyMotion is to write Ruby in camel case where you are implementing
- classes that use Apple&#8217;s Objective-C methods. Reverting back to snake_case when
- the class is pure Ruby.</p>
-
-<h2>Class methods</h2>
-
-<pre><code>+ (User *)userWithName:(NSString *)name;
-</code></pre>
-
-<ul>
-<li><code>+</code> means class method</li>
-<li>next is the return type. In this case a <code>User</code> pointer.</li>
-<li>next is the method name: <code>userWithName</code></li>
-<li>next is a colon <code>:</code>, which means there is an argument.</li>
-<li>next, in brackets, is the argument type. A pointer to an <code>NSString</code> instance.</li>
-<li>Finally the argument variable <code>name</code></li>
-</ul>
-
-
-<p>So just be clear, in Ruby this is:</p>
-
-<pre><code>def self.userWithName(name)
-    #...
-end
-</code></pre>
-
-<h2>Sending messages</h2>
-
-<p>As with all Smalltalk based languages, you are essentially creating methods in
-classes to send messages around. I believe Objective-C does have a dot notation,
-like Ruby, but most code examples I&#8217;ve come across use spaces and lots of square
-brackets.</p>
-
-<p>For example in Objective-C sending the <code>logOut</code> message to a <code>user</code> object is:</p>
-
-<pre><code>[user logOut];
-</code></pre>
-
-<p>The Ruby equivalent:</p>
-
-<pre><code>user.logOut
-</code></pre>
-
-<p>To chain methods in Objective-C it looks like:</p>
-
-<pre><code>NSMutableArray *myArray = [[NSMutableArray alloc] init];
-</code></pre>
-
-<p>This is equivalent to the Ruby:</p>
-
-<pre><code>myArray = NSMutableArray.alloc.init
-</code></pre>
-
-<h2>reallyLongMethod:WithNamedParameters:</h2>
-
-<p>In Objective-C named parameters are heavily used. This is great for clarity, as
-they are intended to be as descriptive as possible. Removing the ambiguity is
-really good, but it is important to know that named parameters are actually
-included in the method name.</p>
-
-<p>So an example Apple SDK method is <code>tableView:numberOfRowsInSection:</code>. Where the
-colons indicate an argument is required. So in this case, two. In Objective-C it
-looks like:</p>
-
-<pre><code>- (Integer) tableView(tableView, numberOfRowsInSection:section)
-</code></pre>
-
-<p>RubyMotion currently runs on Ruby 1.9.3, so named arguments have been added
-especially. The above method looks like the following in RubyMotion:</p>
-
-<pre><code>def tableView(tableView, numberOfRowsInSection: section)
-  # ...
-end
-</code></pre>
-
-<p>This can look a bit strange at times when the Apple SDK requires you to implement
-methods that start with the same name, but take different arguments. If you are
-not aware that the named named arguments are used in the method name, it actually
-looks like you&#8217;re implementing the same method multiple times.</p>
-
-<p>For example, another Apple SDK method <code>tableView:editingStyleForRowAtIndexPath:</code> looks very similar in RubyMotion:</p>
-
-<pre><code>def tableView(tableView, editingStyleForRowAtIndexPath: indexPath)
-  # ...
-end
-</code></pre>
-
-<h2>In summary</h2>
-
-<p>Objective-C is definitely more verbose, but I really like the RubyMotion
-implementation. There&#8217;s loads more to get my head around, but this is a good
-starting point.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -991,6 +881,10 @@ starting point.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/04/29/using-enzyme-to-test-a-react-component-onclick-with-event-preventdefault/">Using Enzyme to test a React component onClick with event preventDefault</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/02/08/making-and-testing-ajax-requests-with-axios-in-a-redux-app/">Making and testing Ajax requests with Axios in a Redux app</a>
       </li>
     
@@ -1004,10 +898,6 @@ starting point.</p>
     
       <li class="post">
         <a href="/blog/2016/11/20/functional-programming-for-a-rubyist/">Functional Programming for a Rubyist</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/11/06/how-to-write-and-test-a-redux-container-component-for-react/">How to write and test a Redux Container Component for React</a>
       </li>
     
   </ul>

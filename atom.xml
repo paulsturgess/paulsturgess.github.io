@@ -4,7 +4,7 @@
   <title><![CDATA[Web & iOS dev – Ruby, Rails, RubyMotion & React]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2017-02-08T21:09:55+00:00</updated>
+  <updated>2017-04-29T21:03:20+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,34 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Using Enzyme to test a React component onClick with event preventDefault]]></title>
+    <link href="http://paulsturgess.github.io/blog/2017/04/29/using-enzyme-to-test-a-react-component-onclick-with-event-preventdefault/"/>
+    <updated>2017-04-29T20:32:00+01:00</updated>
+    <id>http://paulsturgess.github.io/blog/2017/04/29/using-enzyme-to-test-a-react-component-onclick-with-event-preventdefault</id>
+    <content type="html"><![CDATA[<p><a href="https://github.com/airbnb/enzyme">Enzyme</a> is a React Testing utility written
+by the developers at Airbnb that is designed to make testing your components
+much simpler and easier.</p>
+
+<p>Here&#8217;s a quick tip for testing <code>onClick</code> functions where your code calls <code>event.preventDefault()</code></p>
+
+<p>When triggering a click via the Enzyme api method <code>simulate</code>, you are not actually triggering a real event – the underlying implementation is simply calling the <code>onClick</code> prop of the node.</p>
+
+<p>So if you&#8217;re calling <code>event.preventDefault()</code> in your code, you will need to pass
+a second argument to <code>simulate</code>, which is a mock object, that is passed through to the event handler.</p>
+
+<p>For example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>const wrapper = shallow(&lt;YourComponent /&gt;);
+</span><span class='line'>wrapper.find('a').simulate('click', { preventDefault() {} });</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Easy when you know how, but not immediately obvious. Fortunately the <a href="https://github.com/airbnb/enzyme/blob/master/docs/api/ShallowWrapper/simulate.md">Enzyme docs</a> are brilliant and well worth checking out for further detail and examples.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Making and testing Ajax requests with Axios in a Redux app]]></title>
@@ -1940,22 +1968,6 @@ end
 apps.</p>
 
 <p>Thanks to the latest HipByte employee, <a href="http://blog.rubymotion.com/post/62652618638/eloy-duran-joins-the-rubymotion-team">Eloy Durán</a>, for the tips!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[How to debug Core Data output to the console in RubyMotion]]></title>
-    <link href="http://paulsturgess.github.io/blog/2013/10/09/how-to-debug-core-data-output-to-the-console-in-rubymotion/"/>
-    <updated>2013-10-09T08:18:00+01:00</updated>
-    <id>http://paulsturgess.github.io/blog/2013/10/09/how-to-debug-core-data-output-to-the-console-in-rubymotion</id>
-    <content type="html"><![CDATA[<p>Core Data can show you the underlying queries and execution times whilst you
-are running your app. Just fire it up with:</p>
-
-<pre><code>rake args="-com.apple.CoreData.SQLDebug 1"
-</code></pre>
-
-<p>Note you can bump the number up to 2 or 3 depending on how much information
-you want. 3 goes as far as to show you the result set Core Data has fetched.</p>
 ]]></content>
   </entry>
   

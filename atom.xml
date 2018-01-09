@@ -4,7 +4,7 @@
   <title><![CDATA[Web & iOS dev – Ruby, Rails, RubyMotion & React]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2018-01-09T20:54:52+00:00</updated>
+  <updated>2018-01-09T21:26:27+00:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,29 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Debug Ruby using Pry and Docker compose]]></title>
+    <link href="http://paulsturgess.github.io/blog/2018/01/09/using-pry-with-docker-compose/"/>
+    <updated>2018-01-09T21:11:00+00:00</updated>
+    <id>http://paulsturgess.github.io/blog/2018/01/09/using-pry-with-docker-compose</id>
+    <content type="html"><![CDATA[<p>If you&#8217;re using Docker and <code>docker-compose</code> you probably found that by default you can&#8217;t debug your Ruby application with the <code>binding.pry</code> breakpoint.</p>
+
+<p>However, if you comment out the <code>command</code> line for your web container. Then:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker-compose up</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Open a new tab and run:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker-compose run --service-ports --rm web /the/command/you/commented/out</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then you will have interactive access to the command line with <code>binding.pry</code>!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Ruby metaprogramming: define_method and instance_exec]]></title>
@@ -1967,42 +1990,6 @@ can be used on background threads.</p>
 </span><span class='line'>
 </span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Logging to the console in RubyMotion]]></title>
-    <link href="http://paulsturgess.github.io/blog/2013/10/29/logging-to-the-console-in-rubymotion/"/>
-    <updated>2013-10-29T08:44:00+00:00</updated>
-    <id>http://paulsturgess.github.io/blog/2013/10/29/logging-to-the-console-in-rubymotion</id>
-    <content type="html"><![CDATA[<p>The simplest way to output to the console from your RubyMotion app is to use
-<code>puts</code>. This works fine when your app is running in the simulator. However,
-<code>puts</code> does not output to the console when your app is running on the device
-itself.</p>
-
-<p>You can view the live logs while your app is running on your usb connected device via:</p>
-
-<pre><code>$ motion device:console
-</code></pre>
-
-<p>You will see messages from your application alongside those from other apps or
-the system itself.</p>
-
-<p>Instead of using <code>puts</code>, you&#8217;ll need to make use of <code>NSLog</code>. For example</p>
-
-<pre><code>NSLog("My debug messge")
-</code></pre>
-
-<p>Note, however, that the first argument for <code>NSLog</code> is actually a <a href="https://developer.apple.com/library/ios/documentation/cocoa/conceptual/Strings/Articles/formatSpecifiers.html">String Format Specifier</a>.</p>
-
-<p>The following are equivalent:</p>
-
-<pre><code>puts "A #{variable} goes here"
-NSLog("A %@ goes here", variable)
-</code></pre>
-
-<p>Just remember that any <code>NSLog</code> messages you leave in your app will be visible
-to the curious, even after you&#8217;ve released to the App Store.</p>
 ]]></content>
   </entry>
   

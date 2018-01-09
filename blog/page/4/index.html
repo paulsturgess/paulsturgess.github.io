@@ -9,8 +9,7 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="So you&#8217;ve got your Apple developer account and
-now you want to get your RubyMotion app onto your iPhone. At the end of these instructions you &hellip;">
+  <meta name="description" content="Create your rvm .ruby-version and .ruby-gemset files via: $ rvm use 1.9.3@yourgemsetname --create --ruby-version Add bundler to your Rakefile require &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -74,6 +73,69 @@ now you want to get your RubyMotion app onto your iPhone. At the end of these in
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/13/setting-up-bundler-and-rvm-for-a-rubymotion-app/">Setting Up Bundler and RVM for a RubyMotion App</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-13T10:00:00+01:00" pubdate data-updated="true">May 13<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Create your rvm <code>.ruby-version</code> and <code>.ruby-gemset</code> files via:</p>
+
+<pre><code>$ rvm use 1.9.3@yourgemsetname --create --ruby-version
+</code></pre>
+
+<p>Add bundler to your <code>Rakefile</code></p>
+
+<pre><code>require 'bundler'
+Bundler.require
+</code></pre>
+
+<p>Create your <code>Gemfile</code> via:</p>
+
+<pre><code>$ bundle init
+</code></pre>
+
+<p>Update your <code>Gemfile</code></p>
+
+<pre><code>source "https://rubygems.org"
+gem "your-favourite-gem"
+</code></pre>
+
+<p>Install gems via:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>You&#8217;re done.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -573,6 +635,10 @@ $ cd ..
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2018/01/09/using-pry-with-docker-compose/">Debug Ruby using Pry and Docker compose</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2018/01/09/ruby-metaprogramming-define-method-and-instance-exec/">Ruby metaprogramming: define_method and instance_exec</a>
       </li>
     
@@ -586,10 +652,6 @@ $ cd ..
     
       <li class="post">
         <a href="/blog/2017/02/01/using-capybara-and-phantomjs-to-test-an-external-website/">Using Capybara and PhantomJS to test an external website</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2017/01/11/simple-method-for-checking-the-mime-type-for-a-file-in-ruby-on-rails/">Simple method for checking a file mime type in Ruby on Rails</a>
       </li>
     
   </ul>

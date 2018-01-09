@@ -9,7 +9,7 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="React has many lifecycle methods you can hook behaviour onto, one of which is componentDidUpdate. This blog will show you how to test this method &hellip;">
+  <meta name="description" content="Last week the first ever Elixir conference was held in London and I was lucky enough to attend. It was brilliantly run with lots of great speakers &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -73,6 +73,83 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/09/29/elixir-london-conference-2016/">Elixir London Conference 2016</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-09-29T12:35:00+01:00" pubdate data-updated="true">Sep 29<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Last week the first ever <a href="http://www.elixir.london/">Elixir conference</a> was held in London and I was lucky enough to attend. It was brilliantly run with lots of great speakers and they&#8217;ve even got the <a href="http://www.elixir.london/#speakers">videos up online</a> already!</p>
+
+<h2>Elixir and Ruby</h2>
+
+<p><a href="http://elixir-lang.org/">Elixir</a> is a relatively new programming language that&#8217;s gaining in popularity fast, particularly amongst Ruby developers. During the conference they asked the audience to raise their hand if they had been, or are, a Ruby developer and over 75% did (myself included)!</p>
+
+<p>So what&#8217;s attracting the Ruby community? Aside from the fact developers love shiny new things, this shiny new thing is different. That&#8217;s because Elixir runs on the <a href="http://www.erlang.org/">Erlang</a> BEAM which has been around for decades and was originally developed by Ericsson.</p>
+
+<p>The key-note was from co-creator of Erlang,<a href="http://www.elixir.london/2016/robert-virding">Robert Virding</a>. It was fascinating to hear him talk about how Erlang was developed to solve the challenges Ericsson was facing building telecoms systems in the late 80&#8217;s, early 90&#8217;s. It&#8217;s amazing that the problems they solved are just as relevant in todays world of online software applications. One of the most high-profile recent adopters of Erlang is <a href="https://www.whatsapp.com/">WhatsApp</a>.</p>
+
+<p>So what does this have to do with Ruby? Well Elixir inherits all of the characteristics that Erlang is known for:</p>
+
+<ul>
+<li>Concurrent</li>
+<li>Fault tolerant</li>
+<li>Easy to scale</li>
+</ul>
+
+
+<p>Often these are the same criticisms levelled at Ruby and Elixir provides an appealing syntax that looks a lot like Ruby.</p>
+
+<h2>Phoenix</h2>
+
+<p>The icing on the cake for Rails developers looking to transition to Elixir is <a href="http://www.phoenixframework.org/">Phoenix</a>. Phoenix takes a lot of the good ideas in Rails and adds all the benefits of Elixir such as the concurrency and fault tolerance.</p>
+
+<p><a href="http://www.elixir.london/2016/gary-rennie">Gary Rennie</a> (core member of the Phoenix team) did a great job running through some best practices with controllers in Phoenix. He also explained why umbrella applications are a good idea to logically split your application where it makes sense.</p>
+
+<p>As an aside, I recently came across this article from the creator of phoenix Chris McCord <a href="https://dockyard.com/blog/2016/08/09/phoenix-channels-vs-rails-action-cable">comparing Phoenix channels and Rails action cable</a> which makes for eye-opening reading.</p>
+
+<h2>Nerves</h2>
+
+<p>However, it&#8217;s not all about web applications and there were a few great talks and demonstrations showcasing embedded systems with Elixir. One of the most interesting discoveries for me was the <a href="http://nerves-project.org/">Nerves Project</a>.</p>
+
+<p>The goal of Nerves is it make it simple for developers to write Elixir to interface with network and input/output devices, embed the code on a memory card, and run it on hardware like a <a href="https://www.raspberrypi.org/">Raspberry Pi</a>.</p>
+
+<p><a href="http://www.elixir.london/2016/tetiana-dushenkivska">Ju Liu&#8217;s live coding demo</a> involved lots of various sensors (including lasers) and was a particular highlight.</p>
+
+<h2>What&#8217;s next?</h2>
+
+<p>Elixir is very young and there&#8217;s clearly lots of enthusiasm in the community. I&#8217;m definitely going to be keeping a close eye on the ecosystem that is already growing very quickly. There seems to be a lot of benefits to using Elixir for modern application development.</p>
+
+<p>I definitely want to try writing an Elixir application and wrapping my head around functional programming (when I&#8217;m used to Object Oriented programming) is an interesting challenge I&#8217;ve been looking for an excuse to take on!</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1514,69 +1591,6 @@ can be used on background threads.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/10/29/logging-to-the-console-in-rubymotion/">Logging to the Console in RubyMotion</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-10-29T08:44:00+00:00" pubdate data-updated="true">Oct 29<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>The simplest way to output to the console from your RubyMotion app is to use
-<code>puts</code>. This works fine when your app is running in the simulator. However,
-<code>puts</code> does not output to the console when your app is running on the device
-itself.</p>
-
-<p>You can view the live logs while your app is running on your usb connected device via:</p>
-
-<pre><code>$ motion device:console
-</code></pre>
-
-<p>You will see messages from your application alongside those from other apps or
-the system itself.</p>
-
-<p>Instead of using <code>puts</code>, you&#8217;ll need to make use of <code>NSLog</code>. For example</p>
-
-<pre><code>NSLog("My debug messge")
-</code></pre>
-
-<p>Note, however, that the first argument for <code>NSLog</code> is actually a <a href="https://developer.apple.com/library/ios/documentation/cocoa/conceptual/Strings/Articles/formatSpecifiers.html">String Format Specifier</a>.</p>
-
-<p>The following are equivalent:</p>
-
-<pre><code>puts "A #{variable} goes here"
-NSLog("A %@ goes here", variable)
-</code></pre>
-
-<p>Just remember that any <code>NSLog</code> messages you leave in your app will be visible
-to the curious, even after you&#8217;ve released to the App Store.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1593,6 +1607,10 @@ to the curious, even after you&#8217;ve released to the App Store.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2018/01/09/using-pry-with-docker-compose/">Debug Ruby using Pry and Docker compose</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2018/01/09/ruby-metaprogramming-define-method-and-instance-exec/">Ruby metaprogramming: define_method and instance_exec</a>
       </li>
     
@@ -1606,10 +1624,6 @@ to the curious, even after you&#8217;ve released to the App Store.</p>
     
       <li class="post">
         <a href="/blog/2017/02/01/using-capybara-and-phantomjs-to-test-an-external-website/">Using Capybara and PhantomJS to test an external website</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2017/01/11/simple-method-for-checking-the-mime-type-for-a-file-in-ruby-on-rails/">Simple method for checking a file mime type in Ruby on Rails</a>
       </li>
     
   </ul>

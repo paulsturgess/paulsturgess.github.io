@@ -5,12 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>How to use the Crittercism Cocoapod in a RubyMotion app - Web & iOS dev – Ruby, Rails, RubyMotion & React</title>
+  <title>Debug Ruby using Pry and Docker compose - Web & iOS dev – Ruby, Rails, RubyMotion & React</title>
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="Crittercism is a great way of collecting data and
-crash reports from your iOS application whilst it&#8217;s being used in realtime. The easiest way &hellip;">
+  <meta name="description" content="If you&#8217;re using Docker and docker-compose you probably found that by default you can&#8217;t debug your Ruby application with the binding.pry &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +18,7 @@ crash reports from your iOS application whilst it&#8217;s being used in realtime
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://paulsturgess.github.io/blog/2013/07/01/how-to-use-the-crittercism-cocoapod-in-a-rubymotion-app">
+  <link rel="canonical" href="http://paulsturgess.github.io/blog/2018/01/09/using-pry-with-docker-compose">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -77,7 +76,7 @@ crash reports from your iOS application whilst it&#8217;s being used in realtime
   
   <header>
     
-      <h1 class="entry-title">How to Use the Crittercism Cocoapod in a RubyMotion App</h1>
+      <h1 class="entry-title">Debug Ruby Using Pry and Docker Compose</h1>
     
     
       <p class="meta">
@@ -93,45 +92,28 @@ crash reports from your iOS application whilst it&#8217;s being used in realtime
   
 
 
-<time datetime="2013-07-01T10:24:00+01:00" pubdate data-updated="true">Jul 1<span>st</span>, 2013</time>
+<time datetime="2018-01-09T21:11:00+00:00" pubdate data-updated="true">Jan 9<span>th</span>, 2018</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p><a href="http://www.crittercism.com">Crittercism</a> is a great way of collecting data and
-crash reports from your iOS application whilst it&#8217;s being used in realtime.</p>
+<div class="entry-content"><p>If you&#8217;re using Docker and <code>docker-compose</code> you probably found that by default you can&#8217;t debug your Ruby application with the <code>binding.pry</code> breakpoint.</p>
 
-<p>The easiest way to get it up and running in your RubyMotion app is to <a href="http://cocoapods.org/?q=crittercism">use the Coacoapod</a>.</p>
+<p>However, if you comment out the <code>command</code> line for your web container. Then:</p>
 
-<p>If you haven&#8217;t setup Coacoapods in your app yet then check out my article
-where I <a href="http://paulsturgess.co.uk/blog/2013/05/15/using-native-objective-c-cocoapod-libraries-in-rubymotion/">install the ViewDeck Cocoapod</a>.</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker-compose up</span></code></pre></td></tr></table></div></figure>
 
-<p>Update your <code>Rakefile</code> with:</p>
 
-<pre><code>Motion::Project::App.setup do |app|
-  # ...
+<p>Open a new tab and run:</p>
 
-  app.frameworks += [
-    'SystemConfiguration'
-  ]
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker-compose run --service-ports --rm web /the/command/you/commented/out</span></code></pre></td></tr></table></div></figure>
 
-  app.pods do
-    pod 'CrittercismSDK'
-  end
-end
-</code></pre>
 
-<p>Locate your Crittercism App id under Settings on the Crittercism website. Update
-your <code>app_delegate.rb</code> with the following just before you call <code>makeKeyAndVisible</code>:</p>
-
-<pre><code>crittercism_app_id = "51d1421f97c8f273e0000007"
-Crittercism.enableWithAppID(crittercism_app_id)
-</code></pre>
-
-<p>Now when you build your app and errors get raised, you&#8217;ll start receiving crash
-reports.</p>
+<p>Then you will have interactive access to the command line with <code>binding.pry</code>!</p>
 </div>
 
 
@@ -154,7 +136,7 @@ reports.</p>
   
 
 
-<time datetime="2013-07-01T10:24:00+01:00" pubdate data-updated="true">Jul 1<span>st</span>, 2013</time>
+<time datetime="2018-01-09T21:11:00+00:00" pubdate data-updated="true">Jan 9<span>th</span>, 2018</time>
       
 
 
@@ -169,10 +151,8 @@ reports.</p>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/06/28/how-to-memory-profile-a-rubymotion-application-using-instruments/" title="Previous Post: How to Memory Profile a RubyMotion application using Instruments">&laquo; How to Memory Profile a RubyMotion application using Instruments</a>
+        <a class="basic-alignment left" href="/blog/2018/01/09/ruby-metaprogramming-define-method-and-instance-exec/" title="Previous Post: Ruby metaprogramming: define_method and instance_exec">&laquo; Ruby metaprogramming: define_method and instance_exec</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/10/01/setting-the-status-bar-colour-for-ios7-in-rubymotion/" title="Next Post: Setting the status bar colour for iOS7 in RubyMotion">Setting the status bar colour for iOS7 in RubyMotion &raquo;</a>
       
     </p>
   </footer>

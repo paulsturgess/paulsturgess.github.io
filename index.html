@@ -9,7 +9,7 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="If you&#8217;re using Docker and docker-compose you probably found that by default you can&#8217;t debug your Ruby application with the binding.pry &hellip;">
+  <meta name="description" content="The rails/webpacker gem is a fantastic way to configure webpack for your Rails application. However, it has gone through quite a few different &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -73,6 +73,108 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2018/01/09/setup-webpacker-webpack-dev-server-with-docker-compose/">Setup Webpacker Webpack-dev-server With Docker-compose</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2018-01-09T21:29:00+00:00" pubdate data-updated="true">Jan 9<span>th</span>, 2018</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The <a href="https://github.com/rails/webpacker">rails/webpacker gem</a> is a fantastic way to configure <a href="https://webpack.js.org/">webpack</a> for your Rails application. However, it has gone through quite a few different configuration options to get it working with Docker.</p>
+
+<p>Initially you could set the host by using command line arguments, but as of version 3.0.2 and <a href="https://github.com/rails/webpacker/pull/843">this Pull Request</a> the command line argument support was removed in favour of environment variables. By setting various environment variables you can override all dev server settings defined in <code>config/webpacker.yml</code>.</p>
+
+<p>So now my <code>docker-compose.yml</code> config looks something like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="l-Scalar-Plain">web</span><span class="p-Indicator">:</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">&lt;&lt;</span><span class="p-Indicator">:</span> <span class="nv">*app</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">command</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/src/docker/web.sh</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
+</span><span class='line'>      <span class="p-Indicator">-</span> <span class="s">&quot;3000:3000&quot;</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">depends_on</span><span class="p-Indicator">:</span>
+</span><span class='line'>      <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">webpack</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">environment</span><span class="p-Indicator">:</span>
+</span><span class='line'>      <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">WEBPACKER_DEV_SERVER_HOST=webpack</span>
+</span><span class='line'>
+</span><span class='line'><span class="-Error">  </span><span class="l-Scalar-Plain">webpack</span><span class="p-Indicator">:</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">&lt;&lt;</span><span class="p-Indicator">:</span> <span class="nv">*app</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">command</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./bin/webpack-dev-server</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
+</span><span class='line'>      <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">3035:3035</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">environment</span><span class="p-Indicator">:</span>
+</span><span class='line'>      <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">WEBPACKER_DEV_SERVER_HOST=0.0.0.0</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To install yarn and nodejs I added the following to my Debian based dockerfile:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="l-Scalar-Plain">RUN apt-get update &amp;&amp; apt-get install apt-transport-https</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">&amp;&amp; echo &quot;deb https://dl.yarnpkg.com/debian/ stable main&quot; | tee /etc/apt/sources.list.d/yarn.list \</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">&amp;&amp; curl -sL https://deb.nodesource.com/setup_8.x | bash -</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">RUN apt-get update &amp;&amp; \</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">apt-get install -y \</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">yarn</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">nodejs</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -908,175 +1010,6 @@ elements or other components.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/10/14/safer-rebasing-with-git/">Safer Rebasing With Git</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2016-10-14T18:32:00+01:00" pubdate data-updated="true">Oct 14<span>th</span>, 2016</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Rebasing a <a href="https://git-scm.com/">git</a> branch is great way to maintain a clean commit history and it&#8217;s my
-preferred way of getting changes into a feature branch (instead of merging). This
-blog post will explain how I use it and how I make it safer to use.</p>
-
-<h2>Caveat!</h2>
-
-<p>Rebasing is dangerous because you are re-writing the branch history!</p>
-
-<p>Imagine someone else has pulled down your branch and then you re-write history –
-it will <em>really hurt</em> when it comes to combining both your changes.</p>
-
-<p>If your feature branch will be worked on by multiple people, I would strongly urge
-you do not rebase.</p>
-
-<p>The git book does a great job of <a href="https://git-scm.com/book/ch3-6.html">describing rebasing in detail</a>,
-including the pitfalls of rebasing public branches and what to do if you do if you
-get really stuck after rebasing.</p>
-
-<h2>My work flow</h2>
-
-<p>For most projects I work on, feature branches are typically only contributed to
-by one person – so rebasing is ok.</p>
-
-<p>My work-flow for creating a feature branch from <code>master</code> is something like:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ git checkout -b feature/new_thing
-</span><span class='line'>... I make various commits for feature related changes
-</span><span class='line'>... Meanwhile, master is also updated
-</span><span class='line'>$ git fetch
-</span><span class='line'>$ git pull --rebase origin master</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This effectively re-writes the history of <code>feature/new_thing</code> to place my commits
-after those made in <code>master</code>. There&#8217;s no merge commit, so it&#8217;s really neat and tidy.</p>
-
-<p>I like the idea of opening a Pull Request as soon I start work on a feature.
-I&#8217;ll then make &#8216;work in progress&#8217; commits as I go and push them up to the remote.
-This gives people an early chance to review what I&#8217;m doing and lessens the chance
-that my work might get lost if my computer blows up and my backup fails :)</p>
-
-<p>But these commits can be messy and include changes I later revert, as I work on
-the feature. I think it&#8217;s good practice to try and keep commits as logical and
-concise as is reasonably possible. Ideally they will read like documentation for
-the feature so that <code>git log</code> is like a story.</p>
-
-<p>So during development, I won&#8217;t get too hung up on the commits. But eventually I
-will use <a href="https://git-scm.com/book/ch7-6.html">interactive rebase</a> to re-order or
-squash my commits into shape.</p>
-
-<p>My interactive rebase work-flow is typically:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ git log
-</span><span class='line'>... Find the sha for the last commit I want to leave alone
-</span><span class='line'>$ git rebase -i sha-for-commit-to-leave-alone-goes-here</span></code></pre></td></tr></table></div></figure>
-
-
-<p>It will then show something like this:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>pick f7f3f6d Initial work on feature
-</span><span class='line'>pick 310154e Additional work on feature
-</span><span class='line'>pick a5f4a0d Finish feature
-</span><span class='line'>
-</span><span class='line'># Commands:
-</span><span class='line'>#  p, pick = use commit
-</span><span class='line'>#  r, reword = use commit, but edit the commit message
-</span><span class='line'>#  e, edit = use commit, but stop for amending
-</span><span class='line'>#  s, squash = use commit, but meld into previous commit
-</span><span class='line'>#  f, fixup = like "squash", but discard this commit's log message
-</span><span class='line'>#  x, exec = run command (the rest of the line) using shell
-</span><span class='line'>#
-</span><span class='line'># These lines can be re-ordered; they are executed from top to bottom.</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Just edit <code>pick</code> to whatever action you want to perform and use <code>:wq</code> to save.</p>
-
-<p>Now the next step is to push <code>feature/new_thing</code> to the remote and (other than the
-first time I push) I&#8217;ll need to force push and this is where it gets dangerous!</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ git push -f origin feature/new_thing</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This will completely overwrite <code>feature/new_thing</code> whatever state it is in. Too bad if
-someone else updated it, their changes are gone.</p>
-
-<p>Accidentally type <code>feature/other_thing</code> and you&#8217;ve just blitzed the wrong branch!</p>
-
-<h2>The safer way to force push</h2>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ git push --force-with-lease feature/new_thing</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Force with lease essentially checks the remote branch to see if it&#8217;s been updated
-upstream and if so rejects the push and shows you a nice error message.</p>
-
-<p>Beware that if you fetch, but don&#8217;t actually pull in the changes, <code>force-with-lease</code>
-will not save you!</p>
-
-<p>I want to always use <code>force-with-lease</code> over the standard <code>force</code> but this is
-long to type so I have a git alias:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ git config --global alias.pushf "push --force-with-lease"</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now I can safely use:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ git pushf origin feature/new_thing</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Got any git rebase tips? Feel free to contact me on Twitter <a href="https://twitter.com/paulsturgess">@paulsturgess</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1089,6 +1022,10 @@ long to type so I have a git alias:</p>
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2018/01/09/setup-webpacker-webpack-dev-server-with-docker-compose/">Setup webpacker webpack-dev-server with docker-compose</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2018/01/09/using-pry-with-docker-compose/">Debug Ruby using Pry and Docker compose</a>
@@ -1104,10 +1041,6 @@ long to type so I have a git alias:</p>
     
       <li class="post">
         <a href="/blog/2017/02/08/making-and-testing-ajax-requests-with-axios-in-a-redux-app/">Making and testing Ajax requests with Axios in a Redux app</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2017/02/01/using-capybara-and-phantomjs-to-test-an-external-website/">Using Capybara and PhantomJS to test an external website</a>
       </li>
     
   </ul>

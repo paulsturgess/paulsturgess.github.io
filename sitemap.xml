@@ -201,12 +201,18 @@
         <lastmod>2018-01-09T22:00:17+00:00</lastmod>
     </url>
     <url>
-        <loc>http://paulsturgess.github.io/blog/archives/</loc>
-        <lastmod>2018-01-09T22:00:17+00:00</lastmod>
+        <loc>
+            http://paulsturgess.github.io/blog/2020/03/18/stand-up-meetings-for-a-distributed-team/
+        </loc>
+        <lastmod>2020-03-18T20:31:40+00:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/</loc>
-        <lastmod>2018-01-09T22:00:17+00:00</lastmod>
+        <lastmod>2020-03-18T20:31:40+00:00</lastmod>
+    </url>
+    <url>
+        <loc>http://paulsturgess.github.io/blog/archives/</loc>
+        <lastmod>2020-03-18T20:31:40+00:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/robots.txt</loc>

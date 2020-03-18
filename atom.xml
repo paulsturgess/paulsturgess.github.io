@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Web & iOS dev – Ruby, Rails, RubyMotion & React]]></title>
+  <title><![CDATA[A blog about web development]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2018-01-09T22:02:51+00:00</updated>
+  <updated>2020-03-18T20:33:03+00:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,75 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Stand-up meetings for a distributed team]]></title>
+    <link href="http://paulsturgess.github.io/blog/2020/03/18/stand-up-meetings-for-a-distributed-team/"/>
+    <updated>2020-03-18T19:18:00+00:00</updated>
+    <id>http://paulsturgess.github.io/blog/2020/03/18/stand-up-meetings-for-a-distributed-team</id>
+    <content type="html"><![CDATA[<p>This global health emergency is horrendous and thus it looks like remote working will be the new normal for some time.
+I&#8217;ve been working remotely for <a href="https://raileurope.co.uk">Rail Europe</a> for two and a half years, so I thought i&#8217;d reignite my blog to pass on some tips and experience.</p>
+
+<p>Sadly this enforced remote working scenario has the potential to amplify all the difficult parts of remote working. Namely: dealing with isolation,
+fear that you need to &#8220;prove&#8221; you really are working, not separating home life from work life, amongst others.</p>
+
+<p>To be clear, the ideas I want to share are not about squeezing out more productivity from your team. It&#8217;s about reducing
+stress and anxiety, trusting people and giving them room and flexibility to breathe. Remote working is great for all these
+things, but we distributed teams have to act and think differently to the typical co-located norms.</p>
+
+<p>Anyway, I want to focus on one thing in this post&#8230;</p>
+
+<h2>Daily Stand-ups</h2>
+
+<p>These are really common in the tech industry. At Rail Europe we do them asynchronously. But what does that really mean?</p>
+
+<ul>
+<li>Everyone writes their stand-up in a dedicated Slack channel</li>
+<li>They post it (ideally) towards the beginning of their day</li>
+<li>There&#8217;s no expectation that they all have to be posted at the same time</li>
+<li>A stand-up message should contain 3 things:
+
+<ul>
+<li>What you worked on yesterday</li>
+<li>What you plan to work on today</li>
+<li>Any blockers</li>
+</ul>
+</li>
+<li>You&#8217;re encouraged to share how you are feeling or anything else effecting your work</li>
+</ul>
+
+
+<p>This last point is important because, as a distributed team, you cannot rely on normal body language cues.</p>
+
+<p>In theory this is a relatively simple change, that can have quite a dramatic impact, in a number of positive ways:</p>
+
+<ul>
+<li>There&#8217;s no requirement for everyone to be online all at the same time:
+
+<ul>
+<li>This gives people flexibility to start work when it works for them</li>
+<li>It&#8217;s especially benefitial if your team is in multiple-timezones</li>
+</ul>
+</li>
+<li>It&#8217;s less disruptive because you don&#8217;t need everyone to stop work at the same time.</li>
+<li>For anyone off sick, or just not able to attend for any reason, they can easily catch-up on what happened while they were off</li>
+<li>It&#8217;s massively more time efficient:
+
+<ul>
+<li>In-person stand-ups regularly get side-tracked off into details that are rarely relevant for the entire group</li>
+<li>If someone outside your team wants a status update from you, they can read your stand-up</li>
+<li>People can make their own decisions about whether they need to read every single update</li>
+</ul>
+</li>
+</ul>
+
+
+<p>If you need to follow up with someone on a specific point. We tend to use Slack threads or respond on the Jira Story/Trello card.</p>
+
+<p>Ultimately the idea behind this approach is part of a wider communication strategy we have: To allow people to structure their working day how it works for them. To maximse and respect the amount of uninterupted time that we all have,
+so we can focus and stay in <a href="https://en.wikipedia.org/wiki/Flow_(psychology)">the flow</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Setup webpacker webpack-dev-server with docker-compose]]></title>
@@ -1371,144 +1440,6 @@ takes a screenshot and allows the user to share it along with some text.</p>
 
 
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Using NSUserDefaults in RubyMotion]]></title>
-    <link href="http://paulsturgess.github.io/blog/2014/05/07/using-nsuserdefaults-in-rubymotion/"/>
-    <updated>2014-05-07T09:19:00+01:00</updated>
-    <id>http://paulsturgess.github.io/blog/2014/05/07/using-nsuserdefaults-in-rubymotion</id>
-    <content type="html"><![CDATA[<p>Apple describe <a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/nsuserdefaults_Class/Reference/Reference.html">NSUserDefaults</a> as &#8220;a programmatic interface for interacting with the defaults system&#8221;.</p>
-
-<p>It also provides a convenient store for persisting and retrieving user preferences for your application. You can think of it as a <code>key</code> <code>value</code> hash like structure, although it is a bit smarter than that.</p>
-
-<p>Here&#8217;s a really simple implementation I&#8217;ve been using:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>class Cache
-</span><span class='line'>
-</span><span class='line'>  class &lt;&lt; self
-</span><span class='line'>
-</span><span class='line'>    def set_default(key, data)
-</span><span class='line'>      return if read(key)
-</span><span class='line'>      write(key, data)
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>    def write(key, data)
-</span><span class='line'>      NSUserDefaults.standardUserDefaults[storage_key(key)] = data
-</span><span class='line'>      NSUserDefaults.standardUserDefaults.synchronize
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>    def read(key)
-</span><span class='line'>      NSUserDefaults.standardUserDefaults[storage_key(key)]
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>    private
-</span><span class='line'>
-</span><span class='line'>    def storage_key_prefix
-</span><span class='line'>      "#{cache_namespace}_"
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>    def storage_key key
-</span><span class='line'>      "#{storage_key_prefix}#{key}"
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>    def cache_namespace
-</span><span class='line'>      raise NotImplementedError
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>class UserSearchSettings &lt; Cache
-</span><span class='line'>
-</span><span class='line'>  class &lt;&lt; self
-</span><span class='line'>
-</span><span class='line'>    private
-</span><span class='line'>
-</span><span class='line'>    def cache_namespace
-</span><span class='line'>      "user_search"
-</span><span class='line'>    end
-</span><span class='line'>
-</span><span class='line'>  end
-</span><span class='line'>
-</span><span class='line'>end
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>I use it like this:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>UserSearchSettings.write("sort_by", "name")
-</span><span class='line'>=&gt; true
-</span><span class='line'>NSUserDefaults.standardUserDefaults.dictionaryRepresentation
-</span><span class='line'>=&gt; {"user_search_sort_by" =&gt; "name"} # note there will be a lot of other key values in the hash
-</span><span class='line'>UserSearchSettings.read("sort_by")
-</span><span class='line'>=&gt; "name"</span></code></pre></td></tr></table></div></figure>
-
-
-<p>My intention is not to call the <code>Cache</code> class directly and to only use the subclass <code>UserSearchSettings</code>. This forces me to group settings with a prefix defined by the <code>cache_namespace</code> method. This will help avoid accidentally defining the same key name for different values. It also nicely groups related settings.</p>
-
-<p>Each application has its&#8217; own <code>NSUserDefaults.standardUserDefaults</code> so there is no need to prefix the keys with the application name.</p>
-
-<p>This store will persist until the user removes your application from their device.</p>
 ]]></content>
   </entry>
   

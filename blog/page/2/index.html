@@ -1,0 +1,1191 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>A blog about web development</title>
+  <meta name="author" content="Paul Sturgess">
+
+  
+  <meta name="description" content="Recently I&#8217;ve been learning Redux state container for React apps and it actively encourages
+&#8216;stateless&#8217; components. This blog post &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://paulsturgess.github.io/blog/page/2">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="A blog about web development" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-75197-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">A blog about web development</a></h1>
+  
+    <h2>Paul Sturgess</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/">Index</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="https://twitter.com/paulsturgess">@paulsturgess</a></li>
+  <li><a href="https://github.com/paulsturgess">Github</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/10/19/how-to-write-and-test-a-stateless-react-component/">How to Write and Test a Stateless React Component</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-10-19T19:25:00+01:00" pubdate data-updated="true">Oct 19<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Recently I&#8217;ve been learning <a href="http://redux.js.org/">Redux</a> state container for <a href="https://facebook.github.io/react/">React</a> apps and it actively encourages
+&#8216;stateless&#8217; components.  This blog post will describe how these can be written
+and tested.</p>
+
+<p>Note that you can write stateless components whether you&#8217;re using Redux or not!</p>
+
+<h2>What is a stateless component?</h2>
+
+<p>Redux introduces the concept of <a href="http://redux.js.org/docs/basics/UsageWithReact.html#presentational-and-container-components">&#8216;presentational&#8217; and &#8216;container&#8217; components</a> and the major difference between the two is that your presentational components
+should not be aware of Redux.</p>
+
+<p>Without getting into the details of exactly how Redux works, the consequence of
+this separation of responsibilities means your presentational components can be
+fairly simple.</p>
+
+<p>Certainly if they don&#8217;t make use of any React lifecycle methods (like <a href="" title="http://paulsturgess.co.uk/blog/2016/05/04/how-to-test-react-lifecycle-method-componentdidupdate-when-the-component-props-change/">componentDidUpdate</a>) they can start life as a
+simple function that just returns the required output.</p>
+
+<h2>What does a stateless component look like?</h2>
+
+<p>Below is an example taken from a Todo app, what it does isn&#8217;t important. The
+key thing to notice is that it&#8217;s just a function that returns a list item.</p>
+
+<p>Three props are defined <code>onClick</code>, <code>completed</code> and <code>text</code>. There&#8217;s no state
+manipulation.</p>
+
+<script src="https://gist.github.com/paulsturgess/db388c5f981775e96d8cb33d9fdcf073.js">
+</script>
+
+
+<h2>So how is stateless component tested?</h2>
+
+<p>When using <code>ReactTestUtils.renderIntoDocument</code> it will not work with a stateless
+component – you&#8217;ll get an error &#8216;instance must be a composite component&#8217;.</p>
+
+<p>The way around this is to use a component created by extending <code>React.Component</code>
+to wrap the stateless component. You&#8217;ll see in the test below a
+<code>Wrapper</code> component is created.</p>
+
+<p>Once you&#8217;ve done that you can reach into the component to grab out specific DOM
+elements or other components.</p>
+
+<script src="https://gist.github.com/paulsturgess/1cc50c28c6a0b622f9fddceb4d268c41.js">
+</script>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/10/14/safer-rebasing-with-git/">Safer Rebasing With Git</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-10-14T18:32:00+01:00" pubdate data-updated="true">Oct 14<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Rebasing a <a href="https://git-scm.com/">git</a> branch is great way to maintain a clean commit history and it&#8217;s my
+preferred way of getting changes into a feature branch (instead of merging). This
+blog post will explain how I use it and how I make it safer to use.</p>
+
+<h2>Caveat!</h2>
+
+<p>Rebasing is dangerous because you are re-writing the branch history!</p>
+
+<p>Imagine someone else has pulled down your branch and then you re-write history –
+it will <em>really hurt</em> when it comes to combining both your changes.</p>
+
+<p>If your feature branch will be worked on by multiple people, I would strongly urge
+you do not rebase.</p>
+
+<p>The git book does a great job of <a href="https://git-scm.com/book/ch3-6.html">describing rebasing in detail</a>,
+including the pitfalls of rebasing public branches and what to do if you do if you
+get really stuck after rebasing.</p>
+
+<h2>My work flow</h2>
+
+<p>For most projects I work on, feature branches are typically only contributed to
+by one person – so rebasing is ok.</p>
+
+<p>My work-flow for creating a feature branch from <code>master</code> is something like:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git checkout -b feature/new_thing
+</span><span class='line'>... I make various commits for feature related changes
+</span><span class='line'>... Meanwhile, master is also updated
+</span><span class='line'>$ git fetch
+</span><span class='line'>$ git pull --rebase origin master</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This effectively re-writes the history of <code>feature/new_thing</code> to place my commits
+after those made in <code>master</code>. There&#8217;s no merge commit, so it&#8217;s really neat and tidy.</p>
+
+<p>I like the idea of opening a Pull Request as soon I start work on a feature.
+I&#8217;ll then make &#8216;work in progress&#8217; commits as I go and push them up to the remote.
+This gives people an early chance to review what I&#8217;m doing and lessens the chance
+that my work might get lost if my computer blows up and my backup fails :)</p>
+
+<p>But these commits can be messy and include changes I later revert, as I work on
+the feature. I think it&#8217;s good practice to try and keep commits as logical and
+concise as is reasonably possible. Ideally they will read like documentation for
+the feature so that <code>git log</code> is like a story.</p>
+
+<p>So during development, I won&#8217;t get too hung up on the commits. But eventually I
+will use <a href="https://git-scm.com/book/ch7-6.html">interactive rebase</a> to re-order or
+squash my commits into shape.</p>
+
+<p>My interactive rebase work-flow is typically:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git log
+</span><span class='line'>... Find the sha for the last commit I want to leave alone
+</span><span class='line'>$ git rebase -i sha-for-commit-to-leave-alone-goes-here</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It will then show something like this:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pick f7f3f6d Initial work on feature
+</span><span class='line'>pick 310154e Additional work on feature
+</span><span class='line'>pick a5f4a0d Finish feature
+</span><span class='line'>
+</span><span class='line'># Commands:
+</span><span class='line'>#  p, pick = use commit
+</span><span class='line'>#  r, reword = use commit, but edit the commit message
+</span><span class='line'>#  e, edit = use commit, but stop for amending
+</span><span class='line'>#  s, squash = use commit, but meld into previous commit
+</span><span class='line'>#  f, fixup = like "squash", but discard this commit's log message
+</span><span class='line'>#  x, exec = run command (the rest of the line) using shell
+</span><span class='line'>#
+</span><span class='line'># These lines can be re-ordered; they are executed from top to bottom.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Just edit <code>pick</code> to whatever action you want to perform and use <code>:wq</code> to save.</p>
+
+<p>Now the next step is to push <code>feature/new_thing</code> to the remote and (other than the
+first time I push) I&#8217;ll need to force push and this is where it gets dangerous!</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git push -f origin feature/new_thing</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will completely overwrite <code>feature/new_thing</code> whatever state it is in. Too bad if
+someone else updated it, their changes are gone.</p>
+
+<p>Accidentally type <code>feature/other_thing</code> and you&#8217;ve just blitzed the wrong branch!</p>
+
+<h2>The safer way to force push</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git push --force-with-lease feature/new_thing</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Force with lease essentially checks the remote branch to see if it&#8217;s been updated
+upstream and if so rejects the push and shows you a nice error message.</p>
+
+<p>Beware that if you fetch, but don&#8217;t actually pull in the changes, <code>force-with-lease</code>
+will not save you!</p>
+
+<p>I want to always use <code>force-with-lease</code> over the standard <code>force</code> but this is
+long to type so I have a git alias:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git config --global alias.pushf "push --force-with-lease"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now I can safely use:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git pushf origin feature/new_thing</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Got any git rebase tips? Feel free to contact me on Twitter <a href="https://twitter.com/paulsturgess">@paulsturgess</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/09/29/elixir-london-conference-2016/">Elixir London Conference 2016</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-09-29T12:35:00+01:00" pubdate data-updated="true">Sep 29<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Last week the first ever <a href="http://www.elixir.london/">Elixir conference</a> was held in London and I was lucky enough to attend. It was brilliantly run with lots of great speakers and they&#8217;ve even got the <a href="http://www.elixir.london/#speakers">videos up online</a> already!</p>
+
+<h2>Elixir and Ruby</h2>
+
+<p><a href="http://elixir-lang.org/">Elixir</a> is a relatively new programming language that&#8217;s gaining in popularity fast, particularly amongst Ruby developers. During the conference they asked the audience to raise their hand if they had been, or are, a Ruby developer and over 75% did (myself included)!</p>
+
+<p>So what&#8217;s attracting the Ruby community? Aside from the fact developers love shiny new things, this shiny new thing is different. That&#8217;s because Elixir runs on the <a href="http://www.erlang.org/">Erlang</a> BEAM which has been around for decades and was originally developed by Ericsson.</p>
+
+<p>The key-note was from co-creator of Erlang,<a href="http://www.elixir.london/2016/robert-virding">Robert Virding</a>. It was fascinating to hear him talk about how Erlang was developed to solve the challenges Ericsson was facing building telecoms systems in the late 80&#8217;s, early 90&#8217;s. It&#8217;s amazing that the problems they solved are just as relevant in todays world of online software applications. One of the most high-profile recent adopters of Erlang is <a href="https://www.whatsapp.com/">WhatsApp</a>.</p>
+
+<p>So what does this have to do with Ruby? Well Elixir inherits all of the characteristics that Erlang is known for:</p>
+
+<ul>
+<li>Concurrent</li>
+<li>Fault tolerant</li>
+<li>Easy to scale</li>
+</ul>
+
+
+<p>Often these are the same criticisms levelled at Ruby and Elixir provides an appealing syntax that looks a lot like Ruby.</p>
+
+<h2>Phoenix</h2>
+
+<p>The icing on the cake for Rails developers looking to transition to Elixir is <a href="http://www.phoenixframework.org/">Phoenix</a>. Phoenix takes a lot of the good ideas in Rails and adds all the benefits of Elixir such as the concurrency and fault tolerance.</p>
+
+<p><a href="http://www.elixir.london/2016/gary-rennie">Gary Rennie</a> (core member of the Phoenix team) did a great job running through some best practices with controllers in Phoenix. He also explained why umbrella applications are a good idea to logically split your application where it makes sense.</p>
+
+<p>As an aside, I recently came across this article from the creator of phoenix Chris McCord <a href="https://dockyard.com/blog/2016/08/09/phoenix-channels-vs-rails-action-cable">comparing Phoenix channels and Rails action cable</a> which makes for eye-opening reading.</p>
+
+<h2>Nerves</h2>
+
+<p>However, it&#8217;s not all about web applications and there were a few great talks and demonstrations showcasing embedded systems with Elixir. One of the most interesting discoveries for me was the <a href="http://nerves-project.org/">Nerves Project</a>.</p>
+
+<p>The goal of Nerves is it make it simple for developers to write Elixir to interface with network and input/output devices, embed the code on a memory card, and run it on hardware like a <a href="https://www.raspberrypi.org/">Raspberry Pi</a>.</p>
+
+<p><a href="http://www.elixir.london/2016/tetiana-dushenkivska">Ju Liu&#8217;s live coding demo</a> involved lots of various sensors (including lasers) and was a particular highlight.</p>
+
+<h2>What&#8217;s next?</h2>
+
+<p>Elixir is very young and there&#8217;s clearly lots of enthusiasm in the community. I&#8217;m definitely going to be keeping a close eye on the ecosystem that is already growing very quickly. There seems to be a lot of benefits to using Elixir for modern application development.</p>
+
+<p>I definitely want to try writing an Elixir application and wrapping my head around functional programming (when I&#8217;m used to Object Oriented programming) is an interesting challenge I&#8217;ve been looking for an excuse to take on!</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/05/04/how-to-test-react-lifecycle-method-componentdidupdate-when-the-component-props-change/">How to Test React Lifecycle Method componentDidUpdate When the Component Props Change</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-05-04T22:12:00+01:00" pubdate data-updated="true">May 4<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="https://facebook.github.io/react/">React</a> has many lifecycle methods you can hook behaviour onto, one of which is <code>componentDidUpdate</code>.</p>
+
+<p>This blog will show you how to test this method using <a href="https://www.npmjs.com/package/react-dom">react-dom</a>.</p>
+
+<p>Let&#8217;s say your component implements <code>componentDidUpdate</code> like this:</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="kr">import</span> <span class="nx">React</span> <span class="nx">from</span> <span class="s1">&#39;react&#39;</span><span class="p">;</span>
+
+<span class="kr">class</span> <span class="nx">YourComponent</span> <span class="kr">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">componentDidUpdate</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">someFunction</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="nx">someFunction</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+<p>Now say you want to test that <code>componentDidUpdate</code> calls <code>this.someFunction()</code>.</p>
+
+<p>Because the props for the component are set on initial render, and cannot change after that, you can&#8217;t just render an instance of the component and manually update the props in your spec.</p>
+
+<p>This is where <a href="https://www.npmjs.com/package/react-dom">react-dom</a> comes in. Use it to render the component with an initial set of props and then render the component again with different props.</p>
+
+<p>react-dom will re-render the same instance of the component, instead of creating a brand new one each time.</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="kr">import</span> <span class="nx">React</span> <span class="nx">from</span> <span class="s1">&#39;react&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">ReactDOM</span> <span class="nx">from</span> <span class="s1">&#39;react-dom&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">YourComponent</span> <span class="nx">from</span> <span class="s1">&#39;path/to/your-component&#39;</span><span class="p">;</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;your-component&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;componentDidUpdate&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;calls someFunction()&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="kd">let</span> <span class="nx">node</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
+      <span class="nx">instance</span> <span class="o">=</span> <span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">YourComponent</span> <span class="nx">yourProp</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;foo&#39;</span><span class="p">}</span> <span class="o">/&gt;</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
+      <span class="nx">spyOn</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="s1">&#39;someFunction&#39;</span><span class="p">);</span>
+      <span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">YourComponent</span> <span class="nx">yourProp</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;bar&#39;</span><span class="p">}</span> <span class="o">/&gt;</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">someFunction</span><span class="p">).</span><span class="nx">toHaveBeenCalled</span><span class="p">();</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/07/09/rubymotion-inspect-paris-was-loads-of-fun/">RubyMotion #inspect Paris Was Loads of Fun</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-07-09T09:52:00+01:00" pubdate data-updated="true">Jul 9<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Last week was the <a href="http://conference.rubymotion.com/">RubyMotion #inspect 2015</a> conference
+in Paris and not only was I lucky enough to attend, but I was also invited to speak about
+the RubyMotion football manager game I built: <a href="http://www.titlchallenge.com">Title Challenge</a>.</p>
+
+<p><a href="/images/rubymotion_paris.JPG" target="_blank"><img class="center" src="/images/rubymotion_paris.JPG" width="500" height="500" title="Paul at RubyMotion Paris" alt="Paul at RubyMotion Paris"></a></p>
+
+<p>RubyMotion #inspect is a two-day conference and my talk was scheduled for the second day,
+which is lucky for me as I missed day one due to protestors spontaneously deciding to
+prevent the Eurostar from running the day I was due to travel. Fortunately the talks
+were recorded, so hopefully these will be made available soon!</p>
+
+<h2>RubyMotion 4</h2>
+
+<p><a href="https://twitter.com/lrz">Laurent Sansonetti</a> announced what is planned for RubyMotion 4 and it sounds awesome:</p>
+
+<ul>
+<li>A new REPL to work on the device</li>
+<li>Cross-platform game framework</li>
+<li>WatchKit</li>
+<li>iOS 9 support</li>
+<li>More work on live code reloading</li>
+</ul>
+
+
+<h2>Inspiration</h2>
+
+<p>It was great meeting the RubyMotion community and it definitely feels like an
+extension of all of the good things from the Ruby and Ruby On Rails communities.
+Lots of enthusiasm, smart and friendly people doing some really cool things.</p>
+
+<p>For me conferences are all about being inspired and the two talks that stood out
+were from <a href="https://twitter.com/amirrajan">Amir Rajan</a> and <a href="https://twitter.com/markrickert">Mark Rickert</a>.</p>
+
+<p>Amir is the genius behind the game A Dark Room which reached #1 in the US App Store.
+I thoroughly recommend <a href="http://amirrajan.net/a-dark-room/">reading his blog</a> which
+tells the story as he lived it.</p>
+
+<p>Mark told us about his experience quitting his full-time job, selling pretty much
+everything he owned and living on the road. He now consults on RubyMotion projects
+remotely, works half as much, makes more money and most importantly is far more happy!</p>
+
+<p>If you get the chance to hear either of these guys speak then make sure you do.</p>
+
+<h2>Life begins at the end of your comfort zone</h2>
+
+<p>For my talk I discussed the major challenges that were faced in building the game.
+Highlighting, where I could, lessons learned and things I would have done differently
+having now gone through the experience.</p>
+
+<p>What I had to say seemed to go down well. The team working on RedPotion have already
+<a href="https://github.com/clearsightstudio/ProMotion/issues/712">made changes to the framework</a>
+inspired by some simple ideas I had for debugging memory issues.</p>
+
+<p>If there&#8217;s one point to take-away from my talk though it&#8217;s &#8220;Life begins at the end of your comfort zone&#8221;.
+If you have an idea, just go for it and don&#8217;t be afraid to figure out things as
+you go along!</p>
+
+<p>Feel free to take a look at <a href="/downloads/rubymotion_inspect_2015_paul_sturgess.pdf">the slides for my presentation</a>.</p>
+
+<p>If you have questions get in touch on twitter: <a href="https://twitter.com/paulsturgess">@paulsturgess</a>.</p>
+
+<h2>WXG Conference – 25th Sept, Guildford, UK</h2>
+
+<p>I will also be talking about Title Challenge at the <a href="http://wxg.co.uk/">WXG Conference</a>.</p>
+
+<p>It&#8217;s a one day conference about web &amp; digital experiences.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/05/12/core-data-in-rubymotion-defining-your-schema-in-code/">Core Data in RubyMotion – Defining Your Schema in Code</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-05-12T10:55:00+01:00" pubdate data-updated="true">May 12<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>One of the things I love about RubyMotion is being able to build applications without
+having to heavily rely on XCode. I feel far more comfortable in a text editor, where I
+can actually see the code that makes it work.</p>
+
+<p>Typically Core Data schemas are defined in XCode, with text fields and drop down options
+used to define the attributes, relationships etc.</p>
+
+<p>Fortunately for RubyMotion developers the fantastic <a href="https://github.com/infinitered/ruby-xcdm">ruby-xcdm</a>
+allows us to define our schema in code.</p>
+
+<p>This may seem like more work, but one of benefits to defining the schema in code is
+visibility. With the schema checked into version control, it&#8217;s easy to see how it has
+evolved over time. Who made the changes, when they made those changes and hopefully
+the commit message might even say why they made those changes.</p>
+
+<p>The <a href="https://github.com/infinitered/ruby-xcdm/blob/master/README.md">ruby-xcdm Readme</a> does a great
+job of explaining how to set it up. However, I would like to talk a bit about versioning.</p>
+
+<p>If you&#8217;re coming from a Ruby on Rails background (as I was) then CoreData doesn&#8217;t really &#8216;do&#8217;
+migrations like ActiveRecord does. I&#8217;d recommend reading up on the term &#8216;lightweight migration&#8217; in
+the Apple docs. Essentially for simple things, like adding or removing attributes, it can do these
+automatically and they can be performed using ruby-xcdm.</p>
+
+<p>To make this work, all you need to do is copy your schema and create a new file.
+Just make sure you increment the schema number and as long as you have&#8230;</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">task</span> <span class="ss">:&quot;build:simulator&quot;</span> <span class="o">=&gt;</span> <span class="ss">:&quot;schema:build&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>&#8230;in your Rakefile, then the schema will be built and CoreData will perform the migration.</p>
+
+<p>Ruby-xcdm can handle typical relationship types like <code>has_many</code>, <code>has_one</code> and <code>belongs_to</code>. It also
+can handle entities that inherit from a base entity - just lookup the <code>abstract: true</code> and <code>parent:</code> options.</p>
+
+<h2>Shameless plug</h2>
+
+<p>This article is part of a series of blog posts about how I built <a href="http://titlechallenge.com">Title Challenge</a> – A football manager game for iOS.</p>
+
+<p>Others i&#8217;ve written include:</p>
+
+<ul>
+<li><a href="http://paulsturgess.co.uk/blog/2015/03/03/using-paintcode-to-dynamically-create-images-in-the-ios-football-manager-game-title-challenge/">Using PaintCode to Dynamically Create Images</a></li>
+<li><a href="http://paulsturgess.co.uk/blog/2015/02/13/using-reveal-app-to-build-a-rubymotion-football-manager-game/">Debuging layout issues with RevealApp</a></li>
+<li><a href="http://paulsturgess.co.uk/blog/2015/02/17/how-you-can-use-core-data-to-make-your-rubymotion-app-faster/">How to use Core Data to make your app faster</a>.</li>
+<li><a href="http://paulsturgess.co.uk/blog/2015/02/05/tweeting-a-screenshot-in-rubymotion-with-uiactivityviewcontroller/">Tweeting a Screenshot with UIActivityViewController</a></li>
+</ul>
+
+
+<p>Please do check out <a href="http://itunes.apple.com/app/id959982756">Title Challenge on the App Store</a>.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/03/03/using-paintcode-to-dynamically-create-images-in-the-ios-football-manager-game-title-challenge/">Using PaintCode to Dynamically Create Images in the iOS Football Manager Game Title Challenge</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-03-03T15:26:00+00:00" pubdate data-updated="true">Mar 3<span>rd</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>One of the important and distinctive visual aspects of <a href="http://www.titlechallenge.com">Title Challenge</a> is for each football club to have their own shirt and colour theme. The home and away shirts are used on nearly all screens, with the front of the shirts representing a club and the rear of the shirts, with a number on the back, representing a player.</p>
+
+<p>There are over 250 clubs in the database that ships with the game. Each club has 2 shirts and we need several different sizes for different screens. We also had to consider that club shirts will potentially change in both colour and style each season going forward. On top of this, we wanted to support different device resolutions including both retina and non-retina resolutions.</p>
+
+<p>To create a fixed set of graphics of thousands of combinations in varying sizes, styles and colours would have been laborious to say the least and incredibly time consuming to maintain. It also would have enormously bloated the file size of our application.</p>
+
+<h2>Shirt Styles</h2>
+
+<p>We decided we wanted to be able to dynamically display, hide, colour and scale graphical components with code. This would allow us to display any club shirt on the fly.</p>
+
+<p>The first phase was to decide on some core shirt styles that covered the majority of shirts worn by football clubs. We came up with 6: Plain, Stripes, Hoops, Sleeves, Quarters and Halves. We also have a goalkeeper shirt and a substitute bib used for players on the bench.</p>
+
+<p><a href="/images/shirt_styles.png" target="_blank"><img class="left" src="/images/shirt_styles.png" width="825" height="825" title="Shirt Layers image" alt="Shirt Layers image"></a></p>
+
+<p>The image above shows the different shirt styles in Title Challenge</p>
+
+<h2>Vector Layers</h2>
+
+<p>After deciding on the styles, Thom, our designer, produced a set of modular vector graphics that could be layered over each other to create any kit style required without duplicating any of the kit elements.</p>
+
+<p>However, those vector graphics weren’t used directly in the game. The shirts you see are entirely generated from code. To achieve this, each individual shirt element was imported into a third party application called <a href="http://www.paintcodeapp.com/">PaintCode</a>.</p>
+
+<p><a href="/images/shirt_layers.png" target="_blank"><img class="left" src="/images/shirt_layers.png" width="825" height="825" title="Shirt Layers image" alt="Shirt Layers image"></a></p>
+
+<p>The image above shows the layers that make up a black and white striped shirt with a green substitute bib.</p>
+
+<h2>PaintCode</h2>
+
+<p><a href="http://www.paintcodeapp.com/">PaintCode</a> is genius, it automatically generates drawing code from vector graphics.</p>
+
+<p>The code to generate a shirt is actually composed of the same graphical modular layers composed on top of one another, but instead of vector graphics, they’re CALayers composed of UIBezierPath line segments with different fills and strokes.</p>
+
+<p>Even the shirt numbers have been generated using PaintCode. We could have used a font, and we did look for one, but we couldn’t quite find the right one. We wanted one loosely inspired by the <a href="http://goo.gl/nCCUqC">Mexico ‘86 world cup</a>, but with a modern feel.</p>
+
+<p>In the end it was easier to implement all elements of the shirt using the same code-based method. This was particularly true when we were dealing with scaling and animations on the tactics screen.</p>
+
+<p><a href="/images/paintcode.png" target="_blank"><img class="left" src="/images/paintcode.png" width="825" height="825" title="Paintcode screenshot" alt="Paintcode screenshot"></a></p>
+
+<p>Screenshot of <a href="http://www.paintcodeapp.com/">Paintcode</a> with the code in the panel below the shirt vector graphic.</p>
+
+<h2>Turn it off and on again</h2>
+
+<p>To generate the front or rear of a shirt, we simply show/hide a different collar style. We also show/hide the player number as appropriate. The goalkeeper shirt is just a plain shirt with some extra sleeves added on. For bibs, we simply add the bib layer straight over the top.</p>
+
+<p>Basically we just turn layers on and off and change the colours to produce the shirt combination we want. Taking this approach means that making tweaks are a joy to implement and not a chore to dread.</p>
+
+<p>Another benefit is we were able to include the shirts as part of data editor in the game. So any shirt style can be created completely on the fly using a color picker.</p>
+
+<p>We also changed the shirt style several times during the development of Title Challenge. I have no affiliation with <a href="http://www.paintcodeapp.com/">PaintCode</a>, but I&#8217;m so glad we used it!</p>
+
+<h2>Shameless plug</h2>
+
+<p>If you got this far and you&#8217;re still wondering what Title Challenge is or you found this post useful and just feel like supporting me – Please do check out <a href="http://itunes.apple.com/app/id959982756">Title Challenge on the App Store</a>.</p>
+
+<p>I&#8217;ve also written some other posts about developing Title Challenge: <a href="http://paulsturgess.co.uk/blog/2015/02/13/using-reveal-app-to-build-a-rubymotion-football-manager-game/">Debuging layout issues with RevealApp</a> and <a href="http://paulsturgess.co.uk/blog/2015/02/17/how-you-can-use-core-data-to-make-your-rubymotion-app-faster/">How to use Core Data to make your app faster</a>.</p>
+
+<p><a href="/images/tactics.png" target="_blank"><img class="left" src="/images/tactics.png" width="825" height="825" title="Tactics screenshot" alt="Tactics screenshot"></a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/02/17/how-you-can-use-core-data-to-make-your-rubymotion-app-faster/">How You Can Use Core Data to Make Your RubyMotion App Faster</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-17T09:05:00+00:00" pubdate data-updated="true">Feb 17<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>This is my second post in a series explaining some of the technical decisions behind creating the <a href="http://www.titlechallenge.com">football management iPhone game Title Challenge</a>. The first post was a <a href="http://paulsturgess.co.uk/blog/2015/02/13/using-reveal-app-to-build-a-rubymotion-football-manager-game/">short one about using Reveal App</a> as a useful debugging tool for building layouts.</p>
+
+<p>From the outside Title Challenge may appear pretty simple, but under the hood there is a lot more than you might realise going on. Before I talk about why I chose Core Data (or even what Core Data is), let me explain a little bit about the processing the game needs to perform.</p>
+
+<h2>Lots of processing means loading screens</h2>
+
+<p>Each ‘game week’ you progress, the following needs to be updated:</p>
+
+<ul>
+<li>Process player transfers (ensuring these are realistic to each club)</li>
+<li>Simulate player training (players improve their skill gradually over time)</li>
+<li>Update all injured players (each week they will be closer to full fitness)</li>
+<li>Update exhausted players (players get exhausted if they are not rested enough)</li>
+<li>Check player unhappiness (players can get unhappy at not being played enough)</li>
+<li>Run scout reports (your scouts will report back on your shortlisted players)</li>
+<li>Update the transfer list (again ensuring clubs are realistic in who they transfer list)</li>
+</ul>
+
+
+<p>The key thing is that there could be 6,000+ players to update, with thousands of other related records to update in the database. I wanted this to run as fast as possible to reduce waiting times between game weeks.</p>
+
+<p>While this is going on we show a loading screen. We decided to spend time making these look nice by including colourful player illustrations by <a href="http://davewilldesign.com/#/lfc-postcard-series-1314/">Liverpool FC illustrator Dave Will</a>.</p>
+
+<p>Combined with a random humourous/entertaining/interesting quote (of which there are hundreds in the game) it makes waiting as pleasant as possible. Here&#8217;s an example:</p>
+
+<p><a href="/images/loading.PNG" target="_blank"><img class="left" src="/images/loading.PNG" width="825" height="825" title="Loading image" alt="Loading image"></a>
+&nbsp;</p>
+
+<h2>Measuring Performance with RubyMotion-Benchmark</h2>
+
+<p>One way I made the code run faster was to run it, measure it, tweak it. Rinse and repeat. <a href="https://github.com/Watson1978/RubyMotion-Benchmark">Motion Benchmark</a> is a very, very simple gem but it is easy to use for this very task. It gives you precise control on what code is benchmarked, but this also makes it time consuming to identify what you should be benchmarking in the first place.</p>
+
+<h2>Find the bottlenecks in your code</h2>
+
+<p>This is where the Time Profiler in XCode’s Instruments tool is incredibly useful. It could be the subject of an entire blog post. In a nutshell it shows the exact time taken for each branch of code, even for each thread. It gives you a full stack trace to work so you can even see which line of code it is. This makes it easy to identify where the biggest bottlenecks are. I would always try and optimise those first to get some quick wins.</p>
+
+<h2>Optimise your code without even making it run faster</h2>
+
+<p>However, the main point of this blog post is to recommend thinking about how you can optimise your code without even making it run faster. This probably sounds like a an odd statement, but this is where Core Data comes in.</p>
+
+<p>Many developers think <a href="http://en.wikipedia.org/wiki/Core_Data">Core Data</a> is just another way to persist data and is comparable to using <a href="http://www.sqlite.org/">SQLite</a>. Indeed, Core Data can use SQLite to persist data and I use Core Data with SQLite in Title Challenge. However, the fact Core Data can use SQLite is not important and you won’t be writing any SQL to use it. Core Data is primarily a framework for object life-cycle and object graph management.</p>
+
+<p>Coming from a web development background it took me a while to get my head around this. I’ve seen (and written) my fair share of Rails apps tightly coupled to ActiveRecord and the database layer. Using Core Data forces you to understand that persistence is not the same thing as the object graph. So what is “object graph management”? The best way I can explain it, without loads of boring theory, is to tell you how I use it in Title Challenge.</p>
+
+<h2>Core Data and the Managed Object Context</h2>
+
+<p>I figured out the fastest way to perform the game week processing was to do it while the gamer was not even waiting for it to finish. I decided I wanted to perform the processing while the gamer was picking their team, analysing their squad, scouring the transfer list etc. I’m effectively doing all the processing for the next game week ahead of time.</p>
+
+<p>Core Data allows me to do this because I can take a copy of all the objects in the “Object Graph” ie. all the Clubs, Players etc. (in what is known as a Managed Object Context) and manipulate them as necessary on a background thread. I can perform all the tasks I mentioned earlier (e.g. processing transfers), without any of the changes showing up in the user interface as as the gamer is navigating around the app.</p>
+
+<p>In fact, none of these changes are persisted to disk until the gamer hits continue. This is one of the major differences of Core Data from how you use a database in a web app. With Core Data you make as many changes as you like and at some later date you tell it to save.</p>
+
+<p>Core Data is smart enough to handle the merging of all the changes from the background thread in with the changes made by the gamer on the main thread. The beauty of this technique is it doesn’t really matter how fast/slow my processing code runs, if the gamer is not even aware its running in the background.</p>
+
+<p>This approach has worked really well, especially on older devices where sometimes it doesn’t matter how much you optimise your code, it’s going to run slowly.</p>
+
+<h2>Some Complications</h2>
+
+<p>It becomes more complicated when the gamer interacts with players that have also changed in the context on the background thread. This is pretty rare in practice, but I’ve written code to handle any conflicts so it resolves them before continuing to the next game week.</p>
+
+<p>The other thing to watch out for is high memory usage. I found as I was processing nearly every player and every club, each game week, these were all getting pulled into memory and not released. Core Data will hold onto objects unless you tell it let go. This is great for performance, but not so great when memory is at a premium. I highly recommend reading up on <code>refreshObject</code> in the Core Data docs. Call this method on objects when you’re finished with them to release them and control memory spikes.</p>
+
+<h2>Shameless plug</h2>
+
+<p>If you got this far and you&#8217;re still wondering what Title Challenge is or you found this post useful and just feel like supporting me – Please do check out <a href="http://itunes.apple.com/app/id959982756">Title Challenge on the App Store</a>.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/02/13/using-reveal-app-to-build-a-rubymotion-football-manager-game/">Using Reveal App to Build a RubyMotion Football Manager Game</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-13T15:26:00+00:00" pubdate data-updated="true">Feb 13<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>This is the beginning of a series of blog posts I intend to write on how I&#8217;ve built <a href="http://titlechallenge.com">Title Challenge – Football Management</a>.</p>
+
+<p>It&#8217;s an iOS game I&#8217;ve written in <a href="http://www.rubymotion.com/">RubyMotion</a>. I&#8217;m a Ruby on Rails web developer turned app developer. Before building this game, I had no prior knowledge of building mobile applications.</p>
+
+<p>Hopefully this series of posts will inspire other Ruby developers out there to start building really cool mobile apps.</p>
+
+<p><a href="http://revealapp.com/">Reveal App</a> was one of the first third-party tools I downloaded when I started building Title Challenge 18 months ago and I&#8217;ve used it nearly every day since. At first glance it might look like a bit of a gimmick to see your app in 3D but it is incredibly useful for debugging.</p>
+
+<p><a href="/images/reveal_app.png" target="_blank"><img class="left" src="/images/reveal_app.png" width="825" height="825" title="Reveal App screenshot" alt="Reveal App screenshot"></a></p>
+
+<p>I&#8217;ve used Reveal to show me when a <code>UIView</code> is tucked behind some other <code>UIView</code> that I couldn&#8217;t see in the Simulator. Sometimes a <code>UIVIew</code> might not have a height set or something stupid like that and Reveal would instantly show me.</p>
+
+<p>You can rotate your app round to see it from angles you can&#8217;t see in the Simulator.</p>
+
+<p>Another really useful feature is being able to tweak attributes live in the Reveal and the Simulator reflects your changes. For example, you can change the frame of a <code>UIView</code> and see it move in the simulator live.</p>
+
+<p>I&#8217;ve got no affiliation with Reveal but I definitely recommend it for App developers.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/02/05/tweeting-a-screenshot-in-rubymotion-with-uiactivityviewcontroller/">Tweeting a Screenshot in RubyMotion With UIActivityViewController</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-05T18:47:00+00:00" pubdate data-updated="true">Feb 5<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The easiest way to allow users to share content from inside your app is to use <code>UIActivityViewController</code>.</p>
+
+<p>Use it when you want to allow the user to:</p>
+
+<ul>
+<li>Send a Tweet</li>
+<li>Share on Facebook</li>
+<li>Save an image to photos</li>
+<li>Send an SMS message / iMessage</li>
+<li>Send an email</li>
+</ul>
+
+
+<p>In iOS 8 it slides up a panel at the bottom of the screen. The user chooses
+how they want to share the content. The options are based on the applications
+they have installed. You can also specify which ones to include/exclude.</p>
+
+<p>Here&#8217;s enough code to create an app with a button that brings up the <code>UIActivityViewController</code>,
+takes a screenshot and allows the user to share it along with some text.</p>
+
+<p>Hopefully the code and my comments are self-documenting enough to make sense.</p>
+
+<p>I figured this out through a combination of the Apple docs and this <a href="http://nshipster.com/uiactivityviewcontroller/">NSHipster article</a>.</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">AppDelegate</span>
+
+  <span class="kp">attr_reader</span> <span class="ss">:window</span>
+
+  <span class="k">def</span> <span class="nf">application</span><span class="p">(</span><span class="n">application</span><span class="p">,</span> <span class="ss">didFinishLaunchingWithOptions</span><span class="p">:</span><span class="n">launchOptions</span><span class="p">)</span>
+    <span class="n">rootViewController</span> <span class="o">=</span> <span class="no">MyController</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">init</span>
+    <span class="n">rootViewController</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;ActivityViewController Demo&#39;</span>
+    <span class="n">rootViewController</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">backgroundColor</span> <span class="o">=</span> <span class="no">UIColor</span><span class="o">.</span><span class="n">whiteColor</span>
+
+    <span class="n">navigationController</span> <span class="o">=</span> <span class="no">UINavigationController</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">initWithRootViewController</span><span class="p">(</span>
+      <span class="n">rootViewController</span>
+    <span class="p">)</span>
+
+    <span class="vi">@window</span> <span class="o">=</span> <span class="no">UIWindow</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">initWithFrame</span><span class="p">(</span><span class="no">UIScreen</span><span class="o">.</span><span class="n">mainScreen</span><span class="o">.</span><span class="n">bounds</span><span class="p">)</span>
+    <span class="vi">@window</span><span class="o">.</span><span class="n">rootViewController</span> <span class="o">=</span> <span class="n">navigationController</span>
+    <span class="vi">@window</span><span class="o">.</span><span class="n">makeKeyAndVisible</span>
+
+    <span class="kp">true</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1"># This subclass is not technically required</span>
+<span class="c1"># It allows you to switch the text based on the type of service it will be shared on</span>
+<span class="k">class</span> <span class="nc">ShareText</span> <span class="o">&lt;</span> <span class="no">UIActivityItemProvider</span>
+
+  <span class="kp">attr_accessor</span> <span class="ss">:text</span>
+
+  <span class="c1"># The placeholder text</span>
+  <span class="k">def</span> <span class="nf">activityViewControllerPlaceholderItem</span><span class="p">(</span><span class="n">controller</span><span class="p">)</span>
+    <span class="s2">&quot;&quot;</span>
+  <span class="k">end</span>
+
+  <span class="c1"># The text that will be inserted into the Tweet / Email / SMS etc.</span>
+  <span class="c1"># You could easily respond to more activity types if you wanted</span>
+  <span class="k">def</span> <span class="nf">activityViewController</span><span class="p">(</span><span class="n">controller</span><span class="p">,</span> <span class="ss">itemForActivityType</span><span class="p">:</span> <span class="n">activityType</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">activityType</span> <span class="o">==</span> <span class="no">UIActivityTypePostToTwitter</span>
+      <span class="s2">&quot;</span><span class="si">#{</span><span class="n">text</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">twitter_handle</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">hashtag</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">else</span>
+      <span class="s2">&quot;</span><span class="si">#{</span><span class="n">text</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">website</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">hashtag</span>
+    <span class="s2">&quot;#yourhashtag&quot;</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">website</span>
+    <span class="s2">&quot;http://yourwebsite.com&quot;</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">twitter_handle</span>
+    <span class="s2">&quot;@YourTwitterHandle&quot;</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+<span class="c1"># This is a simple controller with one button</span>
+<span class="k">class</span> <span class="nc">MyController</span> <span class="o">&lt;</span> <span class="no">UIViewController</span>
+
+  <span class="k">def</span> <span class="nf">viewDidLoad</span>
+    <span class="n">button</span> <span class="o">=</span> <span class="no">UIButton</span><span class="o">.</span><span class="n">buttonWithType</span><span class="p">(</span><span class="no">UIButtonTypeRoundedRect</span><span class="p">)</span>
+    <span class="n">button</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s1">&#39;Start&#39;</span><span class="p">,</span> <span class="ss">forState</span><span class="p">:</span><span class="no">UIControlStateNormal</span><span class="p">)</span>
+    <span class="n">button</span><span class="o">.</span><span class="n">addTarget</span><span class="p">(</span>
+      <span class="nb">self</span><span class="p">,</span>
+      <span class="ss">action</span><span class="p">:</span> <span class="s1">&#39;button_tapped&#39;</span><span class="p">,</span>
+      <span class="ss">forControlEvents</span><span class="p">:</span> <span class="no">UIControlEventTouchUpInside</span>
+    <span class="p">)</span>
+    <span class="n">button</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="o">[[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">260</span><span class="o">]</span><span class="p">,</span> <span class="o">[</span><span class="n">view</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">40</span><span class="o">]]</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">addSubview</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="c1"># This method generates the image of the entire screen</span>
+  <span class="c1"># Note it will not include the status bar</span>
+  <span class="k">def</span> <span class="nf">screenshot</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="no">UIApplication</span><span class="o">.</span><span class="n">sharedApplication</span><span class="o">.</span><span class="n">keyWindow</span>
+    <span class="no">UIGraphicsBeginImageContextWithOptions</span><span class="p">(</span>
+      <span class="n">window</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+      <span class="kp">false</span><span class="p">,</span>
+      <span class="no">UIScreen</span><span class="o">.</span><span class="n">mainScreen</span><span class="o">.</span><span class="n">scale</span>
+    <span class="p">)</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">drawViewHierarchyInRect</span><span class="p">(</span>
+      <span class="n">window</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span>
+      <span class="ss">afterScreenUpdates</span><span class="p">:</span><span class="kp">true</span>
+    <span class="p">)</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="no">UIGraphicsGetImageFromCurrentImageContext</span><span class="p">()</span>
+    <span class="no">UIGraphicsEndImageContext</span><span class="p">()</span>
+    <span class="n">image</span>
+  <span class="k">end</span>
+
+  <span class="c1"># We create an instance of our ShareText subclass</span>
+  <span class="c1"># Pass it into the UIActivityViewController along with the screenshot</span>
+  <span class="c1"># The UIActivityViewController handles everything else, all you have to do is present the controller.</span>
+  <span class="k">def</span> <span class="nf">button_tapped</span>
+    <span class="n">tc_share_text</span> <span class="o">=</span> <span class="no">ShareText</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">init</span>
+    <span class="n">tc_share_text</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Check out this screengrab!&quot;</span>
+    <span class="n">controller</span> <span class="o">=</span> <span class="no">UIActivityViewController</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">initWithActivityItems</span><span class="p">(</span>
+      <span class="o">[</span><span class="n">tc_share_text</span><span class="p">,</span> <span class="n">screenshot</span><span class="o">]</span><span class="p">,</span>
+      <span class="ss">applicationActivities</span><span class="p">:</span> <span class="kp">nil</span>
+    <span class="p">)</span>
+
+    <span class="n">controller</span><span class="o">.</span><span class="n">excludedActivityTypes</span> <span class="o">=</span> <span class="o">[</span>
+      <span class="no">UIActivityTypePrint</span><span class="p">,</span>
+      <span class="no">UIActivityTypeAssignToContact</span><span class="p">,</span>
+      <span class="no">UIActivityTypeAddToReadingList</span><span class="p">,</span>
+      <span class="no">UIActivityTypePostToFlickr</span><span class="p">,</span>
+      <span class="no">UIActivityTypeAirDrop</span>
+    <span class="o">]</span>
+
+    <span class="nb">self</span><span class="o">.</span><span class="n">presentViewController</span><span class="p">(</span>
+      <span class="n">controller</span><span class="p">,</span>
+      <span class="ss">animated</span><span class="p">:</span><span class="kp">true</span><span class="p">,</span>
+      <span class="ss">completion</span><span class="p">:</span><span class="kp">nil</span>
+    <span class="p">)</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/3/">&larr; Older</a>
+    
+    
+    <a class="next" href="/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2020/03/18/stand-up-meetings-for-a-distributed-team/">Stand-up meetings for a distributed team</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2018/01/09/setup-webpacker-webpack-dev-server-with-docker-compose/">Setup webpacker webpack-dev-server with docker-compose</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2018/01/09/using-pry-with-docker-compose/">Debug Ruby using Pry and Docker compose</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2018/01/09/ruby-metaprogramming-define-method-and-instance-exec/">Ruby metaprogramming: define_method and instance_exec</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/04/29/using-enzyme-to-test-a-react-component-onclick-with-event-preventdefault/">Using Enzyme to test a React component onClick with event preventDefault</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/paulsturgess">@paulsturgess</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'paulsturgess',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2020 - Paul Sturgess -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

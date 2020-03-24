@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about web development]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2020-03-18T20:43:02+00:00</updated>
+  <updated>2020-03-24T20:24:54+00:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,88 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Nothing is urgent – asynchronous communication]]></title>
+    <link href="http://paulsturgess.github.io/blog/2020/03/20/nothing-is-urgent-asynchronous-communication/"/>
+    <updated>2020-03-20T19:14:00+00:00</updated>
+    <id>http://paulsturgess.github.io/blog/2020/03/20/nothing-is-urgent-asynchronous-communication</id>
+    <content type="html"><![CDATA[<p>Lots of people have been thrown into remote working that aren&#8217;t used to it. I&#8217;m writing to share some tips that I hope will hopefully help reduce anxiety, stress and allow your team to work flexibly. As I mentioned before, this isn&#8217;t about squeezing more productivity
+out of your colleagues.</p>
+
+<p> Previously I wrote about how distributed teams can <a href="http://localhost:4000/blog/2020/03/18/stand-up-meetings-for-a-distributed-team/">adapt stand-up meetings to allow people to work more flexibly</a>. Giving them space to adapt their working day around their personal situation.</p>
+
+<p> I&#8217;ve had to shift my working hours to start in the afternoon, as I will now look after my son in the morning whilst my wife works.
+ We switch roles in the afternoon. It&#8217;s pretty much like I&#8217;m working in a US time zone when most of my team is on CET or GMT. We do
+ actually have some people on UTC-7, so I already have company.</p>
+
+<p>Fortunately for me, the Rail Europe team is already geared up to communicate effectively even with people working completely
+different hours, whether time zone inflicted or not&#8230;</p>
+
+<h2>Asynchronous communication</h2>
+
+<p> Asynchronous commuinciation is based on the idea that &#8220;nothing is urgent&#8221;, especially when it comes to writing software. This might seem blindingly obvious when we&#8217;re in the middle of a global pandemic. In reality very few of us are doing anything that&#8217;s really truely <em>urgent</em>. That&#8217;s how you describe the heroic work of people trying to create a vaccine or key-workers on the front-line.</p>
+
+<p> However, that&#8217;s not what I mean here. A communication style where &#8220;nothing is urgent&#8221; means we don&#8217;t interrupt our colleagues and expect immediate answers right now. We use asynchronous communication by default and we are mindful about the notifications we generate for our colleagues.</p>
+
+<p> Jason Fried from Basecamp wrote this fantastic blog post on why <a href="https://m.signalvnoise.com/is-group-chat-making-you-sweat/">Group chat is like being in an all-day meeting with random participants and no agenda</a>. It informs much of our thinking.</p>
+
+<p> I won&#8217;t pretend we are perfect at it and there is always an exception to the rule. But these are the specific (and default) behaviours we encourage amongst the tech team at Rail Europe:</p>
+
+<ul>
+<li>Recognition that most questions do not need an immediate answer</li>
+<li>There&#8217;s no expectation that your colleague/team is online all day
+
+<ul>
+<li>Muting of Slack channels or closing Slack entirely to avoid being interrupted is encouraged</li>
+</ul>
+</li>
+<li>Team decisions are not made in Slack
+
+<ul>
+<li>We use Basecamp for long-form discussions, so everyone can contribute when it suits them</li>
+</ul>
+</li>
+<li>@mention should not be used when someone is offline unless it&#8217;s critical</li>
+<li>Respect Slack statuses such as &#8220;concentrating&#8221;, &#8220;lunch&#8221;, &#8220;gone for a walk&#8221;</li>
+<li>Use the Lunch, Meeting or Phone status to avoid lots of pointless chatter in public channels</li>
+<li>Task specific conversations that are relevant for project managers should go on Jira/Trello</li>
+<li>Technical discussions about code should ideally happen on a Github PR</li>
+<li>Consider an email over a Slack DM</li>
+<li>Document all processes thoroughly
+
+<ul>
+<li>Good documentation allows people to be self-sufficient</li>
+<li>Prevents &#8220;bus&#8221; factor</li>
+</ul>
+</li>
+</ul>
+
+
+<p>We keep meetings down to an absolute minimum, most are replaced by long-form written discussions.
+I&#8217;ll blog about this in more detail in the future.</p>
+
+<p>Of course when I say &#8220;nothing is urgent&#8221; there are exceptions. An outage of our website and certain critical on-call alerts
+need to be responded to swiftly. And it&#8217;s not like we never communicate synchronously, it&#8217;s just that async is our default.</p>
+
+<p>Adopting asynchronous communication really has many positive benefits on the well-being of your team:</p>
+
+<ul>
+<li>Reduces notification fatigue</li>
+<li>Reduces anxiety about being online all the time</li>
+<li>Allows people to not feel guilty about taking breaks when they need to</li>
+<li>Enables more flexibility for when people work</li>
+<li>Because most communication and decisions are written down, if you&#8217;re off work it&#8217;s easy to catch up later</li>
+<li>Everyone sees the value in great documentation and how it empowers them to work self-sufficiently</li>
+<li>Conversations on Jira/Trello make it easy for anyone to understand the latest status of a task</li>
+<li>Everyone gets longer periods of uninterrupted time to get into deep work</li>
+</ul>
+
+
+<p>When it comes to remote work, asynchronous communication really is one of the most liberating things your
+team can adopt.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Stand-up meetings for a distributed team]]></title>
@@ -1288,158 +1370,6 @@ can handle entities that inherit from a base entity - just lookup the <code>abst
 <p>Another really useful feature is being able to tweak attributes live in the Reveal and the Simulator reflects your changes. For example, you can change the frame of a <code>UIView</code> and see it move in the simulator live.</p>
 
 <p>I&#8217;ve got no affiliation with Reveal but I definitely recommend it for App developers.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Tweeting a screenshot in RubyMotion with UIActivityViewController]]></title>
-    <link href="http://paulsturgess.github.io/blog/2015/02/05/tweeting-a-screenshot-in-rubymotion-with-uiactivityviewcontroller/"/>
-    <updated>2015-02-05T18:47:00+00:00</updated>
-    <id>http://paulsturgess.github.io/blog/2015/02/05/tweeting-a-screenshot-in-rubymotion-with-uiactivityviewcontroller</id>
-    <content type="html"><![CDATA[<p>The easiest way to allow users to share content from inside your app is to use <code>UIActivityViewController</code>.</p>
-
-<p>Use it when you want to allow the user to:</p>
-
-<ul>
-<li>Send a Tweet</li>
-<li>Share on Facebook</li>
-<li>Save an image to photos</li>
-<li>Send an SMS message / iMessage</li>
-<li>Send an email</li>
-</ul>
-
-
-<p>In iOS 8 it slides up a panel at the bottom of the screen. The user chooses
-how they want to share the content. The options are based on the applications
-they have installed. You can also specify which ones to include/exclude.</p>
-
-<p>Here&#8217;s enough code to create an app with a button that brings up the <code>UIActivityViewController</code>,
-takes a screenshot and allows the user to share it along with some text.</p>
-
-<p>Hopefully the code and my comments are self-documenting enough to make sense.</p>
-
-<p>I figured this out through a combination of the Apple docs and this <a href="http://nshipster.com/uiactivityviewcontroller/">NSHipster article</a>.</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">AppDelegate</span>
-
-  <span class="kp">attr_reader</span> <span class="ss">:window</span>
-
-  <span class="k">def</span> <span class="nf">application</span><span class="p">(</span><span class="n">application</span><span class="p">,</span> <span class="ss">didFinishLaunchingWithOptions</span><span class="p">:</span><span class="n">launchOptions</span><span class="p">)</span>
-    <span class="n">rootViewController</span> <span class="o">=</span> <span class="no">MyController</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">init</span>
-    <span class="n">rootViewController</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;ActivityViewController Demo&#39;</span>
-    <span class="n">rootViewController</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">backgroundColor</span> <span class="o">=</span> <span class="no">UIColor</span><span class="o">.</span><span class="n">whiteColor</span>
-
-    <span class="n">navigationController</span> <span class="o">=</span> <span class="no">UINavigationController</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">initWithRootViewController</span><span class="p">(</span>
-      <span class="n">rootViewController</span>
-    <span class="p">)</span>
-
-    <span class="vi">@window</span> <span class="o">=</span> <span class="no">UIWindow</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">initWithFrame</span><span class="p">(</span><span class="no">UIScreen</span><span class="o">.</span><span class="n">mainScreen</span><span class="o">.</span><span class="n">bounds</span><span class="p">)</span>
-    <span class="vi">@window</span><span class="o">.</span><span class="n">rootViewController</span> <span class="o">=</span> <span class="n">navigationController</span>
-    <span class="vi">@window</span><span class="o">.</span><span class="n">makeKeyAndVisible</span>
-
-    <span class="kp">true</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-
-<span class="c1"># This subclass is not technically required</span>
-<span class="c1"># It allows you to switch the text based on the type of service it will be shared on</span>
-<span class="k">class</span> <span class="nc">ShareText</span> <span class="o">&lt;</span> <span class="no">UIActivityItemProvider</span>
-
-  <span class="kp">attr_accessor</span> <span class="ss">:text</span>
-
-  <span class="c1"># The placeholder text</span>
-  <span class="k">def</span> <span class="nf">activityViewControllerPlaceholderItem</span><span class="p">(</span><span class="n">controller</span><span class="p">)</span>
-    <span class="s2">&quot;&quot;</span>
-  <span class="k">end</span>
-
-  <span class="c1"># The text that will be inserted into the Tweet / Email / SMS etc.</span>
-  <span class="c1"># You could easily respond to more activity types if you wanted</span>
-  <span class="k">def</span> <span class="nf">activityViewController</span><span class="p">(</span><span class="n">controller</span><span class="p">,</span> <span class="ss">itemForActivityType</span><span class="p">:</span> <span class="n">activityType</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">activityType</span> <span class="o">==</span> <span class="no">UIActivityTypePostToTwitter</span>
-      <span class="s2">&quot;</span><span class="si">#{</span><span class="n">text</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">twitter_handle</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">hashtag</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="k">else</span>
-      <span class="s2">&quot;</span><span class="si">#{</span><span class="n">text</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">website</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">hashtag</span>
-    <span class="s2">&quot;#yourhashtag&quot;</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">website</span>
-    <span class="s2">&quot;http://yourwebsite.com&quot;</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">twitter_handle</span>
-    <span class="s2">&quot;@YourTwitterHandle&quot;</span>
-  <span class="k">end</span>
-
-<span class="k">end</span>
-
-<span class="c1"># This is a simple controller with one button</span>
-<span class="k">class</span> <span class="nc">MyController</span> <span class="o">&lt;</span> <span class="no">UIViewController</span>
-
-  <span class="k">def</span> <span class="nf">viewDidLoad</span>
-    <span class="n">button</span> <span class="o">=</span> <span class="no">UIButton</span><span class="o">.</span><span class="n">buttonWithType</span><span class="p">(</span><span class="no">UIButtonTypeRoundedRect</span><span class="p">)</span>
-    <span class="n">button</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s1">&#39;Start&#39;</span><span class="p">,</span> <span class="ss">forState</span><span class="p">:</span><span class="no">UIControlStateNormal</span><span class="p">)</span>
-    <span class="n">button</span><span class="o">.</span><span class="n">addTarget</span><span class="p">(</span>
-      <span class="nb">self</span><span class="p">,</span>
-      <span class="ss">action</span><span class="p">:</span> <span class="s1">&#39;button_tapped&#39;</span><span class="p">,</span>
-      <span class="ss">forControlEvents</span><span class="p">:</span> <span class="no">UIControlEventTouchUpInside</span>
-    <span class="p">)</span>
-    <span class="n">button</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="o">[[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">260</span><span class="o">]</span><span class="p">,</span> <span class="o">[</span><span class="n">view</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">40</span><span class="o">]]</span>
-    <span class="n">view</span><span class="o">.</span><span class="n">addSubview</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
-  <span class="k">end</span>
-
-  <span class="c1"># This method generates the image of the entire screen</span>
-  <span class="c1"># Note it will not include the status bar</span>
-  <span class="k">def</span> <span class="nf">screenshot</span>
-    <span class="n">window</span> <span class="o">=</span> <span class="no">UIApplication</span><span class="o">.</span><span class="n">sharedApplication</span><span class="o">.</span><span class="n">keyWindow</span>
-    <span class="no">UIGraphicsBeginImageContextWithOptions</span><span class="p">(</span>
-      <span class="n">window</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
-      <span class="kp">false</span><span class="p">,</span>
-      <span class="no">UIScreen</span><span class="o">.</span><span class="n">mainScreen</span><span class="o">.</span><span class="n">scale</span>
-    <span class="p">)</span>
-    <span class="n">window</span><span class="o">.</span><span class="n">drawViewHierarchyInRect</span><span class="p">(</span>
-      <span class="n">window</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span>
-      <span class="ss">afterScreenUpdates</span><span class="p">:</span><span class="kp">true</span>
-    <span class="p">)</span>
-    <span class="n">image</span> <span class="o">=</span> <span class="no">UIGraphicsGetImageFromCurrentImageContext</span><span class="p">()</span>
-    <span class="no">UIGraphicsEndImageContext</span><span class="p">()</span>
-    <span class="n">image</span>
-  <span class="k">end</span>
-
-  <span class="c1"># We create an instance of our ShareText subclass</span>
-  <span class="c1"># Pass it into the UIActivityViewController along with the screenshot</span>
-  <span class="c1"># The UIActivityViewController handles everything else, all you have to do is present the controller.</span>
-  <span class="k">def</span> <span class="nf">button_tapped</span>
-    <span class="n">tc_share_text</span> <span class="o">=</span> <span class="no">ShareText</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">init</span>
-    <span class="n">tc_share_text</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Check out this screengrab!&quot;</span>
-    <span class="n">controller</span> <span class="o">=</span> <span class="no">UIActivityViewController</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">initWithActivityItems</span><span class="p">(</span>
-      <span class="o">[</span><span class="n">tc_share_text</span><span class="p">,</span> <span class="n">screenshot</span><span class="o">]</span><span class="p">,</span>
-      <span class="ss">applicationActivities</span><span class="p">:</span> <span class="kp">nil</span>
-    <span class="p">)</span>
-
-    <span class="n">controller</span><span class="o">.</span><span class="n">excludedActivityTypes</span> <span class="o">=</span> <span class="o">[</span>
-      <span class="no">UIActivityTypePrint</span><span class="p">,</span>
-      <span class="no">UIActivityTypeAssignToContact</span><span class="p">,</span>
-      <span class="no">UIActivityTypeAddToReadingList</span><span class="p">,</span>
-      <span class="no">UIActivityTypePostToFlickr</span><span class="p">,</span>
-      <span class="no">UIActivityTypeAirDrop</span>
-    <span class="o">]</span>
-
-    <span class="nb">self</span><span class="o">.</span><span class="n">presentViewController</span><span class="p">(</span>
-      <span class="n">controller</span><span class="p">,</span>
-      <span class="ss">animated</span><span class="p">:</span><span class="kp">true</span><span class="p">,</span>
-      <span class="ss">completion</span><span class="p">:</span><span class="kp">nil</span>
-    <span class="p">)</span>
-  <span class="k">end</span>
-
-<span class="k">end</span>
-</code></pre></div>
-
-
-
 ]]></content>
   </entry>
   

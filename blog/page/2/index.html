@@ -9,8 +9,7 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="Recently I&#8217;ve been learning Redux state container for React apps and it actively encourages
-&#8216;stateless&#8217; components. This blog post &hellip;">
+  <meta name="description" content="As a follow on from my last article about building and testing stateless presentational components, I&#8217;m going to explain Redux Container &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -74,6 +73,91 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/11/06/how-to-write-and-test-a-redux-container-component-for-react/">How to Write and Test a Redux Container Component for React</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-11-06T20:25:00+00:00" pubdate data-updated="true">Nov 6<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>As a follow on from my last article about <a href="http://paulsturgess.co.uk/blog/2016/10/19/how-to-write-and-test-a-stateless-react-component/">building and testing stateless presentational components</a>, I&#8217;m going to explain Redux Container Components.</p>
+
+<h2>What is a container component?</h2>
+
+<p>A container component is concerned with how things work. This typically involves
+fetching data, watching the store for updates and updating the store itself by
+dispatching actions.</p>
+
+<p>Essentially a container component will wrap a presentational component to add
+behaviour to it.</p>
+
+<h2>What does a container component look like?</h2>
+
+<script src="https://gist.github.com/paulsturgess/7089b2386e8b86335fa7b681e3935c7a.js"></script>
+
+
+<p>The container component is created on Line 16 via the <code>connect()</code> function provided
+by Redux.</p>
+
+<p>You can pass in additional functions to control how you want the state and the
+actions mapped to the props. These are <code>mapStateToProps()</code> and <code>mapDispatchToProps()</code>.</p>
+
+<p>In the example above, I&#8217;m using <code>mapDispatchToProps()</code> to setup the <code>addTodo</code> prop
+that will dispatch the <code>addTodo</code> action we&#8217;ve imported. How this is used is entirely
+down to the <code>AddToForm</code> presentational component and is outside the responsibility
+of this component.</p>
+
+<p>Note the first argument to <code>connect()</code> is null because I&#8217;m not using <code>mapStateToProps()</code>, but
+the principle is the same as for <code>mapDispatchToProps()</code>.</p>
+
+<h2>So how is a container component tested?</h2>
+
+<p>Container components should be fairly lightweight. There seems little point testing
+the <code>connect()</code> function, as this is not our code. But we do care that the props are
+going into our wrapped <code>AddTodoForm</code> component correctly.</p>
+
+<p>So to test this component, all I&#8217;m interested in is that the <code>addTodo</code> prop has
+been setup to dispatch the required action to the store.</p>
+
+<script src="https://gist.github.com/paulsturgess/e0f06a12821343d7854718c34394b60e.js"></script>
+
+
+<p>The mock store and the <code>Provider</code> are required to render the connected component.</p>
+
+<p>After that I&#8217;m just reaching into the component to grab the <code>addTodo</code> prop and calling
+the function. I&#8217;m spying on the dispatch method in the store, that means I can check it&#8217;s
+called with the action that&#8217;s formed correctly.</p>
+
+<p>My test for the presentational component <code>AddTodoForm</code> will take care of checking
+that the prop is actually triggered when it&#8217;s supposed to.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -914,185 +998,6 @@ can handle entities that inherit from a base entity - just lookup the <code>abst
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/02/05/tweeting-a-screenshot-in-rubymotion-with-uiactivityviewcontroller/">Tweeting a Screenshot in RubyMotion With UIActivityViewController</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-02-05T18:47:00+00:00" pubdate data-updated="true">Feb 5<span>th</span>, 2015</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>The easiest way to allow users to share content from inside your app is to use <code>UIActivityViewController</code>.</p>
-
-<p>Use it when you want to allow the user to:</p>
-
-<ul>
-<li>Send a Tweet</li>
-<li>Share on Facebook</li>
-<li>Save an image to photos</li>
-<li>Send an SMS message / iMessage</li>
-<li>Send an email</li>
-</ul>
-
-
-<p>In iOS 8 it slides up a panel at the bottom of the screen. The user chooses
-how they want to share the content. The options are based on the applications
-they have installed. You can also specify which ones to include/exclude.</p>
-
-<p>Here&#8217;s enough code to create an app with a button that brings up the <code>UIActivityViewController</code>,
-takes a screenshot and allows the user to share it along with some text.</p>
-
-<p>Hopefully the code and my comments are self-documenting enough to make sense.</p>
-
-<p>I figured this out through a combination of the Apple docs and this <a href="http://nshipster.com/uiactivityviewcontroller/">NSHipster article</a>.</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">AppDelegate</span>
-
-  <span class="kp">attr_reader</span> <span class="ss">:window</span>
-
-  <span class="k">def</span> <span class="nf">application</span><span class="p">(</span><span class="n">application</span><span class="p">,</span> <span class="ss">didFinishLaunchingWithOptions</span><span class="p">:</span><span class="n">launchOptions</span><span class="p">)</span>
-    <span class="n">rootViewController</span> <span class="o">=</span> <span class="no">MyController</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">init</span>
-    <span class="n">rootViewController</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;ActivityViewController Demo&#39;</span>
-    <span class="n">rootViewController</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">backgroundColor</span> <span class="o">=</span> <span class="no">UIColor</span><span class="o">.</span><span class="n">whiteColor</span>
-
-    <span class="n">navigationController</span> <span class="o">=</span> <span class="no">UINavigationController</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">initWithRootViewController</span><span class="p">(</span>
-      <span class="n">rootViewController</span>
-    <span class="p">)</span>
-
-    <span class="vi">@window</span> <span class="o">=</span> <span class="no">UIWindow</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">initWithFrame</span><span class="p">(</span><span class="no">UIScreen</span><span class="o">.</span><span class="n">mainScreen</span><span class="o">.</span><span class="n">bounds</span><span class="p">)</span>
-    <span class="vi">@window</span><span class="o">.</span><span class="n">rootViewController</span> <span class="o">=</span> <span class="n">navigationController</span>
-    <span class="vi">@window</span><span class="o">.</span><span class="n">makeKeyAndVisible</span>
-
-    <span class="kp">true</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-
-<span class="c1"># This subclass is not technically required</span>
-<span class="c1"># It allows you to switch the text based on the type of service it will be shared on</span>
-<span class="k">class</span> <span class="nc">ShareText</span> <span class="o">&lt;</span> <span class="no">UIActivityItemProvider</span>
-
-  <span class="kp">attr_accessor</span> <span class="ss">:text</span>
-
-  <span class="c1"># The placeholder text</span>
-  <span class="k">def</span> <span class="nf">activityViewControllerPlaceholderItem</span><span class="p">(</span><span class="n">controller</span><span class="p">)</span>
-    <span class="s2">&quot;&quot;</span>
-  <span class="k">end</span>
-
-  <span class="c1"># The text that will be inserted into the Tweet / Email / SMS etc.</span>
-  <span class="c1"># You could easily respond to more activity types if you wanted</span>
-  <span class="k">def</span> <span class="nf">activityViewController</span><span class="p">(</span><span class="n">controller</span><span class="p">,</span> <span class="ss">itemForActivityType</span><span class="p">:</span> <span class="n">activityType</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">activityType</span> <span class="o">==</span> <span class="no">UIActivityTypePostToTwitter</span>
-      <span class="s2">&quot;</span><span class="si">#{</span><span class="n">text</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">twitter_handle</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">hashtag</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="k">else</span>
-      <span class="s2">&quot;</span><span class="si">#{</span><span class="n">text</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">website</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">hashtag</span>
-    <span class="s2">&quot;#yourhashtag&quot;</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">website</span>
-    <span class="s2">&quot;http://yourwebsite.com&quot;</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">twitter_handle</span>
-    <span class="s2">&quot;@YourTwitterHandle&quot;</span>
-  <span class="k">end</span>
-
-<span class="k">end</span>
-
-<span class="c1"># This is a simple controller with one button</span>
-<span class="k">class</span> <span class="nc">MyController</span> <span class="o">&lt;</span> <span class="no">UIViewController</span>
-
-  <span class="k">def</span> <span class="nf">viewDidLoad</span>
-    <span class="n">button</span> <span class="o">=</span> <span class="no">UIButton</span><span class="o">.</span><span class="n">buttonWithType</span><span class="p">(</span><span class="no">UIButtonTypeRoundedRect</span><span class="p">)</span>
-    <span class="n">button</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s1">&#39;Start&#39;</span><span class="p">,</span> <span class="ss">forState</span><span class="p">:</span><span class="no">UIControlStateNormal</span><span class="p">)</span>
-    <span class="n">button</span><span class="o">.</span><span class="n">addTarget</span><span class="p">(</span>
-      <span class="nb">self</span><span class="p">,</span>
-      <span class="ss">action</span><span class="p">:</span> <span class="s1">&#39;button_tapped&#39;</span><span class="p">,</span>
-      <span class="ss">forControlEvents</span><span class="p">:</span> <span class="no">UIControlEventTouchUpInside</span>
-    <span class="p">)</span>
-    <span class="n">button</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="o">[[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">260</span><span class="o">]</span><span class="p">,</span> <span class="o">[</span><span class="n">view</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">40</span><span class="o">]]</span>
-    <span class="n">view</span><span class="o">.</span><span class="n">addSubview</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
-  <span class="k">end</span>
-
-  <span class="c1"># This method generates the image of the entire screen</span>
-  <span class="c1"># Note it will not include the status bar</span>
-  <span class="k">def</span> <span class="nf">screenshot</span>
-    <span class="n">window</span> <span class="o">=</span> <span class="no">UIApplication</span><span class="o">.</span><span class="n">sharedApplication</span><span class="o">.</span><span class="n">keyWindow</span>
-    <span class="no">UIGraphicsBeginImageContextWithOptions</span><span class="p">(</span>
-      <span class="n">window</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
-      <span class="kp">false</span><span class="p">,</span>
-      <span class="no">UIScreen</span><span class="o">.</span><span class="n">mainScreen</span><span class="o">.</span><span class="n">scale</span>
-    <span class="p">)</span>
-    <span class="n">window</span><span class="o">.</span><span class="n">drawViewHierarchyInRect</span><span class="p">(</span>
-      <span class="n">window</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span>
-      <span class="ss">afterScreenUpdates</span><span class="p">:</span><span class="kp">true</span>
-    <span class="p">)</span>
-    <span class="n">image</span> <span class="o">=</span> <span class="no">UIGraphicsGetImageFromCurrentImageContext</span><span class="p">()</span>
-    <span class="no">UIGraphicsEndImageContext</span><span class="p">()</span>
-    <span class="n">image</span>
-  <span class="k">end</span>
-
-  <span class="c1"># We create an instance of our ShareText subclass</span>
-  <span class="c1"># Pass it into the UIActivityViewController along with the screenshot</span>
-  <span class="c1"># The UIActivityViewController handles everything else, all you have to do is present the controller.</span>
-  <span class="k">def</span> <span class="nf">button_tapped</span>
-    <span class="n">tc_share_text</span> <span class="o">=</span> <span class="no">ShareText</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">init</span>
-    <span class="n">tc_share_text</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Check out this screengrab!&quot;</span>
-    <span class="n">controller</span> <span class="o">=</span> <span class="no">UIActivityViewController</span><span class="o">.</span><span class="n">alloc</span><span class="o">.</span><span class="n">initWithActivityItems</span><span class="p">(</span>
-      <span class="o">[</span><span class="n">tc_share_text</span><span class="p">,</span> <span class="n">screenshot</span><span class="o">]</span><span class="p">,</span>
-      <span class="ss">applicationActivities</span><span class="p">:</span> <span class="kp">nil</span>
-    <span class="p">)</span>
-
-    <span class="n">controller</span><span class="o">.</span><span class="n">excludedActivityTypes</span> <span class="o">=</span> <span class="o">[</span>
-      <span class="no">UIActivityTypePrint</span><span class="p">,</span>
-      <span class="no">UIActivityTypeAssignToContact</span><span class="p">,</span>
-      <span class="no">UIActivityTypeAddToReadingList</span><span class="p">,</span>
-      <span class="no">UIActivityTypePostToFlickr</span><span class="p">,</span>
-      <span class="no">UIActivityTypeAirDrop</span>
-    <span class="o">]</span>
-
-    <span class="nb">self</span><span class="o">.</span><span class="n">presentViewController</span><span class="p">(</span>
-      <span class="n">controller</span><span class="p">,</span>
-      <span class="ss">animated</span><span class="p">:</span><span class="kp">true</span><span class="p">,</span>
-      <span class="ss">completion</span><span class="p">:</span><span class="kp">nil</span>
-    <span class="p">)</span>
-  <span class="k">end</span>
-
-<span class="k">end</span>
-</code></pre></div>
-
-
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1109,6 +1014,10 @@ takes a screenshot and allows the user to share it along with some text.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2020/03/20/nothing-is-urgent-asynchronous-communication/">Nothing is urgent – asynchronous communication</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2020/03/18/stand-up-meetings-for-a-distributed-team/">Stand-up meetings for a distributed team</a>
       </li>
     
@@ -1122,10 +1031,6 @@ takes a screenshot and allows the user to share it along with some text.</p>
     
       <li class="post">
         <a href="/blog/2018/01/09/ruby-metaprogramming-define-method-and-instance-exec/">Ruby metaprogramming: define_method and instance_exec</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2017/04/29/using-enzyme-to-test-a-react-component-onclick-with-event-preventdefault/">Using Enzyme to test a React component onClick with event preventDefault</a>
       </li>
     
   </ul>

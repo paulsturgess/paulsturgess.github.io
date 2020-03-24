@@ -1,0 +1,310 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Nothing is urgent – asynchronous communication - A blog about web development</title>
+  <meta name="author" content="Paul Sturgess">
+
+  
+  <meta name="description" content="Lots of people have been thrown into remote working that aren&#8217;t used to it. I&#8217;m writing to share some tips that I hope will hopefully &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://paulsturgess.github.io/blog/2020/03/20/nothing-is-urgent-asynchronous-communication">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="A blog about web development" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-75197-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">A blog about web development</a></h1>
+  
+    <h2>Paul Sturgess</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/">Index</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="https://twitter.com/paulsturgess">@paulsturgess</a></li>
+  <li><a href="https://github.com/paulsturgess">Github</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Nothing Is Urgent – Asynchronous Communication</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2020-03-20T19:14:00+00:00" pubdate data-updated="true">Mar 20<span>th</span>, 2020</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Lots of people have been thrown into remote working that aren&#8217;t used to it. I&#8217;m writing to share some tips that I hope will hopefully help reduce anxiety, stress and allow your team to work flexibly. As I mentioned before, this isn&#8217;t about squeezing more productivity
+out of your colleagues.</p>
+
+<p> Previously I wrote about how distributed teams can <a href="http://localhost:4000/blog/2020/03/18/stand-up-meetings-for-a-distributed-team/">adapt stand-up meetings to allow people to work more flexibly</a>. Giving them space to adapt their working day around their personal situation.</p>
+
+<p> I&#8217;ve had to shift my working hours to start in the afternoon, as I will now look after my son in the morning whilst my wife works.
+ We switch roles in the afternoon. It&#8217;s pretty much like I&#8217;m working in a US time zone when most of my team is on CET or GMT. We do
+ actually have some people on UTC-7, so I already have company.</p>
+
+<p>Fortunately for me, the Rail Europe team is already geared up to communicate effectively even with people working completely
+different hours, whether time zone inflicted or not&#8230;</p>
+
+<h2>Asynchronous communication</h2>
+
+<p> Asynchronous commuinciation is based on the idea that &#8220;nothing is urgent&#8221;, especially when it comes to writing software. This might seem blindingly obvious when we&#8217;re in the middle of a global pandemic. In reality very few of us are doing anything that&#8217;s really truely <em>urgent</em>. That&#8217;s how you describe the heroic work of people trying to create a vaccine or key-workers on the front-line.</p>
+
+<p> However, that&#8217;s not what I mean here. A communication style where &#8220;nothing is urgent&#8221; means we don&#8217;t interrupt our colleagues and expect immediate answers right now. We use asynchronous communication by default and we are mindful about the notifications we generate for our colleagues.</p>
+
+<p> Jason Fried from Basecamp wrote this fantastic blog post on why <a href="https://m.signalvnoise.com/is-group-chat-making-you-sweat/">Group chat is like being in an all-day meeting with random participants and no agenda</a>. It informs much of our thinking.</p>
+
+<p> I won&#8217;t pretend we are perfect at it and there is always an exception to the rule. But these are the specific (and default) behaviours we encourage amongst the tech team at Rail Europe:</p>
+
+<ul>
+<li>Recognition that most questions do not need an immediate answer</li>
+<li>There&#8217;s no expectation that your colleague/team is online all day
+
+<ul>
+<li>Muting of Slack channels or closing Slack entirely to avoid being interrupted is encouraged</li>
+</ul>
+</li>
+<li>Team decisions are not made in Slack
+
+<ul>
+<li>We use Basecamp for long-form discussions, so everyone can contribute when it suits them</li>
+</ul>
+</li>
+<li>@mention should not be used when someone is offline unless it&#8217;s critical</li>
+<li>Respect Slack statuses such as &#8220;concentrating&#8221;, &#8220;lunch&#8221;, &#8220;gone for a walk&#8221;</li>
+<li>Use the Lunch, Meeting or Phone status to avoid lots of pointless chatter in public channels</li>
+<li>Task specific conversations that are relevant for project managers should go on Jira/Trello</li>
+<li>Technical discussions about code should ideally happen on a Github PR</li>
+<li>Consider an email over a Slack DM</li>
+<li>Document all processes thoroughly
+
+<ul>
+<li>Good documentation allows people to be self-sufficient</li>
+<li>Prevents &#8220;bus&#8221; factor</li>
+</ul>
+</li>
+</ul>
+
+
+<p>We keep meetings down to an absolute minimum, most are replaced by long-form written discussions.
+I&#8217;ll blog about this in more detail in the future.</p>
+
+<p>Of course when I say &#8220;nothing is urgent&#8221; there are exceptions. An outage of our website and certain critical on-call alerts
+need to be responded to swiftly. And it&#8217;s not like we never communicate synchronously, it&#8217;s just that async is our default.</p>
+
+<p>Adopting asynchronous communication really has many positive benefits on the well-being of your team:</p>
+
+<ul>
+<li>Reduces notification fatigue</li>
+<li>Reduces anxiety about being online all the time</li>
+<li>Allows people to not feel guilty about taking breaks when they need to</li>
+<li>Enables more flexibility for when people work</li>
+<li>Because most communication and decisions are written down, if you&#8217;re off work it&#8217;s easy to catch up later</li>
+<li>Everyone sees the value in great documentation and how it empowers them to work self-sufficiently</li>
+<li>Conversations on Jira/Trello make it easy for anyone to understand the latest status of a task</li>
+<li>Everyone gets longer periods of uninterrupted time to get into deep work</li>
+</ul>
+
+
+<p>When it comes to remote work, asynchronous communication really is one of the most liberating things your
+team can adopt.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Paul Sturgess</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2020-03-20T19:14:00+00:00" pubdate data-updated="true">Mar 20<span>th</span>, 2020</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2020/03/18/stand-up-meetings-for-a-distributed-team/" title="Previous Post: Stand-up meetings for a distributed team">&laquo; Stand-up meetings for a distributed team</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2020/03/20/nothing-is-urgent-asynchronous-communication/">Nothing is urgent – asynchronous communication</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2020/03/18/stand-up-meetings-for-a-distributed-team/">Stand-up meetings for a distributed team</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2018/01/09/setup-webpacker-webpack-dev-server-with-docker-compose/">Setup webpacker webpack-dev-server with docker-compose</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2018/01/09/using-pry-with-docker-compose/">Debug Ruby using Pry and Docker compose</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2018/01/09/ruby-metaprogramming-define-method-and-instance-exec/">Ruby metaprogramming: define_method and instance_exec</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/paulsturgess">@paulsturgess</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'paulsturgess',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2020 - Paul Sturgess -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

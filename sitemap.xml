@@ -207,12 +207,18 @@
         <lastmod>2020-03-18T20:31:40+00:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://paulsturgess.github.io/blog/2020/03/20/nothing-is-urgent-asynchronous-communication/
+        </loc>
+        <lastmod>2020-03-24T20:21:06+00:00</lastmod>
+    </url>
+    <url>
         <loc>http://paulsturgess.github.io/</loc>
-        <lastmod>2020-03-18T20:31:40+00:00</lastmod>
+        <lastmod>2020-03-24T20:21:06+00:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/blog/archives/</loc>
-        <lastmod>2020-03-18T20:31:40+00:00</lastmod>
+        <lastmod>2020-03-24T20:21:06+00:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/robots.txt</loc>

@@ -17,7 +17,7 @@ your team. It's about trusting them and giving them the space and flexibility to
 day how it fits them. Scheduling loads of meetings takes away the freedom, autonomy and flexibility
 that is one of the major benefits of remote work.
 
-At Rail Europe [we prefer asynchronous communication by default](/blog/2020/03/18/stand-up-meetings-for-a-distributed-team/) and part of this approach is to keep all meetings to an absolute minimum.
+At Rail Europe [we prefer asynchronous communication by default](/blog/2020/03/20/nothing-is-urgent-asynchronous-communication/) and part of this approach is to keep all meetings to an absolute minimum.
 
 ## Problems with meetings
 
@@ -52,6 +52,8 @@ holiday (or maybe they've been off ill from COVID-19!).
 
 Basecamp allows you to decide if you want to be emailed each time someone replies to a post or you
 can wait for the daily summary email. This fits into our idea that [nothing is urgent](/blog/2020/03/20/nothing-is-urgent-asynchronous-communication/).
+
+For daily stand-ups, instead of holding a daily meeting, [we post them asynchronously on Slack](/blog/2020/03/18/stand-up-meetings-for-a-distributed-team/).
 
 ## Benefits of writing things down
 

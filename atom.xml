@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about web development]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2020-03-24T20:24:54+00:00</updated>
+  <updated>2020-04-11T17:31:22+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,100 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Remote working without meetings]]></title>
+    <link href="http://paulsturgess.github.io/blog/2020/04/11/remote-working-without-meetings/"/>
+    <updated>2020-04-11T17:29:00+01:00</updated>
+    <id>http://paulsturgess.github.io/blog/2020/04/11/remote-working-without-meetings</id>
+    <content type="html"><![CDATA[<p>As the COVID-19 pandemic continues, basically all software engineering teams are now working remotely.
+I’ve been part of a distributed software engineering team at Rail Europe for two and a half years,
+so I thought i’d reignite my blog to pass on some tips and experience.</p>
+
+<p>In this post I want to focus on how we communicate with each other and make decisions, whilst rarely
+ever organising group video calls.</p>
+
+<p>As I&#8217;ve emphasised in my previous blog posts, this isn&#8217;t about squeezing more productivity out of
+your team. It&#8217;s about trusting them and giving them the space and flexibility to arange their work
+day how it fits them. Scheduling loads of meetings takes away the freedom, autonomy and flexibility
+that is one of the major benefits of remote work.</p>
+
+<p>At Rail Europe <a href="http://paulsturgess.github.io/blog/2020/03/18/stand-up-meetings-for-a-distributed-team/">we prefer asynchronous communication by default</a> and part of this approach is to keep all meetings to an absolute minimum.</p>
+
+<h2>Problems with meetings</h2>
+
+<p>Here are some issues with meetings (video or in-person):</p>
+
+<ul>
+<li>Favours those that are best at thinking on their feet</li>
+<li>Favours those with a more extrovert personality</li>
+<li>Participants must stop work and be online at precisely the same time
+
+<ul>
+<li>If someone is off work, their opinion is not heard</li>
+<li>Difficult with colleagues in different timezones</li>
+</ul>
+</li>
+<li>A one hour meeting for five people is really a five hour meeting</li>
+<li>Often organised without a clear agenda</li>
+<li>More effort to create a written record</li>
+<li>Dominated by those in positions of power</li>
+</ul>
+
+
+<p>Of course a good meeting facilitator can resolve many of these issues.</p>
+
+<h2>The alternative to meetings</h2>
+
+<p>At Rail Europe we prefer &#8220;long form&#8221; written discussions instead of meetings. We conduct these on <a href="https://basecamp.com/">Basecamp</a>, but I&#8217;ve also used <a href="https://help.github.com/en/github/building-a-strong-community/about-team-discussions">Github Team Discussions</a> for the same purpose and it worked well.</p>
+
+<p>We use it like a message forum – so someone starts a post on a specific topic and people reply to it.</p>
+
+<p>These are great when you need to solicit the opinion of the wider team. Ultimately instead of calling a meeting,
+you describe in detail your proposal/idea/problem and select who you want to notify.</p>
+
+<p>We also have certain long running threads that we use in place of &#8220;status update&#8221; meetings. So instead of
+scheduling a weekly catch up meeting – each time something significant happens you want to share with your
+team (or even the whole company). You post an update to a specific thread. Everyone stays informed, all the
+time without a meeting. This is critical for keeping people up-to-date even if they&#8217;ve had a week off on
+holiday (or maybe they&#8217;ve been off ill from COVID-19!).</p>
+
+<p>Basecamp allows you to decide if you want to be emailed each time someone replies to a post or you
+can wait for the daily summary email. This fits into our idea that <a href="http://paulsturgess.github.io/blog/2020/03/20/nothing-is-urgent-asynchronous-communication/">nothing is urgent</a>.</p>
+
+<h2>Benefits of writing things down</h2>
+
+<p>I must admit I was initially sceptical of this no meeting approach, I thought it would surely be less
+efficient than having a quick-fire back and forth video chat.</p>
+
+<p>However, written long form discussions provide many benefits:</p>
+
+<ul>
+<li>Doesn&#8217;t require everyone online at the same time</li>
+<li>Read and reply in your own time without breaking your flow</li>
+<li>Requires the author (would be meeting organisor) to think through their proposal and fully articulate it</li>
+<li>Allows responses to be more considered (do some research first) rather than &#8220;knee-jerk&#8221;</li>
+<li>If you&#8217;re off work, you can easily catch up later</li>
+<li>Level playing field for participants, not just those that &#8220;shout loudest&#8221;</li>
+<li>Can read historical discussions going back years to find out <em>why</em> something was decided</li>
+<li>Discussion is transparent to anyone in the company</li>
+<li>Easier to bring in people from the wider team to follow and contribute</li>
+</ul>
+
+
+<p>Having participated in this type of team communication for a few years, I can now see that these longer,
+more considered discussions, often result in a decision that has more &#8220;buy-in&#8221; from the team.
+Anecdotally it also feels like we reach well thought-out solutions which, in the end save us time.</p>
+
+<p>For all these reasons, we also avoid making team decisions in Slack and instead defer to a Basecamp post.</p>
+
+<p>Don&#8217;t get me wrong, it&#8217;s not like we don&#8217;t ever have meetings. I have regular 1:1s and many tricky
+problems are best resolved over real-time discussions in Slack.</p>
+
+<p>But for my direct team consisting of 5 engineers, 2 QA testers and a product manager – we haven&#8217;t had a
+meeting together in 2020 and it doesn&#8217;t look like we&#8217;ll have one any time soon.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Nothing is urgent – asynchronous communication]]></title>
@@ -1345,31 +1439,6 @@ can handle entities that inherit from a base entity - just lookup the <code>abst
 <h2>Shameless plug</h2>
 
 <p>If you got this far and you&#8217;re still wondering what Title Challenge is or you found this post useful and just feel like supporting me – Please do check out <a href="http://itunes.apple.com/app/id959982756">Title Challenge on the App Store</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Using Reveal App to build a RubyMotion football manager game]]></title>
-    <link href="http://paulsturgess.github.io/blog/2015/02/13/using-reveal-app-to-build-a-rubymotion-football-manager-game/"/>
-    <updated>2015-02-13T15:26:00+00:00</updated>
-    <id>http://paulsturgess.github.io/blog/2015/02/13/using-reveal-app-to-build-a-rubymotion-football-manager-game</id>
-    <content type="html"><![CDATA[<p>This is the beginning of a series of blog posts I intend to write on how I&#8217;ve built <a href="http://titlechallenge.com">Title Challenge – Football Management</a>.</p>
-
-<p>It&#8217;s an iOS game I&#8217;ve written in <a href="http://www.rubymotion.com/">RubyMotion</a>. I&#8217;m a Ruby on Rails web developer turned app developer. Before building this game, I had no prior knowledge of building mobile applications.</p>
-
-<p>Hopefully this series of posts will inspire other Ruby developers out there to start building really cool mobile apps.</p>
-
-<p><a href="http://revealapp.com/">Reveal App</a> was one of the first third-party tools I downloaded when I started building Title Challenge 18 months ago and I&#8217;ve used it nearly every day since. At first glance it might look like a bit of a gimmick to see your app in 3D but it is incredibly useful for debugging.</p>
-
-<p><a href="http://paulsturgess.github.io/images/reveal_app.png" target="_blank"><img class="left" src="http://paulsturgess.github.io/images/reveal_app.png" width="825" height="825" title="Reveal App screenshot" alt="Reveal App screenshot"></a></p>
-
-<p>I&#8217;ve used Reveal to show me when a <code>UIView</code> is tucked behind some other <code>UIView</code> that I couldn&#8217;t see in the Simulator. Sometimes a <code>UIVIew</code> might not have a height set or something stupid like that and Reveal would instantly show me.</p>
-
-<p>You can rotate your app round to see it from angles you can&#8217;t see in the Simulator.</p>
-
-<p>Another really useful feature is being able to tweak attributes live in the Reveal and the Simulator reflects your changes. For example, you can change the frame of a <code>UIView</code> and see it move in the simulator live.</p>
-
-<p>I&#8217;ve got no affiliation with Reveal but I definitely recommend it for App developers.</p>
 ]]></content>
   </entry>
   

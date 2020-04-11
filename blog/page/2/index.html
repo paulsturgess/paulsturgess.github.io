@@ -9,7 +9,8 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="As a follow on from my last article about building and testing stateless presentational components, I&#8217;m going to explain Redux Container &hellip;">
+  <meta name="description" content="Functional programming has piqued my interest for a while – it appears to be reaching
+a tipping point with the rise of ReactJS, Redux, Elm and &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -73,6 +74,109 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/11/20/functional-programming-for-a-rubyist/">Functional Programming for a Rubyist</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-11-20T12:22:00+00:00" pubdate data-updated="true">Nov 20<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Functional programming has piqued my interest for a while – it appears to be reaching
+a tipping point with the rise of <a href="https://facebook.github.io/react/">ReactJS</a>, <a href="http://redux.js.org/">Redux</a>, <a href="http://elm-lang.org/">Elm</a> and <a href="https://facebook.github.io/immutable-js/">ImmutableJS</a>
+bringing Functional Programming to a whole new set of developers through Javascript.</p>
+
+<p><a href="http://elixir-lang.org/">Elixir</a> is also a functional programming language that&#8217;s
+attracting a lot of the Ruby community.</p>
+
+<p>As an object-orientated Rubyist, I&#8217;ve been exposed to some functional programming
+ideas through Blocks, Procs and Lambdas but when programming in Ruby you&#8217;re typically
+mutating state all over the place.</p>
+
+<p>Pure functional programming works with immutable state.</p>
+
+<h2>Coursera</h2>
+
+<p>To learn more about functional programming, I&#8217;ve just successfully completed the
+Coursera course <a href="https://www.coursera.org/learn/progfun1">Functional Programming Principles in Scala</a>
+taught by the creator of <a href="http://www.scala-lang.org/">Scala</a>, Martin Odersky.</p>
+
+<p>Although I didn&#8217;t set out to specifically learn Scala, I decided to take the
+course because the <a href="https://www.coursera.org/learn/progfun1#ratings">reviews from fellow programmers</a>
+highly recommended it for learning Functional Programming. I think they were right – it&#8217;s
+a very well put together course and it&#8217;s also really tough.</p>
+
+<p>It completely challenges the way you think when you are used to writing imperative code.
+The course is definitely less about learning Scala and more focussed on the fundamentals
+of functional programming. Interestingly Scala actually allows both the worlds of
+functional and object-orientated to co-exist.</p>
+
+<p>Each week you have an assignment to complete that you can upload your program directly
+from your IDE – there&#8217;s an automated test suite that will grade your submission.</p>
+
+<h2>Side effect free</h2>
+
+<p>So one of the reasons functional programming is gaining popularity is because one of
+the main cited benefits is that the code is easier to reason about due to being
+&#8216;side-effect free&#8217;.</p>
+
+<p>It&#8217;s this immutability that is at the core of React &amp; Redux, especially for performance.</p>
+
+<p>When a component&#8217;s props or state change, React decides whether an actual DOM update
+is necessary. By using immutable state, it&#8217;s very easy to track if an object
+has changed. The React documentation has a really good detailed explanation on <a href="https://facebook.github.io/react/docs/optimizing-performance.html">Optimizing Performance</a>.</p>
+
+<h2>Scalable</h2>
+
+<p>Functional programming languages are often talked about as being highly performant, but
+what does this mean?</p>
+
+<p>The future trend for computing appears to be more cores and one the way to make best
+use of the hardware is to run code in parallel. This is where that &#8216;side-effect free&#8217;
+code comes into play as makes it a lot easier to run in parallel.</p>
+
+<h2>The Future</h2>
+
+<p>Functional programming is certainly a completely different mindset for those of
+us used to object-oriented programs. It will be really interesting to see if it
+does become the mainstream approach to building web applications. I think I might
+start trying to apply some functional programming in Ruby and see how I get on.</p>
+
+<p>Further Reading&#8230;</p>
+
+<ul>
+<li><a href="http://www.rubypigeon.com/posts/avoid-mutation-functional-style-in-ruby/">Avoid mutation in Ruby</a></li>
+<li><a href="http://www.rubypigeon.com/posts/isolate-side-effects-functional-style-in-ruby/">Isolate side-effects in Ruby</a></li>
+<li><a href="http://blog.carbonfive.com/2014/01/26/applying-functional-programming-principles-to-your-rails-codebase/">Applying functional programming in Rails</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -946,58 +1050,6 @@ can handle entities that inherit from a base entity - just lookup the <code>abst
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/02/13/using-reveal-app-to-build-a-rubymotion-football-manager-game/">Using Reveal App to Build a RubyMotion Football Manager Game</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-02-13T15:26:00+00:00" pubdate data-updated="true">Feb 13<span>th</span>, 2015</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>This is the beginning of a series of blog posts I intend to write on how I&#8217;ve built <a href="http://titlechallenge.com">Title Challenge – Football Management</a>.</p>
-
-<p>It&#8217;s an iOS game I&#8217;ve written in <a href="http://www.rubymotion.com/">RubyMotion</a>. I&#8217;m a Ruby on Rails web developer turned app developer. Before building this game, I had no prior knowledge of building mobile applications.</p>
-
-<p>Hopefully this series of posts will inspire other Ruby developers out there to start building really cool mobile apps.</p>
-
-<p><a href="http://revealapp.com/">Reveal App</a> was one of the first third-party tools I downloaded when I started building Title Challenge 18 months ago and I&#8217;ve used it nearly every day since. At first glance it might look like a bit of a gimmick to see your app in 3D but it is incredibly useful for debugging.</p>
-
-<p><a href="/images/reveal_app.png" target="_blank"><img class="left" src="/images/reveal_app.png" width="825" height="825" title="Reveal App screenshot" alt="Reveal App screenshot"></a></p>
-
-<p>I&#8217;ve used Reveal to show me when a <code>UIView</code> is tucked behind some other <code>UIView</code> that I couldn&#8217;t see in the Simulator. Sometimes a <code>UIVIew</code> might not have a height set or something stupid like that and Reveal would instantly show me.</p>
-
-<p>You can rotate your app round to see it from angles you can&#8217;t see in the Simulator.</p>
-
-<p>Another really useful feature is being able to tweak attributes live in the Reveal and the Simulator reflects your changes. For example, you can change the frame of a <code>UIView</code> and see it move in the simulator live.</p>
-
-<p>I&#8217;ve got no affiliation with Reveal but I definitely recommend it for App developers.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1014,6 +1066,10 @@ can handle entities that inherit from a base entity - just lookup the <code>abst
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2020/04/11/remote-working-without-meetings/">Remote working without meetings</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2020/03/20/nothing-is-urgent-asynchronous-communication/">Nothing is urgent – asynchronous communication</a>
       </li>
     
@@ -1027,10 +1083,6 @@ can handle entities that inherit from a base entity - just lookup the <code>abst
     
       <li class="post">
         <a href="/blog/2018/01/09/using-pry-with-docker-compose/">Debug Ruby using Pry and Docker compose</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2018/01/09/ruby-metaprogramming-define-method-and-instance-exec/">Ruby metaprogramming: define_method and instance_exec</a>
       </li>
     
   </ul>

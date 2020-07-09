@@ -217,12 +217,18 @@
         <lastmod>2020-04-11T17:40:35+01:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://paulsturgess.github.io/blog/2020/07/09/reducing-siloed-knowledge-with-great-documentation/
+        </loc>
+        <lastmod>2020-07-09T20:45:18+01:00</lastmod>
+    </url>
+    <url>
         <loc>http://paulsturgess.github.io/</loc>
-        <lastmod>2020-04-11T17:40:35+01:00</lastmod>
+        <lastmod>2020-07-09T20:45:18+01:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/blog/archives/</loc>
-        <lastmod>2020-04-11T17:40:35+01:00</lastmod>
+        <lastmod>2020-07-09T20:45:18+01:00</lastmod>
     </url>
     <url>
         <loc>http://paulsturgess.github.io/robots.txt</loc>

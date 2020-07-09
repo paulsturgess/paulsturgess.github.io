@@ -9,8 +9,8 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="As the COVID-19 pandemic continues, basically all software engineering teams are now working remotely.
-I’ve been part of a distributed software &hellip;">
+  <meta name="description" content="Talk to most software engineers and they&#8217;ll tell you they&#8217;ve worked on projects with poor
+documentation and know first-hand that it &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -74,6 +74,118 @@ I’ve been part of a distributed software &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2020/07/09/reducing-siloed-knowledge-with-great-documentation/">Reducing Siloed Knowledge With Great Documentation</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2020-07-09T19:21:00+01:00" pubdate data-updated="true">Jul 9<span>th</span>, 2020</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Talk to most software engineers and they&#8217;ll tell you they&#8217;ve worked on projects with poor
+documentation and know first-hand that it causes frustration, bottle-necks and general inefficiency.
+Yet if you ask software engineers what they enjoy doing, writing documentation is either not on
+their list or it&#8217;s right down the bottom.</p>
+
+<p>The tech team at Rail Europe places documentation very high up the list of priorities. This isn&#8217;t
+because we only employ people that enjoy writing documentation (although some of us clearly do! Myself
+most certainly included). Documentation is baked into the heart of our way of working.</p>
+
+<p>However, I can assure you we haven&#8217;t all decided to write documentation in the name of productivity gains.
+The main benefit of documentation to remote teams is flexibility&#8230;</p>
+
+<h2>Avoiding blockers</h2>
+
+<p>Siloed information is the enemy of flexible remote work. We&#8217;re an internationally distributed team
+that believes in <a href="/blog/2020/03/20/nothing-is-urgent-asynchronous-communication/">asynchronous communication</a>.
+We want everyone to be able to work to their schedule, not a rigid 9-5. It&#8217;s no good if certain people
+have to be available and online all the time, to be around to answer questions and interject at
+any moment.</p>
+
+<p>Once you trust each-other to manage your own time to get the work done, you have to optimise for it.
+Good clear documentation is the bedrock of this approach, as it enables people to be self-sufficient.
+Rather being blocked waiting for so-and-so to become available to answer a question, you
+can read the docs and make progress.</p>
+
+<h2>Onboarding</h2>
+
+<p>Not everyone gets an in-person induction, but there&#8217;s definitely plenty to read! Our onboarding
+documents are extensive and full of answers to questions that new starters ask. We know this
+because we encourage each new starter to update and enhance the documentation. If they can&#8217;t find the
+answer they&#8217;re after, they&#8217;re empowered to update the docs. We use Github’s wiki feature, everyone
+has write access from day one.</p>
+
+<p>One of the main benefits of this is it avoids repetition and wasted time explaining the same
+processes and concepts. It also means the new starter can read and digest at their pace and doesn&#8217;t
+have to sit through multiple meetings taking copious amounts of notes.</p>
+
+<h2>Git as a living history</h2>
+
+<p>We love Ruby because it&#8217;s so expressive and the code itself is often self-documenting. But there&#8217;s
+a long-held tradition of well written commit messages in the Rail Europe (formerly Loco2) codebase.
+It&#8217;s a testiment to the engineers that pioneered the application, that the commits tell the story of
+not only what changed, but frequently why it changed, what alternative approaches were considered
+and other jewels of information around decisions that were made many years ago by people that no
+longer work at the company.</p>
+
+<p>Because the example set was so strong, each new engineer has embraced it. Once code has been reviewed
+and is ready to be shipped, interactive rebasing and squashing is used so that &#8220;work in progress&#8221;
+commits are not included on the main branch. This means that &#8220;git log&#8221; reads like a well-written story.</p>
+
+<p>This fits with our approach of continuous integration as each commit is atomic, which makes them easy
+to rollback if required (fortunately not often!).</p>
+
+<p>How to use Git can be a hotly disputed topic within engineering teams. Our belief is that Github PR&#8217;s
+are great for discussing and reviewing changes and the &#8220;work in progress&#8221; commits make perfect sense
+in the context of the history of a PR. We don&#8217;t encourage squashing during a code review, but personally
+I like the idea mentioned on this blog post from <a href="https://www.futurelearn.com/info/blog/telling-stories-with-your-git-history">Future Learn</a> that just as we refactor code before merging, we should refactor our commits too.</p>
+
+<p>On writing the commit messages themselves, the article <a href="https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html">A Note About Git Commit Messages</a> basically sums it up for me.</p>
+
+<h2>Why does feature x work like that?</h2>
+
+<p>An adhoc form of documentation comes as a side-effect from our desire to work without meetings. <a href="/blog/2020/04/11/remote-working-without-meetings/">This
+previous blog post I wrote</a> goes into the detail,
+but to briefly summarise and mention one benefit&#8230; we openly discuss large new features before
+implementation using a Basecamp message board. This kind of blew my mind when I joined the company,
+as it meant I could go back in time and review the discussions that were had by the engineers right
+when they were discussing how certain features might work.</p>
+
+<p>This kind of documentation is obviously not &#8220;curated&#8221; and designed as a long-term living document, like
+our wiki. But it can still provide valuable pieces of information that can otherwise be lost in the
+mists of time.</p>
+
+<h2>Summary</h2>
+
+<p>Documentaton comes in many forms and ultimately I think it&#8217;s one of the most under-rated and overlooked
+priorities that every software engineering team can benefit from.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1013,64 +1125,6 @@ way to get the two to talk together is via the <a href="https://github.com/teamp
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2017/01/11/simple-method-for-checking-the-mime-type-for-a-file-in-ruby-on-rails/">Simple Method for Checking a File Mime Type in Ruby on Rails</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2017-01-11T19:16:00+00:00" pubdate data-updated="true">Jan 11<span>th</span>, 2017</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>When accepting file uploads from users of your application, you should always
-check the file to ensure malicious content isn&#8217;t permitted.</p>
-
-<p>If you have a simple Rails <code>file_field</code> in a multipart form, you&#8217;ll get a <a href="http://api.rubyonrails.org/classes/ActionDispatch/Http/UploadedFile.html">ActionDispatch::Http::UploadedFile</a>. This object wraps up the temporary uploaded file and has methods
-like <code>content_type</code> and <code>original_filename</code>.</p>
-
-<p>At first glance it sounds sensible to check the extension (determined from <code>original_filename</code>) along with the <code>content_type</code>, against a whitelist of allowed
-values. However, if the pesky user has renamed the file extension before uploading
-the file, your whitelist will not help you as even <code>content_type</code> will return the
-incorrect value.</p>
-
-<p>This is why checking the mime type of the file is important, but this is not
-something Ruby does natively. There are a few Ruby gems around which specifically
-handle this problem but the simplest solution I found, without requiring any third
-party dependencies, was to use the underlying Operating System and execute the
-<a href="http://man7.org/linux/man-pages/man1/file.1.html">file command</a> via back ticks:</p>
-
-<div class="highlight"><pre><code class="ruby">  <span class="sb">`file --b --mime-type &#39;/path/to/file.txt&#39;`</span><span class="o">.</span><span class="n">strip</span>
-</code></pre></div>
-
-
-<p>This works on both Linux and OS X and will return the mime type such as
-&#8216;text/plain&#8217;, which can then be used as part of your validation.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1083,6 +1137,10 @@ party dependencies, was to use the underlying Operating System and execute the
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2020/07/09/reducing-siloed-knowledge-with-great-documentation/">Reducing siloed knowledge with great documentation</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2020/04/11/remote-working-without-meetings/">Remote working without meetings</a>
@@ -1098,10 +1156,6 @@ party dependencies, was to use the underlying Operating System and execute the
     
       <li class="post">
         <a href="/blog/2018/01/09/setup-webpacker-webpack-dev-server-with-docker-compose/">Setup webpacker webpack-dev-server with docker-compose</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2018/01/09/using-pry-with-docker-compose/">Debug Ruby using Pry and Docker compose</a>
       </li>
     
   </ul>

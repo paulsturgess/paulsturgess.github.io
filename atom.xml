@@ -4,7 +4,7 @@
   <title><![CDATA[A blog about web development]]></title>
   <link href="http://paulsturgess.github.io/atom.xml" rel="self"/>
   <link href="http://paulsturgess.github.io/"/>
-  <updated>2020-04-11T17:41:53+01:00</updated>
+  <updated>2020-07-09T20:50:09+01:00</updated>
   <id>http://paulsturgess.github.io/</id>
   <author>
     <name><![CDATA[Paul Sturgess]]></name>
@@ -12,6 +12,91 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Reducing siloed knowledge with great documentation]]></title>
+    <link href="http://paulsturgess.github.io/blog/2020/07/09/reducing-siloed-knowledge-with-great-documentation/"/>
+    <updated>2020-07-09T19:21:00+01:00</updated>
+    <id>http://paulsturgess.github.io/blog/2020/07/09/reducing-siloed-knowledge-with-great-documentation</id>
+    <content type="html"><![CDATA[<p>Talk to most software engineers and they&#8217;ll tell you they&#8217;ve worked on projects with poor
+documentation and know first-hand that it causes frustration, bottle-necks and general inefficiency.
+Yet if you ask software engineers what they enjoy doing, writing documentation is either not on
+their list or it&#8217;s right down the bottom.</p>
+
+<p>The tech team at Rail Europe places documentation very high up the list of priorities. This isn&#8217;t
+because we only employ people that enjoy writing documentation (although some of us clearly do! Myself
+most certainly included). Documentation is baked into the heart of our way of working.</p>
+
+<p>However, I can assure you we haven&#8217;t all decided to write documentation in the name of productivity gains.
+The main benefit of documentation to remote teams is flexibility&#8230;</p>
+
+<h2>Avoiding blockers</h2>
+
+<p>Siloed information is the enemy of flexible remote work. We&#8217;re an internationally distributed team
+that believes in <a href="http://paulsturgess.github.io/blog/2020/03/20/nothing-is-urgent-asynchronous-communication/">asynchronous communication</a>.
+We want everyone to be able to work to their schedule, not a rigid 9-5. It&#8217;s no good if certain people
+have to be available and online all the time, to be around to answer questions and interject at
+any moment.</p>
+
+<p>Once you trust each-other to manage your own time to get the work done, you have to optimise for it.
+Good clear documentation is the bedrock of this approach, as it enables people to be self-sufficient.
+Rather being blocked waiting for so-and-so to become available to answer a question, you
+can read the docs and make progress.</p>
+
+<h2>Onboarding</h2>
+
+<p>Not everyone gets an in-person induction, but there&#8217;s definitely plenty to read! Our onboarding
+documents are extensive and full of answers to questions that new starters ask. We know this
+because we encourage each new starter to update and enhance the documentation. If they can&#8217;t find the
+answer they&#8217;re after, they&#8217;re empowered to update the docs. We use Github’s wiki feature, everyone
+has write access from day one.</p>
+
+<p>One of the main benefits of this is it avoids repetition and wasted time explaining the same
+processes and concepts. It also means the new starter can read and digest at their pace and doesn&#8217;t
+have to sit through multiple meetings taking copious amounts of notes.</p>
+
+<h2>Git as a living history</h2>
+
+<p>We love Ruby because it&#8217;s so expressive and the code itself is often self-documenting. But there&#8217;s
+a long-held tradition of well written commit messages in the Rail Europe (formerly Loco2) codebase.
+It&#8217;s a testiment to the engineers that pioneered the application, that the commits tell the story of
+not only what changed, but frequently why it changed, what alternative approaches were considered
+and other jewels of information around decisions that were made many years ago by people that no
+longer work at the company.</p>
+
+<p>Because the example set was so strong, each new engineer has embraced it. Once code has been reviewed
+and is ready to be shipped, interactive rebasing and squashing is used so that &#8220;work in progress&#8221;
+commits are not included on the main branch. This means that &#8220;git log&#8221; reads like a well-written story.</p>
+
+<p>This fits with our approach of continuous integration as each commit is atomic, which makes them easy
+to rollback if required (fortunately not often!).</p>
+
+<p>How to use Git can be a hotly disputed topic within engineering teams. Our belief is that Github PR&#8217;s
+are great for discussing and reviewing changes and the &#8220;work in progress&#8221; commits make perfect sense
+in the context of the history of a PR. We don&#8217;t encourage squashing during a code review, but personally
+I like the idea mentioned on this blog post from <a href="https://www.futurelearn.com/info/blog/telling-stories-with-your-git-history">Future Learn</a> that just as we refactor code before merging, we should refactor our commits too.</p>
+
+<p>On writing the commit messages themselves, the article <a href="https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html">A Note About Git Commit Messages</a> basically sums it up for me.</p>
+
+<h2>Why does feature x work like that?</h2>
+
+<p>An adhoc form of documentation comes as a side-effect from our desire to work without meetings. <a href="http://paulsturgess.github.io/blog/2020/04/11/remote-working-without-meetings/">This
+previous blog post I wrote</a> goes into the detail,
+but to briefly summarise and mention one benefit&#8230; we openly discuss large new features before
+implementation using a Basecamp message board. This kind of blew my mind when I joined the company,
+as it meant I could go back in time and review the discussions that were had by the engineers right
+when they were discussing how certain features might work.</p>
+
+<p>This kind of documentation is obviously not &#8220;curated&#8221; and designed as a long-term living document, like
+our wiki. But it can still provide valuable pieces of information that can otherwise be lost in the
+mists of time.</p>
+
+<h2>Summary</h2>
+
+<p>Documentaton comes in many forms and ultimately I think it&#8217;s one of the most under-rated and overlooked
+priorities that every software engineering team can benefit from.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Remote working without meetings]]></title>
@@ -1368,79 +1453,6 @@ can handle entities that inherit from a base entity - just lookup the <code>abst
 <p>I&#8217;ve also written some other posts about developing Title Challenge: <a href="http://paulsturgess.co.uk/blog/2015/02/13/using-reveal-app-to-build-a-rubymotion-football-manager-game/">Debuging layout issues with RevealApp</a> and <a href="http://paulsturgess.co.uk/blog/2015/02/17/how-you-can-use-core-data-to-make-your-rubymotion-app-faster/">How to use Core Data to make your app faster</a>.</p>
 
 <p><a href="http://paulsturgess.github.io/images/tactics.png" target="_blank"><img class="left" src="http://paulsturgess.github.io/images/tactics.png" width="825" height="825" title="Tactics screenshot" alt="Tactics screenshot"></a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[How you can use Core Data to make your RubyMotion app faster]]></title>
-    <link href="http://paulsturgess.github.io/blog/2015/02/17/how-you-can-use-core-data-to-make-your-rubymotion-app-faster/"/>
-    <updated>2015-02-17T09:05:00+00:00</updated>
-    <id>http://paulsturgess.github.io/blog/2015/02/17/how-you-can-use-core-data-to-make-your-rubymotion-app-faster</id>
-    <content type="html"><![CDATA[<p>This is my second post in a series explaining some of the technical decisions behind creating the <a href="http://www.titlechallenge.com">football management iPhone game Title Challenge</a>. The first post was a <a href="http://paulsturgess.co.uk/blog/2015/02/13/using-reveal-app-to-build-a-rubymotion-football-manager-game/">short one about using Reveal App</a> as a useful debugging tool for building layouts.</p>
-
-<p>From the outside Title Challenge may appear pretty simple, but under the hood there is a lot more than you might realise going on. Before I talk about why I chose Core Data (or even what Core Data is), let me explain a little bit about the processing the game needs to perform.</p>
-
-<h2>Lots of processing means loading screens</h2>
-
-<p>Each ‘game week’ you progress, the following needs to be updated:</p>
-
-<ul>
-<li>Process player transfers (ensuring these are realistic to each club)</li>
-<li>Simulate player training (players improve their skill gradually over time)</li>
-<li>Update all injured players (each week they will be closer to full fitness)</li>
-<li>Update exhausted players (players get exhausted if they are not rested enough)</li>
-<li>Check player unhappiness (players can get unhappy at not being played enough)</li>
-<li>Run scout reports (your scouts will report back on your shortlisted players)</li>
-<li>Update the transfer list (again ensuring clubs are realistic in who they transfer list)</li>
-</ul>
-
-
-<p>The key thing is that there could be 6,000+ players to update, with thousands of other related records to update in the database. I wanted this to run as fast as possible to reduce waiting times between game weeks.</p>
-
-<p>While this is going on we show a loading screen. We decided to spend time making these look nice by including colourful player illustrations by <a href="http://davewilldesign.com/#/lfc-postcard-series-1314/">Liverpool FC illustrator Dave Will</a>.</p>
-
-<p>Combined with a random humourous/entertaining/interesting quote (of which there are hundreds in the game) it makes waiting as pleasant as possible. Here&#8217;s an example:</p>
-
-<p><a href="http://paulsturgess.github.io/images/loading.PNG" target="_blank"><img class="left" src="http://paulsturgess.github.io/images/loading.PNG" width="825" height="825" title="Loading image" alt="Loading image"></a>
-&nbsp;</p>
-
-<h2>Measuring Performance with RubyMotion-Benchmark</h2>
-
-<p>One way I made the code run faster was to run it, measure it, tweak it. Rinse and repeat. <a href="https://github.com/Watson1978/RubyMotion-Benchmark">Motion Benchmark</a> is a very, very simple gem but it is easy to use for this very task. It gives you precise control on what code is benchmarked, but this also makes it time consuming to identify what you should be benchmarking in the first place.</p>
-
-<h2>Find the bottlenecks in your code</h2>
-
-<p>This is where the Time Profiler in XCode’s Instruments tool is incredibly useful. It could be the subject of an entire blog post. In a nutshell it shows the exact time taken for each branch of code, even for each thread. It gives you a full stack trace to work so you can even see which line of code it is. This makes it easy to identify where the biggest bottlenecks are. I would always try and optimise those first to get some quick wins.</p>
-
-<h2>Optimise your code without even making it run faster</h2>
-
-<p>However, the main point of this blog post is to recommend thinking about how you can optimise your code without even making it run faster. This probably sounds like a an odd statement, but this is where Core Data comes in.</p>
-
-<p>Many developers think <a href="http://en.wikipedia.org/wiki/Core_Data">Core Data</a> is just another way to persist data and is comparable to using <a href="http://www.sqlite.org/">SQLite</a>. Indeed, Core Data can use SQLite to persist data and I use Core Data with SQLite in Title Challenge. However, the fact Core Data can use SQLite is not important and you won’t be writing any SQL to use it. Core Data is primarily a framework for object life-cycle and object graph management.</p>
-
-<p>Coming from a web development background it took me a while to get my head around this. I’ve seen (and written) my fair share of Rails apps tightly coupled to ActiveRecord and the database layer. Using Core Data forces you to understand that persistence is not the same thing as the object graph. So what is “object graph management”? The best way I can explain it, without loads of boring theory, is to tell you how I use it in Title Challenge.</p>
-
-<h2>Core Data and the Managed Object Context</h2>
-
-<p>I figured out the fastest way to perform the game week processing was to do it while the gamer was not even waiting for it to finish. I decided I wanted to perform the processing while the gamer was picking their team, analysing their squad, scouring the transfer list etc. I’m effectively doing all the processing for the next game week ahead of time.</p>
-
-<p>Core Data allows me to do this because I can take a copy of all the objects in the “Object Graph” ie. all the Clubs, Players etc. (in what is known as a Managed Object Context) and manipulate them as necessary on a background thread. I can perform all the tasks I mentioned earlier (e.g. processing transfers), without any of the changes showing up in the user interface as as the gamer is navigating around the app.</p>
-
-<p>In fact, none of these changes are persisted to disk until the gamer hits continue. This is one of the major differences of Core Data from how you use a database in a web app. With Core Data you make as many changes as you like and at some later date you tell it to save.</p>
-
-<p>Core Data is smart enough to handle the merging of all the changes from the background thread in with the changes made by the gamer on the main thread. The beauty of this technique is it doesn’t really matter how fast/slow my processing code runs, if the gamer is not even aware its running in the background.</p>
-
-<p>This approach has worked really well, especially on older devices where sometimes it doesn’t matter how much you optimise your code, it’s going to run slowly.</p>
-
-<h2>Some Complications</h2>
-
-<p>It becomes more complicated when the gamer interacts with players that have also changed in the context on the background thread. This is pretty rare in practice, but I’ve written code to handle any conflicts so it resolves them before continuing to the next game week.</p>
-
-<p>The other thing to watch out for is high memory usage. I found as I was processing nearly every player and every club, each game week, these were all getting pulled into memory and not released. Core Data will hold onto objects unless you tell it let go. This is great for performance, but not so great when memory is at a premium. I highly recommend reading up on <code>refreshObject</code> in the Core Data docs. Call this method on objects when you’re finished with them to release them and control memory spikes.</p>
-
-<h2>Shameless plug</h2>
-
-<p>If you got this far and you&#8217;re still wondering what Title Challenge is or you found this post useful and just feel like supporting me – Please do check out <a href="http://itunes.apple.com/app/id959982756">Title Challenge on the App Store</a>.</p>
 ]]></content>
   </entry>
   

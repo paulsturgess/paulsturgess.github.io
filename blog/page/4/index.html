@@ -9,8 +9,7 @@
   <meta name="author" content="Paul Sturgess">
 
   
-  <meta name="description" content="Presuming you have RubyMotion installed. This one-liner should open the release
-notes in your favourite editor: $ open /Library/RubyMotion/NEWS ">
+  <meta name="description" content="Instruments, to quote Apple, &#8220;is a performance, analysis, and testing tool for dynamically tracing and profiling OS X and iOS code&#8221;. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -74,6 +73,78 @@ notes in your favourite editor: $ open /Library/RubyMotion/NEWS ">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/28/how-to-memory-profile-a-rubymotion-application-using-instruments/">How to Memory Profile a RubyMotion Application Using Instruments</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-28T09:54:00+01:00" pubdate data-updated="true">Jun 28<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="https://developer.apple.com/library/mac/#documentation/developertools/conceptual/InstrumentsUserGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40004652-CH1-SW1">Instruments</a>, to quote Apple, &#8220;is a performance, analysis, and testing tool for dynamically tracing and profiling OS X and iOS code&#8221;.</p>
+
+<p>Essentially it gives you live data while your application is running to
+help track down memory leaks and performance issues.</p>
+
+<h2>Profiling in the simulator</h2>
+
+<p>Simply fire your application up and then open Xcode. Open Instruments via the menu:</p>
+
+<pre><code>Xcode &gt; Open Developer Tool &gt; Instruments
+</code></pre>
+
+<p>Once Instruments had opened, I elected to keep the icon in the dock. This just
+saves having to open Xcode each time I want to run Instruments.</p>
+
+<p>Once you&#8217;ve chosen the type of profiling you want to perform, from the <code>Choose Target</code>
+dropdown select, select <code>Attach to Process</code>. Under the <code>System</code> heading you should
+see the name of your app to select.</p>
+
+<p>Finally hit the record button and you&#8217;re good to go.</p>
+
+<h2>Profiling whilst your app is running on your device</h2>
+
+<p>First up make sure your device is recognised by Xcode to be &#8220;used for development&#8221;.</p>
+
+<p>If you haven&#8217;t done this, connect your device to your computer and open Xcode
+and open the organiser via:</p>
+
+<pre><code>Xcode &gt; Window &gt; Organizer
+</code></pre>
+
+<p>Find your device and select &#8220;Use for development&#8221;</p>
+
+<p>Now in Instruments you should be able to select your iPhone as a target. Then under
+<code>Choose Target</code> you should get a list of your apps to choose from.</p>
+
+<p>Note that your application must have been provisioned using a development profile.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -984,6 +1055,10 @@ $ cd ..
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2020/07/09/reducing-siloed-knowledge-with-great-documentation/">Reducing siloed knowledge with great documentation</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2020/04/11/remote-working-without-meetings/">Remote working without meetings</a>
       </li>
     
@@ -997,10 +1072,6 @@ $ cd ..
     
       <li class="post">
         <a href="/blog/2018/01/09/setup-webpacker-webpack-dev-server-with-docker-compose/">Setup webpacker webpack-dev-server with docker-compose</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2018/01/09/using-pry-with-docker-compose/">Debug Ruby using Pry and Docker compose</a>
       </li>
     
   </ul>

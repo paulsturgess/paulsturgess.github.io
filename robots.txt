@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: 
-
-Sitemap: http://paulsturgess.github.io/sitemap.xml 

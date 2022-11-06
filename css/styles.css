@@ -685,6 +685,8 @@ video {
   background-color: #0891b2;
 }
 
+/* If JavaScript is turned off the toggle does not work, so we hide it */
+
 .no-js #toggle-form {
   display: none;
 }

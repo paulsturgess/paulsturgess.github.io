@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#toggle:checked ~ .dot {
+  transform: translateX(100%);
+  background-color: #0891b2;
+}
+
+.no-js #toggle-form {
+  display: none;
+}
+
+#using-dark-theme {
+  display: none
+}
+
+.dark #using-dark-theme {
+  display: block;
+}
+
+.dark #using-light-theme {
+  display: none;
+}

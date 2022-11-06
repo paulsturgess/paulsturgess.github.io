@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- I'm using Tailwind css which is overkill, but it was fun! :) -->
+  <link href="css/styles.css" rel="stylesheet">
+  <title>paulsturgess.co.uk</title>
+
+  <script>
+    const toggleTheme = () => document.documentElement.classList.toggle('dark')
+
+    window.onload = () => {
+      document.body.classList.remove("no-js")
+
+      const prefersDarkTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      if (prefersDarkTheme) toggleTheme()
+
+      const toggle = document.getElementById('toggle');
+      toggle.addEventListener('change', toggleTheme)
+    }
+  </script>
+</head>
+<body class="no-js grid h-screen place-items-center bg-gray-200 dark:bg-gray-900">
+  <main class="relative rounded-lg bg-white dark:bg-gray-800 p-8 m-40 mt-10 shadow-xl space-y-4">
+    <h1 class="text-2xl font-bold dark:text-white">
+      Hello there 👋🏻
+    </h1>
+
+    <p class="text-base text-slate-700 dark:text-white">My name is Paul Sturgess and I've been building websites and apps for 18 years. I enjoy working 'full stack', taking the tech lead role and working remotely.</p>
+
+    <p class="text-base text-slate-700 dark:text-white">I care passionately about maintainable code, test coverage, good documentation, diversity, continuous delivery, sharing knowledge and small pull requests.</p>
+
+    <p class="text-base text-slate-700 dark:text-white">Tech I especially enjoy using: Ruby, TypeScript, React, Next.js and Rails.</p>
+
+    <div class="flex">
+      <p class="grow text-base text-slate-700 dark:text-white">Connect with me on <a href="https://www.linkedin.com/in/paul-sturgess/" class="underline text-cyan-800 dark:text-cyan-300">LinkedIn</a>.</p>
+
+      <div id="toggle-form" class="flex-nowrap ml-4">
+        <label for="toggle" class="relative flex items-center cursor-pointer">
+          <div class="block bg-gray-600 w-10 h-6 rounded-full focus-within:border-cyan-600 focus-within:border-2">
+            <input type="checkbox" id="toggle" class="sr-only">
+            <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></div>
+          </div>
+          <p id="using-dark-theme" class="sr-only">Toggle the checkbox to select the light theme</p>
+          <p id="using-light-theme" class="sr-only">Toggle the checkbox to select the dark theme</p>
+
+          <p class="ml-2 text-slate-700 dark:text-white text-sm whitespace-nowrap" aria-hidden="true">
+            Toggle theme
+          </p>
+        </label>
+      </div>
+    </div>
+
+
+  </main>
+</body>
+</html>

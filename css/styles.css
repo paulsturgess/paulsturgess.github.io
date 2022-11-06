@@ -599,6 +599,10 @@ video {
   margin-bottom: calc(1rem * var(--tw-space-y-reverse));
 }
 
+.overflow-hidden {
+  overflow: hidden;
+}
+
 .whitespace-nowrap {
   white-space: nowrap;
 }

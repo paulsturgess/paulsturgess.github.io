@@ -12,7 +12,11 @@ Tech used:
 
 ## Tailwind CSS
 
-Tailwind CSS is a framework that allows building a webpage whilst writing very little CSS. It's incredibly flexibile.
+Run the following to auto generate the new Tailwind styles:
+
+```bash
+npx tailwindcss -i css/input.css -o css/styles.css --watch
+```
 
 Mobile-first responsive layouts are achieved using breakpoints.
 
